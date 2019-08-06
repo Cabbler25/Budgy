@@ -69,3 +69,11 @@ ALTER TABLE public.users ADD CONSTRAINT users_fk FOREIGN KEY (family_id) REFEREN
 ALTER TABLE public.users ADD CONSTRAINT users_fk_1 FOREIGN KEY (family_role) REFERENCES public.family_roles(id);
 ALTER TABLE public.expenses ADD CONSTRAINT expenses_fk_1 FOREIGN KEY (type) REFERENCES public.expense_types(id);
 ALTER TABLE public.incomes ADD CONSTRAINT incomes_fk_1 FOREIGN KEY (type) REFERENCES public.income_types(id);
+
+
+/**
+*
+* Add any changes queries that alter the database here
+*
+**/
+ALTER TABLE public.users ADD CONSTRAINT users_un UNIQUE ("password",username,email);
