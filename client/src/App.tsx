@@ -10,13 +10,20 @@ import Landing from './components/Landing.component';
 // We will define our theme here
 // All components will inherit from this
 // https://material-ui.com/customization/themes/
+
+const colors = {
+  green: '#4CAF50',
+  lightGreen: '#63b175',
+  offWhite: '#FFFFFF',
+  teal: '#009688'
+}
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#4CAF50'
+      main: colors.lightGreen
     },
     secondary: {
-      main: '#009688'
+      main: colors.teal
     },
   },
 });
@@ -25,7 +32,7 @@ const App: React.FC = () => {
   return (
     <Provider store={store}>
       <MuiThemeProvider theme={theme}>
-        <div style={{ minHeight: '15px', height: '15px', backgroundColor: '#388E3C' }} />
+        <div style={{ minHeight: '10px', height: '10px', backgroundColor: '#388E3C' }} />
         <NavBar />
         <br />
         <Router>

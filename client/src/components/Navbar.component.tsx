@@ -6,20 +6,23 @@ import { Typography, makeStyles, Theme, createStyles } from '@material-ui/core';
 import { IUserState, IState } from '../redux';
 import { connect } from 'react-redux';
 
+const offWhite = '#FFFFFF';
 const useStyles = makeStyles((theme: Theme) => createStyles({
   navbar: {
+    maxHeight: '50%',
+    height: '50%',
     color: 'primary'
   },
   title: {
     marginRight: '40px',
     marginLeft: '5px',
-    color: '#FFFFFF'
+    color: offWhite
   },
   nav_item: {
     marginLeft: '10px',
     textTransform: 'initial',
     fontSize: '17px',
-    color: '#FFFFFF'
+    color: offWhite
   },
   nav_right: {
     marginRight: '5px',
@@ -34,9 +37,9 @@ interface INavProps {
 function NavBar(props: INavProps) {
   const classes = useStyles();
   return (
-    <AppBar className={classes.navbar} position='sticky'>
-      <Toolbar>
-        <Typography className={classes.title} variant='h4'>Wataname</Typography>
+    <AppBar position='sticky'>
+      <Toolbar className={classes.navbar}>
+        <Typography className={classes.title} variant="h5">Wataname</Typography>
         <Button className={classes.nav_item} color='secondary'>Budget</Button>
         <Button className={classes.nav_item} color='secondary'>Expenses</Button>
         <Button className={classes.nav_item} color='secondary'>Income</Button>
