@@ -14,7 +14,6 @@ import Expenses from './components/Expenses.component';
 import User from './components/User.component';
 import colors from './assets/Colors';
 import Logout from './components/Logout.component';
-import Login from './components/Login.component';
 
 
 // We will define our theme here, feel free to add to it.
@@ -59,7 +58,6 @@ const App: React.FC = () => {
             <NavBar />
             <br />
             <Route path="/" exact component={Home} />
-            <Route path="/login" exact component={Login} />
             <Route path="/logout" exact component={Logout} />
             <Route path="/register" exact component={Register} />
             <Route path="/user" exact component={User} />
