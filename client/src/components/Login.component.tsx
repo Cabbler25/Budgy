@@ -5,32 +5,91 @@
  */
 
 import React from 'react';
-import { Paper, Button } from '@material-ui/core';
+import { Paper, Button, Divider, TextField } from '@material-ui/core';
 import { IUserState, IState } from '../redux';
 import { updateUserLoggedIn } from '../redux/actions';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
 
 interface ILoginProps {
   user: IUserState,
-  updateUserLoggedIn: (val: boolean) => void,
-  history: any
+  updateUserLoggedIn: (val: boolean) => void
 }
 
 export function Login(props: ILoginProps) {
-  return (
-    <div style={{ textAlign: 'center' }}>
-      <Paper style={{ display: 'inline-block', padding: '50px' }}>
-        <h1>Login page</h1>
-        <Button onClick={handleLogin} variant='contained' color='secondary'>Login</Button>
-      </Paper>
-    </div>
-  );
+  const [usernameField, setUsernameField] = React.useState('');
+  const [usernameError, setUsernameError] = React.useState(false);
+  const [usernameErrorTxt, setUsernameErrorTxt] = React.useState('');
+  const [pwField, setPwField] = React.useState('');
+  const [pwError, setPwError] = React.useState(false);
+  const [pwErrorTxt, setPwErrorTxt] = React.useState('');
 
   // Placeholder
-  function handleLogin(e: any) {
+  function logIn() {
+    alert('Logged in!');
     props.updateUserLoggedIn(true);
-    props.history.push('/home');
   }
+
+  const handleUsernameInput = (e: any) => {
+    setUsernameField(e.target.value);
+    setUsernameError(false);
+  }
+
+  const handlePwInput = (e: any) => {
+    setPwField(e.target.value);
+    setPwError(false);
+  }
+
+  const handleLogin = () => {
+    if (usernameField == '') {
+      setUsernameError(true);
+      setUsernameErrorTxt('Missing field');
+    }
+    if (pwField == '') {
+      setPwError(true);
+      setPwErrorTxt('Missing field');
+    }
+    if (usernameField != '' && pwField != '') logIn();
+  }
+
+  return (
+    props.user.isLoggedIn ? <Redirect push to='/user' /> :
+      <div style={{ marginTop: '50px', textAlign: 'center' }}>
+        <Paper style={{ display: 'inline-block', padding: '50px' }}>
+          <h2>Welcome</h2>
+          <div onKeyPress={(e: any) => {
+            if (e.key == 'Enter') {
+              handleLogin();
+            }
+          }}>
+            <Divider style={{ marginBottom: '25px' }} />
+            <TextField
+              error={usernameError}
+              id="username"
+              onChange={handleUsernameInput}
+              variant="outlined"
+              placeholder='username'
+              helperText={usernameError ? usernameErrorTxt : ''}
+            />
+            <br />
+            <div style={{ marginTop: '10px' }} />
+            <TextField
+              error={pwError}
+              id="password"
+              onChange={handlePwInput}
+              type="password"
+              variant="outlined"
+              placeholder='password'
+              helperText={pwError ? pwErrorTxt : ''}
+            />
+          </div>
+          <br />
+          <Button style={{ marginTop: '10px' }} onClick={handleLogin}>
+            Login
+          </Button>
+        </Paper>
+      </div >
+  );
 }
 
 // Redux
