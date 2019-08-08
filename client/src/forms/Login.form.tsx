@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Popover, Button, Paper, Divider, TextField, Backdrop } from '@material-ui/core';
 import { updateUserLoggedIn } from '../redux/actions';
 import { IUserState, IState } from '../redux';
@@ -12,150 +12,107 @@ interface ILoginProps {
   handleClose: any
 }
 
-export class Login extends React.Component<ILoginProps, any> {
+export function Login(props: ILoginProps) {
+  const [usernameField, setUsernameField] = React.useState('');
+  const [usernameError, setUsernameError] = React.useState(false);
+  const [usernameErrorTxt, setUsernameErrorTxt] = React.useState('');
+  const [pwField, setPwField] = React.useState('');
+  const [pwError, setPwError] = React.useState(false);
+  const [pwErrorTxt, setPwErrorTxt] = React.useState('');
 
-  constructor(props: ILoginProps) {
-    super(props);
-    this.state = {
-      usernameError: false,
-      pwError: false,
-      username: '',
-      password: '',
-      errorUsernameFieldTxt: '',
-      errorPwFieldTxt: ''
-    }
+  useEffect(() => {
+    setUsernameError(false);
+    setPwError(false);
+  }, [props.open])
+
+  const handleUsernameInput = (e: any) => {
+    setUsernameField(e.target.value);
+    setUsernameError(false);
   }
 
-  render() {
-    return (
-      <React.Fragment>
-        <Backdrop open={this.props.open} />
-        <Popover
-          style={{
-            marginTop: '16px',
-          }}
-          id={this.props.open ? 'simple-popover' : undefined}
-          open={this.props.open}
-          anchorEl={this.props.anchorEl}
-          onClose={this.props.handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-        >
-          <div>
-            <Paper style={{ display: 'inline-block', padding: '40px' }}>
-              <h2>Welcome</h2>
-              <Divider style={{ marginBottom: '25px' }} />
-              <div onKeyPress={(e: any) => {
-                if (e.key == 'Enter') {
-                  this.handleClose();
-                }
-              }}>
-                {this.getUsernameField()}
-                <div style={{ marginTop: '-11.5px' }}><br /></div>
-                {this.getPwField()}
-              </div>
-              <br />
-              <Button style={{ marginTop: '-5px' }} onClick={() => this.handleClose()}>
-                Login
-            </Button>
-            </Paper>
-          </div>
-        </Popover >
-      </React.Fragment>
-    )
-  }
-
-  componentDidUpdate(prevProps: any) {
-    if (prevProps.open != this.props.open) {
-      this.setState({
-        usernameError: false,
-        pwError: false
-      })
-    }
-  }
-
-  handleInputChange(event: any) {
-    this.setState({
-      [event.target.id]: event.target.value,
-      usernameError: false,
-      pwError: false
-    });
-  }
-
-  handleClose() {
-    const data = this.state;
-    if (data.username == '') {
-      this.setState({
-        usernameError: true,
-        errorUsernameFieldTxt: 'Missing field'
-      });
-    }
-    if (data.password == '') {
-      this.setState({
-        pwError: true,
-        errorPwFieldTxt: 'Missing field'
-      });
-    }
-    if ((data.username !== '') && (data.password !== '')) {
-      this.logIn();
-    }
+  const handlePwInput = (e: any) => {
+    setPwField(e.target.value);
+    setPwError(false);
   }
 
   // Placeholder
-  logIn() {
+  function logIn() {
     alert('Logged in!');
-    this.props.updateUserLoggedIn(true);
-    this.props.handleClose();
-    console.log(`${this.state.username}, ${this.state.password}`);
+    props.updateUserLoggedIn(true);
+    props.handleClose();
+    console.log(`${usernameField}, ${pwField}`);
   }
 
-  getUsernameField() {
-    return (
-      !this.state.usernameError ?
-        <TextField
-          id="username"
-          onChange={(e: any) => this.handleInputChange(e)}
-          variant="outlined"
-          placeholder='username'
-        /> :
-        <TextField
-          error
-          id="username"
-          onChange={(e: any) => this.handleInputChange(e)}
-          variant="outlined"
-          placeholder='username'
-          helperText={this.state.errorUsernameFieldTxt}
-        />
-    );
+  const handleLogin = () => {
+    if (usernameField == '') {
+      setUsernameError(true);
+      setUsernameErrorTxt('Missing field');
+    }
+    if (pwField == '') {
+      setPwError(true);
+      setPwErrorTxt('Missing field');
+    }
+    if (usernameField != '' && pwField != '') logIn();
   }
 
-  getPwField() {
-    return (
-      !this.state.pwError ?
-        <TextField
-          id="password"
-          onChange={(e: any) => this.handleInputChange(e)}
-          type="password"
-          variant="outlined"
-          placeholder='password' />
-        :
-        <TextField
-          error
-          id="password"
-          onChange={(e: any) => this.handleInputChange(e)}
-          type="password"
-          variant="outlined"
-          placeholder='password'
-          helperText={this.state.errorPwFieldTxt}
-        />
-    );
-  }
+  return (
+    <React.Fragment>
+      <Backdrop open={props.open} />
+      <Popover
+        style={{
+          marginTop: '16px',
+        }}
+        id={props.open ? 'simple-popover' : undefined}
+        open={props.open}
+        anchorEl={props.anchorEl}
+        onClose={props.handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <div>
+          <Paper style={{ display: 'inline-block', padding: '50px' }}>
+            <h2>Welcome</h2>
+            <div onKeyPress={(e: any) => {
+              if (e.key == 'Enter') {
+                handleLogin();
+              }
+            }}>
+              <Divider style={{ marginBottom: '25px' }} />
+              <TextField
+                error={usernameError}
+                id="username"
+                onChange={handleUsernameInput}
+                variant="outlined"
+                placeholder='username'
+                helperText={usernameError ? usernameErrorTxt : ''}
+              />
+              <br />
+              <div style={{ marginTop: '10px' }} />
+              <TextField
+                error={pwError}
+                id="password"
+                onChange={handlePwInput}
+                type="password"
+                variant="outlined"
+                placeholder='password'
+                helperText={pwError ? pwErrorTxt : ''}
+              />
+            </div>
+            <br />
+            <Button style={{ marginTop: '10px' }} onClick={handleLogin}>
+              Login
+          </Button>
+          </Paper>
+        </div>
+      </Popover >
+    </React.Fragment>
+  )
 }
 
 // Redux

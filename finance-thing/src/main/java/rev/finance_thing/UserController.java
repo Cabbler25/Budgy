@@ -14,17 +14,15 @@ import services.UserService;
 
 @RestController
 public class UserController {
-	
-	  @PostMapping("/register")
-	  public ResponseEntity<Object> userRegister(@RequestBody UserForm userForm) {
-	     UserService.RegisterUser(userForm);
-	     return new ResponseEntity<>(HttpStatus.CREATED);
-	  }
-	  
-	  @GetMapping("/user/{id}")
-	  public ResponseEntity<User> getUser(@PathVariable("id") int id) {
-		 
-		 return new ResponseEntity<>(UserService.GetUser(id),HttpStatus.OK);
-	  }
 
+	@PostMapping("/register")
+	public ResponseEntity<Object> userRegister(@RequestBody UserForm userForm) {
+		UserService.RegisterUser(userForm);
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+
+	@GetMapping("/user/{id}")
+	public ResponseEntity<User> getUser(@PathVariable("id") int id) {
+		return new ResponseEntity<>(UserService.GetUser(id), HttpStatus.OK);
+	}
 }
