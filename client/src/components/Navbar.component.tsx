@@ -7,10 +7,9 @@ import { IUserState, IState, IUiState } from '../redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import colors from '../assets/Colors';
-import Login from '../forms/Login.form';
+import Login from './LoginPopover.component';
 import { setMobileView } from '../redux/actions';
 import { Sidebar } from './Sidebar.component';
-import ReactDOM from 'react-dom';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   navbar: {
@@ -43,7 +42,7 @@ interface INavProps {
 }
 
 function NavBar(props: INavProps) {
-  const classes = useStyles();
+  const classes = useStyles(props);
 
   // Mobile view query
   const mediaQuery = window.matchMedia('(min-width: 700px)');
@@ -99,9 +98,10 @@ function NavBar(props: INavProps) {
       <Sidebar open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} handleLogin={handleLoginOpen} />
       <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined }} position='sticky'>
         <Toolbar className={classes.navbar}>
-          {props.ui.isMobileView && <Button style={{ maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>
-            <Icon style={{ fontSize: 30, color: colors.offWhite }}>view_headline</Icon>
-          </Button>}
+          {props.ui.isMobileView &&
+            <Button style={{ marginRight: '5px', maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>
+              <Icon style={{ fontSize: 30, color: colors.offWhite }}>view_headline</Icon>
+            </Button>}
           <Button className={classes.title} variant='text' component={Link} to="/">
             <Typography variant={props.ui.isMobileView ? 'body1' : 'h5'}>Wataname</Typography>
           </Button>
@@ -125,13 +125,21 @@ function NavBar(props: INavProps) {
               :
               <List>
                 <ListItem>
-                  <Button id='loginButton' size='small' variant='outlined' className={classes.nav_item} color='secondary'
-                    style={{ borderColor: colors.offWhite }} onClick={handleLoginOpen}>
-                    Login
-                  </Button>
+                  {props.ui.isMobileView ?
+                    <Button id='loginButton' size='small' variant='outlined' className={classes.nav_item} color='secondary'
+                      style={{ borderColor: colors.offWhite, fontSize: '12px' }}
+                      component={Link} to='/login'>
+                      Login
+                    </Button>
+                    :
+                    <Button id='loginButton' size='small' variant='outlined' className={classes.nav_item} color='secondary'
+                      style={{ borderColor: colors.offWhite }} onClick={handleLoginOpen}>
+                      Login
+                    </Button>}
                   <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
                   <Button size='small' variant='contained' className={classes.nav_item} color='secondary'
-                    style={{ backgroundColor: colors.orange }} component={Link} to="/register">
+                    style={{ backgroundColor: colors.orange, fontSize: props.ui.isMobileView ? '12px' : '16px' }}
+                    component={Link} to="/register">
                     Register
                   </Button>
                 </ListItem>
