@@ -1,25 +1,73 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
+import { PersistGate } from 'redux-persist/integration/react'
+import { Provider } from 'react-redux';
+import { store, persistor } from './redux/Store';
+import NavBar from './components/Navbar.component';
+import Home from './components/Home.component';
+import Register from './components/Register.component';
+import Budget from './components/Budget.component';
+import Incomes from './components/Incomes.component';
+import Expenses from './components/Expenses.component';
+import User from './components/User.component';
+import colors from './assets/Colors';
+import Logout from './components/Logout.component';
+
+
+// We will define our theme here, feel free to add to it.
+// All components will inherit from this.
+// https://material-ui.com/customization/themes/
+// Of course, we needn't use Material UI, open to suggestions~
+
+const theme = createMuiTheme({
+  // Override CSS types of any component
+  overrides: {
+    MuiDivider: {
+      root: {
+        backgroundColor: colors.teal
+      }
+    },
+  },
+  // Override the props of any component
+  props: {
+    MuiButton: {
+      variant: 'contained',
+      color: 'secondary'
+    }
+  },
+  // Theme settings
+  palette: {
+    primary: {
+      main: colors.lightGreen
+    },
+    secondary: {
+      main: colors.teal
+    },
+  },
+});
 
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <MuiThemeProvider theme={theme}>
+          <Router>
+            <div style={{ height: '7px', width: '100%', minWidth: '100%', backgroundColor: colors.darkGreen }} />
+            <NavBar />
+            <br />
+            <Route path="/" exact component={Home} />
+            <Route path="/logout" exact component={Logout} />
+            <Route path="/register" exact component={Register} />
+            <Route path="/user" exact component={User} />
+            <Route path="/incomes" exact component={Incomes} />
+            <Route path="/budget" exact component={Budget} />
+            <Route path="/expenses" exact component={Expenses} />
+          </Router>
+        </MuiThemeProvider>
+      </PersistGate>
+    </Provider>
   );
 }
 
