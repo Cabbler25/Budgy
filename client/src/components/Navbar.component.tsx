@@ -7,7 +7,7 @@ import { IUserState, IState, IUiState } from '../redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import colors from '../assets/Colors';
-import Login from '../forms/Login.form';
+import Login from './LoginPopover.component';
 import { setMobileView } from '../redux/actions';
 import { Sidebar } from './Sidebar.component';
 
