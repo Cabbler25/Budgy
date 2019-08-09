@@ -14,8 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
-
 @Entity
 @Table(name = "users")
 public class User {
@@ -23,73 +21,92 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
-	@Column(name="family_id")
+
+	@Column(name = "family_id")
 	private int familyId;
-	
-	@Column(name="family_role")
+
+	@Column(name = "family_role")
 	private int familyRole;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private String username;
-	
-	@Column(name="first_name", nullable=false)
-	private String firstname; 
-	
-	@Column(name="last_name", nullable=false)
+
+	@Column(name = "first_name", nullable = false)
+	private String firstname;
+
+	@Column(name = "last_name", nullable = false)
 	private String lastname;
-	
-	@Column(name="email", nullable=false)
+
+	@Column(name = "email", nullable = false)
 	private String email;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private String password;
-	
-	public User(int id, int familyId, int familyRole, String username, String firstName, String lastName, String email,
-			String password) {
-		super();
-		this.id = id;
-		this.familyId = familyId;
-		this.familyRole = familyRole;
-		this.username = username;
-		this.firstname = firstName;
-		this.lastname = lastName;
-		this.email = email;
-		this.password = password;
+
+	public int getId() {
+		return id;
 	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getFamilyId() {
+		return familyId;
+	}
+
+	public void setFamilyId(int familyId) {
+		this.familyId = familyId;
+	}
+
+	public int getFamilyRole() {
+		return familyRole;
+	}
+
+	public void setFamilyRole(int familyRole) {
+		this.familyRole = familyRole;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getFirstname() {
+		return firstname;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public User() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	public User(int id, int familyId, int familyRole, String username, String firstName, String lastName,
-			String email) {
-		super();
-		this.id = id;
-		this.familyId = familyId;
-		this.familyRole = familyRole;
-		this.username = username;
-		this.firstname = firstName;
-		this.lastname = lastName;
-		this.email = email;
-	}
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", familyId=" + familyId + ", familyRole=" + familyRole + ", username=" + username
-				+ ", firstName=" + firstname + ", lastName=" + lastname + ", email=" + email + ", password=" + password
-				+ "]";
-	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -104,6 +121,7 @@ public class User {
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -146,40 +164,30 @@ public class User {
 			return false;
 		return true;
 	}
-	public int getId() {
-		return id;
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", familyId=" + familyId + ", familyRole=" + familyRole + ", username=" + username
+				+ ", firstname=" + firstname + ", lastname=" + lastname + ", email=" + email + ", password=" + password
+				+ "]";
 	}
-	public void setId(int id) {
+
+	public User(int id, int familyId, int familyRole, String username, String firstname, String lastname, String email,
+			String password) {
+		super();
 		this.id = id;
-	}
-	public int getFamilyId() {
-		return familyId;
-	}
-	public void setFamilyId(int familyId) {
 		this.familyId = familyId;
-	}
-	public int getFamilyRole() {
-		return familyRole;
-	}
-	public void setFamilyRole(int familyRole) {
 		this.familyRole = familyRole;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
 		this.username = username;
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.email = email;
+		this.password = password;
 	}
-	public String getFirstName() {
-		return firstname;
+
+	public User() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
-	public void setFirstName(String firstName) {
-		this.firstname = firstName;
-	}
-	public String getLastName() {
-		return lastname;
-	}
-	public void setLastName(String lastName) {
-		this.lastname = lastName;
-	}
+
 }
