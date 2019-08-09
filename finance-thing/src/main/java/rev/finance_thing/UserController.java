@@ -23,8 +23,6 @@ public class UserController {
 	  
 	  @GetMapping("/user/{id}")
 	  public ResponseEntity<User> getUser(@PathVariable("id") int id) {
-		 
 		 return new ResponseEntity<>(UserService.GetUser(id),HttpStatus.OK);
 	  }
-
 }
