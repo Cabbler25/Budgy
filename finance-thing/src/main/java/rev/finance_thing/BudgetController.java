@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import entities.Budget;
+import exceptions.BudgetNotFoundException;
 import forms.BudgetForm;
 import services.BudgetService;
 
@@ -31,8 +33,16 @@ public class BudgetController {
 		return new ResponseEntity<>(BudgetService.GetBudget(id), HttpStatus.OK);
 	}
 
-	@GetMapping("/budget/user/{userId}")
-	public ResponseEntity<List<Budget>> getBudgetsByUser(@PathVariable("userId") int userId) {
-		return new ResponseEntity<>(BudgetService.GetBudgetsByUser(userId), HttpStatus.OK);
+//	Find Budgets by user id. If not found, send message to the client
+	@GetMapping("/budget/user/{id}")
+	public ResponseEntity<List<Budget>> getBudgetsByUserId(@PathVariable("id") int id) {
+		BudgetService BudgetService = new BudgetService();
+		try { // Search the reimbursement
+			List<Budget> Budgets = BudgetService.getBudgetsByUserId(id);
+			return new ResponseEntity<>(Budgets, HttpStatus.OK);
+//			If not found, proper response is sent to the server
+		} catch (BudgetNotFoundException e) {
+			throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+		}
 	}
 }
