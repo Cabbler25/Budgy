@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Paper, Button, Divider, TextField } from '@material-ui/core';
 import { IUserState, IState } from '../redux';
 import { updateUserLoggedIn } from '../redux/actions';
@@ -11,12 +11,12 @@ interface ILoginProps {
 }
 
 export function Login(props: ILoginProps) {
-  const [usernameField, setUsernameField] = React.useState('');
-  const [usernameError, setUsernameError] = React.useState(false);
-  const [usernameErrorTxt, setUsernameErrorTxt] = React.useState('');
-  const [pwField, setPwField] = React.useState('');
-  const [pwError, setPwError] = React.useState(false);
-  const [pwErrorTxt, setPwErrorTxt] = React.useState('');
+  const [usernameField, setUsernameField] = useState('');
+  const [usernameError, setUsernameError] = useState(false);
+  const [usernameErrorTxt, setUsernameErrorTxt] = useState('');
+  const [pwField, setPwField] = useState('');
+  const [pwError, setPwError] = useState(false);
+  const [pwErrorTxt, setPwErrorTxt] = useState('');
 
   // Placeholder
   function logIn() {

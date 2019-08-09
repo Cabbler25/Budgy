@@ -1,7 +1,10 @@
 package services;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,6 +15,7 @@ import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
 import entities.Budget;
+import exceptions.BudgetNotFoundException;
 import forms.BudgetForm;
 
 public class BudgetService {
@@ -25,22 +29,31 @@ public class BudgetService {
 			budget = session.get(Budget.class, id);
 		}
 
-		System.out.println(budget);
 		return budget;
 	}
 
-	public static List<Budget> GetBudgetsByUser(int userId) {
-		List<Budget> budgets = new ArrayList<>();
-
+//	Get All Budgets by user_id. In this case, the typical session.get() won't work as well
+//	since the user_id is not the primary key (Id) of the Budget entity. So, the 
+//	criteriaQuery was used here.
+	public List<Budget> getBudgetsByUserId(int id) throws BudgetNotFoundException {
 		sessionFactory = configure();
-		String hql = "FROM Budget WHERE Budget.userId = :id";
 		try (Session session = sessionFactory.openSession()) {
-			Query<Budget> query = session.createQuery(hql, Budget.class);
-			query.setParameter("id", userId);
-			System.out.println("called");
-			budgets = query.getResultList();
+//			Create the query to search Budget by user_id
+			CriteriaBuilder cb = session.getCriteriaBuilder();
+//			Create the criteria query
+			CriteriaQuery<Budget> BudgetQuery = cb.createQuery(Budget.class);
+//			Define the data type expected to be returned from the query result
+			Root<Budget> root = BudgetQuery.from(Budget.class);
+//			Perform query
+			BudgetQuery.select(root).where(cb.equal(root.get("userId"), id));
+			Query query = session.createQuery(BudgetQuery);
+			List<Budget> Budgets = query.getResultList();
+			if (Budgets.size() == 0) {
+				throw new BudgetNotFoundException("Budget not found");
+			} else {
+				return Budgets;
+			}
 		}
-		return budgets;
 	}
 
 	public static Budget PostBudget(BudgetForm budgetForm) {
