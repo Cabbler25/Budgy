@@ -1,9 +1,3 @@
-/**
- * 
- * Currently unused, see Login.form in /forms/
- * 
- */
-
 import React from 'react';
 import { Paper, Button, Divider, TextField } from '@material-ui/core';
 import { IUserState, IState } from '../redux';
