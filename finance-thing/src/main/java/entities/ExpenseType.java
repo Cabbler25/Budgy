@@ -21,7 +21,7 @@ import javax.persistence.Table;
 public class ExpenseType {
 //	Primary key
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 //	Define the relationship between this table's primary key, and the
 //	expenses table foreign key (type)
