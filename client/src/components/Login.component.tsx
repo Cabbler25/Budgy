@@ -35,15 +35,15 @@ export function Login(props: ILoginProps) {
   }
 
   const handleLogin = () => {
-    if (usernameField == '') {
+    if (!usernameField) {
       setUsernameError(true);
       setUsernameErrorTxt('Missing field');
     }
-    if (pwField == '') {
+    if (!pwField) {
       setPwError(true);
       setPwErrorTxt('Missing field');
     }
-    if (usernameField != '' && pwField != '') logIn();
+    if (usernameField && pwField) logIn();
   }
 
   return (
@@ -52,7 +52,7 @@ export function Login(props: ILoginProps) {
         <Paper style={{ display: 'inline-block', padding: '50px' }}>
           <h2>Welcome</h2>
           <div onKeyPress={(e: any) => {
-            if (e.key == 'Enter') {
+            if (e.key === 'Enter') {
               handleLogin();
             }
           }}>

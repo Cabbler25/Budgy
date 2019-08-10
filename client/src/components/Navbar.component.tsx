@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import colors from '../assets/Colors';
 import { IState, IUiState, IUserState } from '../redux';
 import { setMobileView } from '../redux/actions';
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     color: 'primary'
   },
   title: {
-    marginRight: '30px',
+    marginRight: '50px',
     textTransform: 'initial',
     color: colors.offWhite
   },
@@ -39,6 +39,9 @@ interface INavProps {
   user: IUserState,
   ui: IUiState,
   setMobileView: (val: boolean) => void
+  history: any,
+  location: any,
+  match: any,
 }
 
 function NavBar(props: INavProps) {
@@ -93,8 +96,13 @@ function NavBar(props: INavProps) {
     setSidebarOpen(false);
   };
 
+  function onPage(route: string) {
+    return props.location.pathname == route;
+  }
+
   return (
     <Fragment>
+      {console.log(props.location.pathname)}
       <Sidebar open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} handleLogin={handleLoginOpen} />
       <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined }} position='sticky'>
         <Toolbar className={classes.navbar}>
@@ -107,13 +115,16 @@ function NavBar(props: INavProps) {
           </Button>
           {!props.ui.isMobileView &&
             <Fragment>
-              <Button className={classes.nav_item} variant='text' component={Link} to="/budget">
+              <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/budget"
+                style={{ textDecoration: onPage('/budget') ? `underline` : undefined }}>
                 Budget
               </Button>
-              <Button className={classes.nav_item} variant='text' component={Link} to="/expenses">
+              <Button className={classes.nav_item} variant='text' component={Link} to="/expenses"
+                style={{ textDecoration: onPage('/expenses') ? `underline` : undefined }}>
                 Expenses
               </Button>
-              <Button className={classes.nav_item} variant='text' component={Link} to="/incomes">
+              <Button className={classes.nav_item} variant='text' component={Link} to="/incomes"
+                style={{ textDecoration: onPage('/incomes') ? `underline` : undefined }}>
                 Incomes
               </Button>
             </Fragment>}
@@ -163,4 +174,4 @@ const mapDispatchToProps = {
   setMobileView: setMobileView
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NavBar));
