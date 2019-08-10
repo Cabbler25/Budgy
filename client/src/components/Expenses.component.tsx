@@ -17,7 +17,11 @@ function Expenses(props:IExpenseProps ) {
   return (
     <Container style={{ textAlign: 'center' }}>
       <h2>Manage your expenses, {props.user.first}</h2>  
-      {NewExpense()}
+      {/* Here is the create new expense form. 
+          The axios request is sent thru there. */}
+      {/* Send the user Id to let the database know
+          who made the expense. */}
+      {NewExpense(props.user.id)}
       <br/> 
     </Container>
   );

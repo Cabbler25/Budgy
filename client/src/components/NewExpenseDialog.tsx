@@ -12,6 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { Paper, TextField, Container } from '@material-ui/core';
 import { Row } from 'reactstrap';
+import Axios from 'axios';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,25 +27,45 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function NewExpense() {
+export default function NewExpense(authorId:number) {
   const classes = useStyles();
   const [state, setState] = React.useState({
     open: false,
     type: 0,
+    description:'',
+    amount:0
   });
 
   const handleChange = (name: keyof typeof state) => (
     event: React.ChangeEvent<{ value: unknown }>,
   ) => {
-    setState({ ...state, [name]: Number(event.target.value) });
+    setState({ ...state, [name]: event.target.value });
   };
 
   function handleClickOpen() {
     setState({ ...state, open: true });
   }
-
+//   Request function for new expense here
+  async function createNewExpense(){
+    const url = 'http://localhost:8080/expense/create';
+    const response = await Axios.post(url, {
+      userId:authorId,
+      type:state.type,
+      date:new Date().toISOString().slice(0,10),
+      description:state.description,
+      amount:state.amount
+    });
+    try {
+        console.log(response.status);
+    } catch {
+        console.log("ERRORS: ",response.data);
+    }
+  }
   function handleClose() {
     setState({ ...state, open: false });
+    // Function call to send the request for creating new expense
+    createNewExpense();
+
   }
 
   return (
@@ -73,15 +94,19 @@ export default function NewExpense() {
                   <Container>
                     <Row className="new-expense-form">
                         <TextField
+                        name="amount"
                         className="new-expense-form"
                         placeholder="amount"
-                        type="number" />
+                        type="number" 
+                        onChange={handleChange("amount")}/>
                     </Row>
                     <Row className="new-expense-form">
                         <TextField
+                        name="description"
                         className="new-expense-form"
                         placeholder="description"
-                        type="text" />
+                        type="text" 
+                        onChange={handleChange("description")}/>
                     </Row>
                   </Container>
               </Paper>
@@ -89,11 +114,15 @@ export default function NewExpense() {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+            <Button 
+            onClick={handleClose} 
+            color="primary">
+                Ok
+            </Button>
+          <Button 
+          onClick={handleClose} 
+          color="primary">
             Cancel
-          </Button>
-          <Button onClick={handleClose} color="primary">
-            Ok
           </Button>
         </DialogActions>
       </Dialog>
