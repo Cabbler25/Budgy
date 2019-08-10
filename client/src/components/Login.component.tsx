@@ -7,10 +7,10 @@ import { Redirect } from 'react-router';
 import Axios from 'axios';
 
 interface ILoginProps {
-  user: IUserState,
-  updateUserInfo: (payload: any) => void,
-  updateUserLoggedIn: (val: boolean) => void,
-  history: any
+  user: IUserState;
+  updateUserInfo: (payload: any) => void;
+  updateUserLoggedIn: (val: boolean) => void;
+  history: any;
 }
 
 export function Login(props: ILoginProps) {

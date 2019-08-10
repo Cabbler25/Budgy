@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
 interface ILogoutProps {
-  user: IUserState,
-  updateUserLoggedIn: (val: boolean) => void,
-  updateUserInfo: (payload: any) => void
+  user: IUserState;
+  updateUserLoggedIn: (val: boolean) => void;
+  updateUserInfo: (payload: any) => void;
 }
 
 export function Logout(props: ILogoutProps) {

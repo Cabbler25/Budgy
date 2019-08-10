@@ -10,6 +10,7 @@ import { IState, IUiState, IUserState } from '../redux';
 import { setMobileView } from '../redux/actions';
 import Login from './LoginPopover.component';
 import { Sidebar } from './Sidebar.component';
+import { StaticContext } from 'react-router';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   navbar: {
@@ -36,12 +37,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 interface INavProps {
-  user: IUserState,
-  ui: IUiState,
-  setMobileView: (val: boolean) => void
-  history: any,
-  location: any,
-  match: any,
+  user: IUserState;
+  ui: IUiState;
+  setMobileView: (val: boolean) => void;
+  history: any;
+  location: any;
+  match: any;
 }
 
 function NavBar(props: INavProps) {
