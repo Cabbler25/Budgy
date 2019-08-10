@@ -102,7 +102,6 @@ function NavBar(props: INavProps) {
 
   return (
     <Fragment>
-      {console.log(props.location.pathname)}
       <Sidebar open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} handleLogin={handleLoginOpen} />
       <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined }} position='sticky'>
         <Toolbar className={classes.navbar}>

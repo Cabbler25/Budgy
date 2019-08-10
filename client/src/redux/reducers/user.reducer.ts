@@ -2,6 +2,11 @@ import { userActionTypes } from '../actions';
 
 const initialState = {
     isLoggedIn: false,
+    id: 0,
+    first: '',
+    last: '',
+    username: '',
+    token: ''
 };
 
 // Define what actually happens when a specific action is dispatched.
@@ -13,6 +18,11 @@ export const updateUserReducer = (state = initialState, action: any) => {
             return {
                 ...state,
                 isLoggedIn: action.isLoggedIn
+            }
+        case userActionTypes.UPDATE_USER_INFO:
+            return {
+                ...state,
+                ...action.payload
             }
         default: return state;
     }
