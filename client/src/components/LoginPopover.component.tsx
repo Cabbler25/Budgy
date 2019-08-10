@@ -47,6 +47,7 @@ export function Login(props: ILoginProps) {
       setPwError(false);
       setUsernameError(false);
       alert('Logged in!');
+      console.log(payload.data.rows[0]);
       props.updateUserLoggedIn(true);
       props.handleClose();
 
