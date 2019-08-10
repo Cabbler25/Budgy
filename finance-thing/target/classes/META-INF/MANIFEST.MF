@@ -1,13 +1,11 @@
 Manifest-Version: 1.0
 Implementation-Title: finance-thing
 Implementation-Version: 0.0.1-SNAPSHOT
-<<<<<<< HEAD
+Built-By: migue
 Built-By: kkevi
-=======
 Built-By: asosl
->>>>>>> 22a4e64fe8d298be729b6c7c4137fa4b42306cb1
 Implementation-Vendor-Id: rev
-Build-Jdk: 1.8.0_221
+Build-Jdk: 1.8.0_211
 Implementation-URL: http://maven.apache.org
 Created-By: Maven Integration for Eclipse
 
