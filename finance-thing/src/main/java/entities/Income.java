@@ -24,7 +24,7 @@ public class Income {
 	private String description;
 	
 	@Column(name="amount")
-	private int amount;
+	private double amount;
 
 	public int getId() {
 		return id;
@@ -58,11 +58,11 @@ public class Income {
 		this.description = description;
 	}
 
-	public int getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(int amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 
@@ -70,7 +70,9 @@ public class Income {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + amount;
+		long temp;
+		temp = Double.doubleToLongBits(amount);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + id;
 		result = prime * result + type;
@@ -87,7 +89,7 @@ public class Income {
 		if (getClass() != obj.getClass())
 			return false;
 		Income other = (Income) obj;
-		if (amount != other.amount)
+		if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
 			return false;
 		if (description == null) {
 			if (other.description != null)
@@ -109,7 +111,7 @@ public class Income {
 				+ ", amount=" + amount + "]";
 	}
 
-	public Income(int id, int user_id, int type, String description, int amount) {
+	public Income(int id, int user_id, int type, String description, double amount) {
 		super();
 		this.id = id;
 		this.user_id = user_id;
@@ -123,12 +125,5 @@ public class Income {
 		// TODO Auto-generated constructor stub
 	}
 
-
-
-
-
-
-	
-	
 	
 }
