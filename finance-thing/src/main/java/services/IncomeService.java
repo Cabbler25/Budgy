@@ -13,22 +13,27 @@ import entities.IncomeTypes;
 import forms.IncomeForm;
 import forms.UpdateIncomeForm;
 import rev.finance_thing.IncomeController;
+import exceptions.IncomeNotFoundException;
 
 
 public class IncomeService {
 	
 	static SessionFactory sessionFactory;
 	IncomeController income;
-	
-	public static Income getIncome(int id) {
+	//get income by id
+	public static Income getIncome(int id) throws IncomeNotFoundException {
 		Income income = new Income();
 		
 		sessionFactory = configure();
 		try(Session session = sessionFactory.openSession()) {
 			income = session.get(Income.class, id);
-		}
-		System.out.println(income);
-		return income;
+			if(income == null) {
+				throw new	
+				IncomeNotFoundException("Income not found");	
+				} else {
+					return income;
+				}
+			}
 	}
 	
 	public static void IncomeInfo(IncomeForm incomeForm) {
@@ -71,29 +76,32 @@ public class IncomeService {
 
 	}
 	
-	
-	public void updateIncome(UpdateIncomeForm income) {
+	// patch income
+	public void updateIncome(UpdateIncomeForm income) throws IncomeNotFoundException {
 		Income updatedIncome;
 		
-		updatedIncome = getIncome(income.getId());
-		
-		if (income.getUser_id() !=0) {
-			updatedIncome.setUser_id(income.getUser_id());
-		}
-		if (income.getType() !=0) {
-			updatedIncome.setType(income.getType());;
-		}
-		if (income.getDescription() != null) {
-			updatedIncome.setDescription(income.getDescription());
-		}
-		if (income.getAmount() !=0) {
-			updatedIncome.setAmount(income.getAmount());
-		}
-		
-		try (Session session = sessionFactory.openSession()) {
-			Transaction tx = session.beginTransaction();
-			session.update(updatedIncome);
-			tx.commit();
+		try {
+			updatedIncome = getIncome(income.getId());
+			if (income.getUser_id() !=0) {
+				updatedIncome.setUser_id(income.getUser_id());
+			}
+			if (income.getType() !=0) {
+				updatedIncome.setType(income.getType());;
+			}
+			if (income.getDescription() != null) {
+				updatedIncome.setDescription(income.getDescription());
+			}
+			if (income.getAmount() !=0) {
+				updatedIncome.setAmount(income.getAmount());
+			}
+			
+			try (Session session = sessionFactory.openSession()) {
+				Transaction tx = session.beginTransaction();
+				session.update(updatedIncome);
+				tx.commit();
+			}
+		}	catch (IncomeNotFoundException e) {
+			throw e;
 		}
 	}
 }
