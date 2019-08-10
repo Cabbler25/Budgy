@@ -2,12 +2,13 @@ import { Backdrop, Button, Divider, Paper, Popover, TextField } from '@material-
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { IState, IUserState } from '../redux';
-import { updateUserLoggedIn } from '../redux/actions';
+import { updateUserLoggedIn, updateUserInfo } from '../redux/actions';
 import Axios from 'axios';
 
 interface ILoginProps {
   user: IUserState,
   updateUserLoggedIn: (val: boolean) => void,
+  updateUserInfo: (payload: any) => void
   handleClose: () => void,
   open: boolean,
   anchorEl: any
@@ -40,33 +41,28 @@ export function Login(props: ILoginProps) {
   // Placeholder
   async function logIn() {
     const url = 'http://localhost:8080/login';
-    await Axios.post(url,{
+    await Axios.post(url, {
       username: usernameField,
       password: pwField,
-    }).then(payload =>{
+    }).then(payload => {
       setPwError(false);
       setUsernameError(false);
-      alert('Logged in!');
-      console.log(payload.data.rows[0]);
+      props.updateUserInfo(payload.data)
       props.updateUserLoggedIn(true);
       props.handleClose();
-
-    }).catch(err =>{
-      if(err.response.status === 404)
-      {
+    }).catch(err => {
+      if (err.response.status === 404) {
         setPwError(false);
         setUsernameError(false);
         setUsernameError(true);
         setUsernameErrorTxt(`User ${usernameField} not found!`);
       }
-      else
-      {
+      else {
         setPwError(false);
         setUsernameError(false);
         setPwError(true);
         setPwErrorTxt('Incorrect Password!');
       }
-
     });
 
   }
@@ -151,7 +147,8 @@ const mapStateToProps = (state: IState) => {
 }
 
 const mapDispatchToProps = {
-  updateUserLoggedIn: updateUserLoggedIn
+  updateUserLoggedIn: updateUserLoggedIn,
+  updateUserInfo: updateUserInfo
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
