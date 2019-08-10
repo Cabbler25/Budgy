@@ -6,6 +6,11 @@ import { updateUiReducer } from "./reducers/ui.reducer";
 // Need more user data, add it here
 export interface IUserState {
     isLoggedIn: boolean,
+    id: number,
+    first: string,
+    last: string,
+    username: string,
+    token: string
 }
 
 export interface IUiState {

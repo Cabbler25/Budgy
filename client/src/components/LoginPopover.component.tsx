@@ -2,14 +2,16 @@ import { Backdrop, Button, Divider, Paper, Popover, TextField } from '@material-
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { IState, IUserState } from '../redux';
-import { updateUserLoggedIn } from '../redux/actions';
+import { updateUserLoggedIn, updateUserInfo } from '../redux/actions';
+import Axios from 'axios';
 
 interface ILoginProps {
-  user: IUserState,
-  updateUserLoggedIn: (val: boolean) => void,
-  open: any,
-  anchorEl: any,
-  handleClose: any
+  user: IUserState;
+  updateUserLoggedIn: (val: boolean) => void;
+  updateUserInfo: (payload: any) => void;
+  handleClose: () => void;
+  open: boolean;
+  anchorEl: any;
 }
 
 export function Login(props: ILoginProps) {
@@ -28,31 +30,44 @@ export function Login(props: ILoginProps) {
   const handleUsernameInput = (e: any) => {
     setUsernameField(e.target.value);
     setUsernameError(false);
+    setPwError(false);
   }
 
   const handlePwInput = (e: any) => {
     setPwField(e.target.value);
     setPwError(false);
+    setUsernameError(false);
   }
 
-  // Placeholder
-  function logIn() {
-    alert('Logged in!');
-    props.updateUserLoggedIn(true);
-    props.handleClose();
-    console.log(`${usernameField}, ${pwField}`);
+  async function logIn() {
+    const url = 'http://localhost:8080/login';
+    await Axios.post(url, {
+      username: usernameField,
+      password: pwField,
+    }).then(payload => {
+      setPwError(false);
+      setUsernameError(false);
+      props.updateUserInfo(payload.data)
+      props.updateUserLoggedIn(true);
+      props.handleClose();
+    }).catch(err => {
+      setUsernameError(true);
+      setUsernameErrorTxt('');
+      setPwError(true);
+      setPwErrorTxt('Incorrect Username or Password!');
+    });
   }
 
   const handleLogin = () => {
-    if (usernameField == '') {
+    if (!usernameField) {
       setUsernameError(true);
       setUsernameErrorTxt('Missing field');
     }
-    if (pwField == '') {
+    if (!pwField) {
       setPwError(true);
       setPwErrorTxt('Missing field');
     }
-    if (usernameField != '' && pwField != '') logIn();
+    if (usernameField && pwField) logIn();
   }
 
   return (
@@ -116,14 +131,17 @@ export function Login(props: ILoginProps) {
 }
 
 // Redux
+// Needed state
 const mapStateToProps = (state: IState) => {
   return {
     user: state.user
   }
 }
 
+// Needed actions
 const mapDispatchToProps = {
-  updateUserLoggedIn: updateUserLoggedIn
+  updateUserLoggedIn: updateUserLoggedIn,
+  updateUserInfo: updateUserInfo
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

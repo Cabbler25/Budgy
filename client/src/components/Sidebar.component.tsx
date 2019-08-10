@@ -1,7 +1,7 @@
-import React from 'react'
-import { Drawer, Button, Divider, Paper } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Button, Divider, Drawer } from '@material-ui/core';
+import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { IState } from '../redux';
 
 export function Sidebar(props: any) {
@@ -14,15 +14,15 @@ export function Sidebar(props: any) {
         </h2>
           <div style={{ textAlign: 'center' }}>
             {props.isLoggedIn ?
-              <Button style={{ marginBottom: '20px' }} color='inherit' component={Link} to="/user">
+              <Button color='inherit' component={Link} to="/user">
                 My Profile
               </Button>
               :
-              <Button style={{ marginBottom: '20px' }} onClick={props.handleLogin}>
+              <Button onClick={props.handleLogin}>
                 Login
             </Button>}
           </div>
-          <Divider />
+          <Divider style={{ marginTop: '20px' }} />
           <div style={{ textAlign: 'center' }}>
             <Button style={{ marginTop: '20px' }} component={Link} to="/">
               Home
@@ -39,12 +39,12 @@ export function Sidebar(props: any) {
           </div>
           <div style={{ margin: 'auto 0px 0px 0px' }}>
             {props.isLoggedIn &&
-              <React.Fragment>
-                <Divider />
-                <Button fullWidth={true} style={{ marginTop: '20px', marginBottom: '20px' }} component={Link} to="/logout">
+              <div style={{ textAlign: 'center' }}>
+                <Divider style={{ marginTop: '20px' }} />
+                <Button style={{ marginTop: '20px', marginBottom: '20px' }} component={Link} to="/logout">
                   Logout
-              </Button>
-              </React.Fragment>}
+                </Button>
+              </div>}
           </div>
         </div>
       </Drawer >

@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import entities.Family;
 import entities.User;
 import forms.LoginForm;
+import forms.ReturnUserForm;
 import forms.UpdateForm;
 import forms.UserForm;
 import io.jsonwebtoken.JwtBuilder;
@@ -115,7 +116,7 @@ public class UserService {
 		return builder.compact();
 	}
 
-	public static String LoginUser(LoginForm loginForm) {
+	public static ReturnUserForm LoginUser(LoginForm loginForm) {
 		User user = new User();
 
 		sessionFactory = configure();
@@ -125,14 +126,20 @@ public class UserService {
 			query.setParameter("un", loginForm.getUsername());
 			user = (User) query.uniqueResult();
 		}
-		if (user == null)
+		if (user == null) {
 			return null;
+		}
 
 		if (BCrypt.checkpw(loginForm.getPassword(), user.getPassword())) {
 
-			return createJWT(String.valueOf(user.getId()), user.getUsername(), String.valueOf(user.getFamilyRole()), 0);
-		} else
+			{
+				ReturnUserForm userReturn = new ReturnUserForm(user.getId(), user.getUsername(), user.getFirstname(), user.getLastname(), createJWT(String.valueOf(user.getId()), user.getUsername(), String.valueOf(user.getFamilyRole()),
+						0));
+				return userReturn;
+			}
+		} else {
 			return null;
+		}
 
 	}// Returns User Object for the time being TODO Change to token or whatever
 

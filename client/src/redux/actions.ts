@@ -1,6 +1,7 @@
 // Action types, i.e what action is to be done
 export const userActionTypes = {
-    UPDATE_USER_LOGGED_IN: 'UPDATE_USER_LOGGED_IN'
+    UPDATE_USER_LOGGED_IN: 'UPDATE_USER_LOGGED_IN',
+    UPDATE_USER_INFO: 'UPDATE_USER_INFO'
 }
 
 export const uiActionTypes = {
@@ -13,6 +14,13 @@ export const updateUserLoggedIn = (val: boolean) => (dispatch: any) => {
     dispatch({
         type: userActionTypes.UPDATE_USER_LOGGED_IN,
         isLoggedIn: val
+    })
+}
+
+export const updateUserInfo = (payload: any) => (dispatch: any) => {
+    dispatch({
+        type: userActionTypes.UPDATE_USER_INFO,
+        payload: payload
     })
 }
 
