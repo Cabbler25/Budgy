@@ -1,20 +1,20 @@
-import './App.css';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
-import { PersistGate } from 'redux-persist/integration/react'
 import { Provider } from 'react-redux';
-import { store, persistor } from './redux/Store';
-import NavBar from './components/Navbar.component';
-import Home from './components/Home.component';
-import Register from './components/Register.component';
-import Budget from './components/Budget.component';
-import Incomes from './components/Incomes.component';
-import Expenses from './components/Expenses.component';
-import User from './components/User.component';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { PersistGate } from 'redux-persist/integration/react';
+import './App.css';
 import colors from './assets/Colors';
-import Logout from './components/Logout.component';
+import Budget from './components/Budget.component';
+import Expenses from './components/Expenses.component';
+import Home from './components/Home.component';
+import Incomes from './components/Incomes.component';
 import Login from './components/Login.component';
+import Logout from './components/Logout.component';
+import NavBar from './components/Navbar.component';
+import Register from './components/Register.component';
+import User from './components/User.component';
+import { persistor, store } from './redux/Store';
 
 
 // We will define our theme here, feel free to add to it.
