@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import entities.User;
 import forms.LoginForm;
+import forms.ReturnUserForm;
 import forms.UpdateForm;
 import forms.UserForm;
 import services.UserService;
@@ -33,13 +34,11 @@ public class UserController {
 
 	@CrossOrigin
 	@PostMapping("/login")
-	public ResponseEntity<String> userLogin(@RequestBody LoginForm loginForm) {
-		String token = UserService.LoginUser(loginForm);
+	public ResponseEntity<ReturnUserForm> userLogin(@RequestBody LoginForm loginForm) {
+		ReturnUserForm token = UserService.LoginUser(loginForm);
 		if (token == null)
-			return new ResponseEntity<>("Incorrect Password", HttpStatus.BAD_REQUEST);
-		if (token == "User not Found")
-			return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
-		return new ResponseEntity<>(token, HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(UserService.LoginUser(loginForm), HttpStatus.OK);
 
 	}
 
