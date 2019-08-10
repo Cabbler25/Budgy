@@ -30,6 +30,7 @@ export function Login(props: ILoginProps) {
       setUsernameError(false);
       alert('Logged in!');
       //Do something will payload
+      console.log(payload.data);
       props.updateUserLoggedIn(true);
     }).catch(err =>{
       if(err.response.status === 404)
