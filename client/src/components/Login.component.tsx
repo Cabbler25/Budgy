@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Paper, Button, Divider, TextField } from '@material-ui/core';
 import { IUserState, IState } from '../redux';
-import { updateUserLoggedIn } from '../redux/actions';
+import { updateUserLoggedIn, updateUserInfo } from '../redux/actions';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import Axios from 'axios';
 
 interface ILoginProps {
-  user: IUserState,
-  updateUserLoggedIn: (val: boolean) => void
+  user: IUserState;
+  updateUserInfo: (payload: any) => void;
+  updateUserLoggedIn: (val: boolean) => void;
+  history: any;
 }
 
 export function Login(props: ILoginProps) {
@@ -19,47 +21,46 @@ export function Login(props: ILoginProps) {
   const [pwError, setPwError] = useState(false);
   const [pwErrorTxt, setPwErrorTxt] = useState('');
 
-  // Placeholder
+  useEffect(() => {
+    setUsernameError(false);
+    setPwError(false);
+  }, [])
+
   async function logIn() {
     const url = 'http://localhost:8080/login';
-    await Axios.post(url,{
+    await Axios.post(url, {
       username: usernameField,
       password: pwField,
-    }).then(payload =>{
+    }).then(payload => {
       setPwError(false);
       setUsernameError(false);
+<<<<<<< HEAD
       alert('Logged in!');
       //Do something will payload
       console.log(payload.data);
+=======
+      props.updateUserInfo(payload.data);
+>>>>>>> 1c27b4c6a51352bfbce1d05644d63d9e4bcb50aa
       props.updateUserLoggedIn(true);
-    }).catch(err =>{
-      if(err.response.status === 404)
-      {
-        setPwError(false);
-        setUsernameError(false);
-        setUsernameError(true);
-        setUsernameErrorTxt(`User ${usernameField} not found!`);
-      }
-      else
-      {
-        setPwError(false);
-        setUsernameError(false);
-        setPwError(true);
-        setPwErrorTxt('Incorrect Password!');
-      }
-
+      props.history.push('/');
+    }).catch(err => {
+      setUsernameError(true);
+      setUsernameErrorTxt('');
+      setPwError(true);
+      setPwErrorTxt('Incorrect Username or Password!');
     });
-
   }
 
   const handleUsernameInput = (e: any) => {
     setUsernameField(e.target.value);
     setUsernameError(false);
+    setPwError(false);
   }
 
   const handlePwInput = (e: any) => {
     setPwField(e.target.value);
     setPwError(false);
+    setUsernameError(false);
   }
 
   const handleLogin = () => {
@@ -122,7 +123,8 @@ const mapStateToProps = (state: IState) => {
 }
 
 const mapDispatchToProps = {
-  updateUserLoggedIn: updateUserLoggedIn
+  updateUserLoggedIn: updateUserLoggedIn,
+  updateUserInfo: updateUserInfo
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

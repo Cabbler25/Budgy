@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { IUserState, IState } from '../redux';
 
 interface IHomeProps {
-  user: IUserState
+  user: IUserState;
 }
 
 function Home(props: IHomeProps) {

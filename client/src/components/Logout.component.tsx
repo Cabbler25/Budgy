@@ -1,16 +1,24 @@
 import React from 'react';
-import { updateUserLoggedIn } from '../redux/actions';
+import { updateUserLoggedIn, updateUserInfo } from '../redux/actions';
 import { IUserState, IState } from '../redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
 interface ILogoutProps {
-  user: IUserState,
-  updateUserLoggedIn: (val: boolean) => void
+  user: IUserState;
+  updateUserLoggedIn: (val: boolean) => void;
+  updateUserInfo: (payload: any) => void;
 }
 
-export function Logout(props: any) {
+export function Logout(props: ILogoutProps) {
   props.updateUserLoggedIn(false);
+  props.updateUserInfo({
+    id: 0,
+    first: '',
+    last: '',
+    username: '',
+    token: ''
+  })
   return (
     <Redirect to="/" />
   )
@@ -24,7 +32,8 @@ const mapStateToProps = (state: IState) => {
 }
 
 const mapDispatchToProps = {
-  updateUserLoggedIn: updateUserLoggedIn
+  updateUserLoggedIn: updateUserLoggedIn,
+  updateUserInfo: updateUserInfo
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Logout);
