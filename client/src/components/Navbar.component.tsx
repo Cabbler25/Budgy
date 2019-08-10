@@ -1,16 +1,15 @@
-import React, { useEffect } from 'react';
+import { createStyles, Icon, List, ListItem, makeStyles, Theme, Typography } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-import { Typography, makeStyles, Theme, createStyles, List, ListItem, Icon } from '@material-ui/core';
-import { IUserState, IState, IUiState } from '../redux';
+import Toolbar from '@material-ui/core/Toolbar';
+import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import colors from '../assets/Colors';
-import Login from '../forms/Login.form';
+import { IState, IUiState, IUserState } from '../redux';
 import { setMobileView } from '../redux/actions';
+import Login from './LoginPopover.component';
 import { Sidebar } from './Sidebar.component';
-import ReactDOM from 'react-dom';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   navbar: {
@@ -43,19 +42,19 @@ interface INavProps {
 }
 
 function NavBar(props: INavProps) {
-  const classes = useStyles();
+  const classes = useStyles(props);
 
   // Mobile view query
   const mediaQuery = window.matchMedia('(min-width: 700px)');
 
   // Login form
-  const [loginOpen, setLoginOpen] = React.useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   // Hide/show navbar on scroll
-  const [isTopView, setTopView] = React.useState(true);
+  const [isTopView, setTopView] = useState(true);
 
   // Hide/show sidebar
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   window.onscroll = () => {
     if (window.pageYOffset >= 10) {
@@ -95,18 +94,19 @@ function NavBar(props: INavProps) {
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       <Sidebar open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} handleLogin={handleLoginOpen} />
       <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined }} position='sticky'>
         <Toolbar className={classes.navbar}>
-          {props.ui.isMobileView && <Button style={{ maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>
-            <Icon style={{ fontSize: 30, color: colors.offWhite }}>view_headline</Icon>
-          </Button>}
+          {props.ui.isMobileView &&
+            <Button style={{ marginRight: '5px', maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>
+              <Icon style={{ fontSize: 30, color: colors.offWhite }}>menu</Icon>
+            </Button>}
           <Button className={classes.title} variant='text' component={Link} to="/">
             <Typography variant={props.ui.isMobileView ? 'body1' : 'h5'}>Wataname</Typography>
           </Button>
           {!props.ui.isMobileView &&
-            <React.Fragment>
+            <Fragment>
               <Button className={classes.nav_item} variant='text' component={Link} to="/budget">
                 Budget
               </Button>
@@ -116,7 +116,7 @@ function NavBar(props: INavProps) {
               <Button className={classes.nav_item} variant='text' component={Link} to="/incomes">
                 Incomes
               </Button>
-            </React.Fragment>}
+            </Fragment>}
           <div className={classes.nav_right}>
             {props.user.isLoggedIn ?
               <Button className={classes.nav_item} variant='text' color='secondary' component={Link} to="/logout">
@@ -125,13 +125,21 @@ function NavBar(props: INavProps) {
               :
               <List>
                 <ListItem>
-                  <Button id='loginButton' size='small' variant='outlined' className={classes.nav_item} color='secondary'
-                    style={{ borderColor: colors.offWhite }} onClick={handleLoginOpen}>
-                    Login
-                  </Button>
+                  {props.ui.isMobileView ?
+                    <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
+                      style={{ borderColor: colors.offWhite, fontSize: '12px' }}
+                      component={Link} to='/login'>
+                      Login
+                    </Button>
+                    :
+                    <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
+                      style={{ borderColor: colors.offWhite }} onClick={handleLoginOpen}>
+                      Login
+                    </Button>}
                   <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
-                  <Button size='small' variant='contained' className={classes.nav_item} color='secondary'
-                    style={{ backgroundColor: colors.orange }} component={Link} to="/register">
+                  <Button className={classes.nav_item} size='small' variant='contained' color='secondary'
+                    style={{ backgroundColor: colors.orange, fontSize: props.ui.isMobileView ? '12px' : undefined }}
+                    component={Link} to="/register">
                     Register
                   </Button>
                 </ListItem>
@@ -140,7 +148,7 @@ function NavBar(props: INavProps) {
           </div>
         </Toolbar>
       </AppBar >
-    </React.Fragment >
+    </Fragment >
   );
 }
 

@@ -8,42 +8,45 @@ export function Sidebar(props: any) {
   return (
     <div role="presentation" onClick={props.handleClose} onKeyDown={props.handleClose} >
       <Drawer open={props.open} onClose={() => props.handleClose()}>
-        <Paper>
+        <div style={{ minWidth: '250px', maxWidth: '250px' }}>
           <h2 style={{ textAlign: 'center', paddingTop: '25px' }}>
             Wataname
         </h2>
-          {props.isLoggedIn ?
-            <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-              <Button fullWidth={true} color='inherit' component={Link} to="/user">My Profile</Button>
-            </div>
-            :
-            <Button fullWidth={true} style={{ marginBottom: '20px' }} onClick={props.handleLogin}>
-              Login
+          <div style={{ textAlign: 'center' }}>
+            {props.isLoggedIn ?
+              <Button style={{ marginBottom: '20px' }} color='inherit' component={Link} to="/user">
+                My Profile
+              </Button>
+              :
+              <Button style={{ marginBottom: '20px' }} onClick={props.handleLogin}>
+                Login
             </Button>}
-          }
+          </div>
           <Divider />
           <div style={{ textAlign: 'center' }}>
-            <Button style={{ marginTop: '20px' }} fullWidth={true} component={Link} to="/">
+            <Button style={{ marginTop: '20px' }} component={Link} to="/">
               Home
-            </Button>
-            <Button style={{ marginTop: '20px' }} fullWidth={true} component={Link} to="/budget">
+            </Button><br />
+            <Button style={{ marginTop: '20px' }} component={Link} to="/budget">
               Budget
-            </Button>
-            <Button style={{ marginTop: '15px' }} fullWidth={true} component={Link} to="/expenses">
+            </Button><br />
+            <Button style={{ marginTop: '15px' }} component={Link} to="/expenses">
               Expenses
-            </Button>
-            <Button style={{ marginTop: '15px' }} fullWidth={true} component={Link} to="/incomes">
+            </Button><br />
+            <Button style={{ marginTop: '15px' }} component={Link} to="/incomes">
               incomes
-            </Button>
+            </Button><br />
           </div>
           <div style={{ margin: 'auto 0px 0px 0px' }}>
-            <Divider />
             {props.isLoggedIn &&
-              <Button fullWidth={true} style={{ marginTop: '20px', marginBottom: '20px' }} component={Link} to="/logout">
-                Logout
-              </Button>}
+              <React.Fragment>
+                <Divider />
+                <Button fullWidth={true} style={{ marginTop: '20px', marginBottom: '20px' }} component={Link} to="/logout">
+                  Logout
+              </Button>
+              </React.Fragment>}
           </div>
-        </Paper>
+        </div>
       </Drawer >
     </ div >
   );
