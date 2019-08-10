@@ -8,7 +8,7 @@ import Axios from 'axios';
 interface ILoginProps {
   user: IUserState,
   updateUserLoggedIn: (val: boolean) => void,
-  updateUserInfo: (payload: any) => void
+  updateUserInfo: (payload: any) => void,
   handleClose: () => void,
   open: boolean,
   anchorEl: any
@@ -30,15 +30,15 @@ export function Login(props: ILoginProps) {
   const handleUsernameInput = (e: any) => {
     setUsernameField(e.target.value);
     setUsernameError(false);
+    setPwError(false);
   }
 
   const handlePwInput = (e: any) => {
     setPwField(e.target.value);
     setPwError(false);
+    setUsernameError(false);
   }
 
-  //
-  // Placeholder
   async function logIn() {
     const url = 'http://localhost:8080/login';
     await Axios.post(url, {
@@ -51,20 +51,11 @@ export function Login(props: ILoginProps) {
       props.updateUserLoggedIn(true);
       props.handleClose();
     }).catch(err => {
-      if (err.response.status === 404) {
-        setPwError(false);
-        setUsernameError(false);
-        setUsernameError(true);
-        setUsernameErrorTxt(`User ${usernameField} not found!`);
-      }
-      else {
-        setPwError(false);
-        setUsernameError(false);
-        setPwError(true);
-        setPwErrorTxt('Incorrect Password!');
-      }
+      setUsernameError(true);
+      setUsernameErrorTxt('');
+      setPwError(true);
+      setPwErrorTxt('Incorrect Username or Password!');
     });
-
   }
 
   const handleLogin = () => {
@@ -140,12 +131,14 @@ export function Login(props: ILoginProps) {
 }
 
 // Redux
+// Needed state
 const mapStateToProps = (state: IState) => {
   return {
     user: state.user
   }
 }
 
+// Needed actions
 const mapDispatchToProps = {
   updateUserLoggedIn: updateUserLoggedIn,
   updateUserInfo: updateUserInfo
