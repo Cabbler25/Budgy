@@ -1,24 +1,24 @@
-import React, { useEffect } from 'react';
-import { Popover, Button, Paper, Divider, TextField, Backdrop } from '@material-ui/core';
-import { updateUserLoggedIn } from '../redux/actions';
-import { IUserState, IState } from '../redux';
+import { Backdrop, Button, Divider, Paper, Popover, TextField } from '@material-ui/core';
+import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import { IState, IUserState } from '../redux';
+import { updateUserLoggedIn } from '../redux/actions';
 
 interface ILoginProps {
   user: IUserState,
   updateUserLoggedIn: (val: boolean) => void,
-  open: any,
-  anchorEl: any,
-  handleClose: any
+  handleClose: () => void,
+  open: boolean,
+  anchorEl: any
 }
 
 export function Login(props: ILoginProps) {
-  const [usernameField, setUsernameField] = React.useState('');
-  const [usernameError, setUsernameError] = React.useState(false);
-  const [usernameErrorTxt, setUsernameErrorTxt] = React.useState('');
-  const [pwField, setPwField] = React.useState('');
-  const [pwError, setPwError] = React.useState(false);
-  const [pwErrorTxt, setPwErrorTxt] = React.useState('');
+  const [usernameField, setUsernameField] = useState('');
+  const [usernameError, setUsernameError] = useState(false);
+  const [usernameErrorTxt, setUsernameErrorTxt] = useState('');
+  const [pwField, setPwField] = useState('');
+  const [pwError, setPwError] = useState(false);
+  const [pwErrorTxt, setPwErrorTxt] = useState('');
 
   useEffect(() => {
     setUsernameError(false);
@@ -44,19 +44,19 @@ export function Login(props: ILoginProps) {
   }
 
   const handleLogin = () => {
-    if (usernameField == '') {
+    if (!usernameField) {
       setUsernameError(true);
       setUsernameErrorTxt('Missing field');
     }
-    if (pwField == '') {
+    if (!pwField) {
       setPwError(true);
       setPwErrorTxt('Missing field');
     }
-    if (usernameField != '' && pwField != '') logIn();
+    if (usernameField && pwField) logIn();
   }
 
   return (
-    <React.Fragment>
+    <Fragment>
       <Backdrop open={props.open} />
       <Popover
         style={{
@@ -111,7 +111,7 @@ export function Login(props: ILoginProps) {
           </Paper>
         </div>
       </Popover >
-    </React.Fragment>
+    </Fragment>
   )
 }
 

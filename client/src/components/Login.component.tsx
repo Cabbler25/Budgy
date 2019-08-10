@@ -1,10 +1,4 @@
-/**
- * 
- * Currently unused, see Login.form in /forms/
- * 
- */
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Paper, Button, Divider, TextField } from '@material-ui/core';
 import { IUserState, IState } from '../redux';
 import { updateUserLoggedIn } from '../redux/actions';
@@ -17,12 +11,12 @@ interface ILoginProps {
 }
 
 export function Login(props: ILoginProps) {
-  const [usernameField, setUsernameField] = React.useState('');
-  const [usernameError, setUsernameError] = React.useState(false);
-  const [usernameErrorTxt, setUsernameErrorTxt] = React.useState('');
-  const [pwField, setPwField] = React.useState('');
-  const [pwError, setPwError] = React.useState(false);
-  const [pwErrorTxt, setPwErrorTxt] = React.useState('');
+  const [usernameField, setUsernameField] = useState('');
+  const [usernameError, setUsernameError] = useState(false);
+  const [usernameErrorTxt, setUsernameErrorTxt] = useState('');
+  const [pwField, setPwField] = useState('');
+  const [pwError, setPwError] = useState(false);
+  const [pwErrorTxt, setPwErrorTxt] = useState('');
 
   // Placeholder
   function logIn() {
@@ -41,15 +35,15 @@ export function Login(props: ILoginProps) {
   }
 
   const handleLogin = () => {
-    if (usernameField == '') {
+    if (!usernameField) {
       setUsernameError(true);
       setUsernameErrorTxt('Missing field');
     }
-    if (pwField == '') {
+    if (!pwField) {
       setPwError(true);
       setPwErrorTxt('Missing field');
     }
-    if (usernameField != '' && pwField != '') logIn();
+    if (usernameField && pwField) logIn();
   }
 
   return (
@@ -58,7 +52,7 @@ export function Login(props: ILoginProps) {
         <Paper style={{ display: 'inline-block', padding: '50px' }}>
           <h2>Welcome</h2>
           <div onKeyPress={(e: any) => {
-            if (e.key == 'Enter') {
+            if (e.key === 'Enter') {
               handleLogin();
             }
           }}>

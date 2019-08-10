@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import { createStyles, Icon, List, ListItem, makeStyles, Theme, Typography } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-import { Typography, makeStyles, Theme, createStyles, List, ListItem, Icon } from '@material-ui/core';
-import { IUserState, IState, IUiState } from '../redux';
+import Toolbar from '@material-ui/core/Toolbar';
+import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import colors from '../assets/Colors';
-import Login from './LoginPopover.component';
+import { IState, IUiState, IUserState } from '../redux';
 import { setMobileView } from '../redux/actions';
+import Login from './LoginPopover.component';
 import { Sidebar } from './Sidebar.component';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     color: 'primary'
   },
   title: {
-    marginRight: '30px',
+    marginRight: '50px',
     textTransform: 'initial',
     color: colors.offWhite
   },
@@ -39,6 +39,9 @@ interface INavProps {
   user: IUserState,
   ui: IUiState,
   setMobileView: (val: boolean) => void
+  history: any,
+  location: any,
+  match: any,
 }
 
 function NavBar(props: INavProps) {
@@ -48,13 +51,13 @@ function NavBar(props: INavProps) {
   const mediaQuery = window.matchMedia('(min-width: 700px)');
 
   // Login form
-  const [loginOpen, setLoginOpen] = React.useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   // Hide/show navbar on scroll
-  const [isTopView, setTopView] = React.useState(true);
+  const [isTopView, setTopView] = useState(true);
 
   // Hide/show sidebar
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   window.onscroll = () => {
     if (window.pageYOffset >= 10) {
@@ -93,30 +96,38 @@ function NavBar(props: INavProps) {
     setSidebarOpen(false);
   };
 
+  function onPage(route: string) {
+    return props.location.pathname == route;
+  }
+
   return (
-    <React.Fragment>
+    <Fragment>
+      {console.log(props.location.pathname)}
       <Sidebar open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} handleLogin={handleLoginOpen} />
       <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined }} position='sticky'>
         <Toolbar className={classes.navbar}>
           {props.ui.isMobileView &&
             <Button style={{ marginRight: '5px', maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>
-              <Icon style={{ fontSize: 30, color: colors.offWhite }}>view_headline</Icon>
+              <Icon style={{ fontSize: 30, color: colors.offWhite }}>menu</Icon>
             </Button>}
           <Button className={classes.title} variant='text' component={Link} to="/">
             <Typography variant={props.ui.isMobileView ? 'body1' : 'h5'}>Wataname</Typography>
           </Button>
           {!props.ui.isMobileView &&
-            <React.Fragment>
-              <Button className={classes.nav_item} variant='text' component={Link} to="/budget">
+            <Fragment>
+              <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/budget"
+                style={{ textDecoration: onPage('/budget') ? `underline` : undefined }}>
                 Budget
               </Button>
-              <Button className={classes.nav_item} variant='text' component={Link} to="/expenses">
+              <Button className={classes.nav_item} variant='text' component={Link} to="/expenses"
+                style={{ textDecoration: onPage('/expenses') ? `underline` : undefined }}>
                 Expenses
               </Button>
-              <Button className={classes.nav_item} variant='text' component={Link} to="/incomes">
+              <Button className={classes.nav_item} variant='text' component={Link} to="/incomes"
+                style={{ textDecoration: onPage('/incomes') ? `underline` : undefined }}>
                 Incomes
               </Button>
-            </React.Fragment>}
+            </Fragment>}
           <div className={classes.nav_right}>
             {props.user.isLoggedIn ?
               <Button className={classes.nav_item} variant='text' color='secondary' component={Link} to="/logout">
@@ -126,19 +137,19 @@ function NavBar(props: INavProps) {
               <List>
                 <ListItem>
                   {props.ui.isMobileView ?
-                    <Button id='loginButton' size='small' variant='outlined' className={classes.nav_item} color='secondary'
+                    <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
                       style={{ borderColor: colors.offWhite, fontSize: '12px' }}
                       component={Link} to='/login'>
                       Login
                     </Button>
                     :
-                    <Button id='loginButton' size='small' variant='outlined' className={classes.nav_item} color='secondary'
+                    <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
                       style={{ borderColor: colors.offWhite }} onClick={handleLoginOpen}>
                       Login
                     </Button>}
                   <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
-                  <Button size='small' variant='contained' className={classes.nav_item} color='secondary'
-                    style={{ backgroundColor: colors.orange, fontSize: props.ui.isMobileView ? '12px' : '16px' }}
+                  <Button className={classes.nav_item} size='small' variant='contained' color='secondary'
+                    style={{ backgroundColor: colors.orange, fontSize: props.ui.isMobileView ? '12px' : undefined }}
                     component={Link} to="/register">
                     Register
                   </Button>
@@ -148,7 +159,7 @@ function NavBar(props: INavProps) {
           </div>
         </Toolbar>
       </AppBar >
-    </React.Fragment >
+    </Fragment >
   );
 }
 
@@ -163,4 +174,4 @@ const mapDispatchToProps = {
   setMobileView: setMobileView
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NavBar));
