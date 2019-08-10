@@ -2,7 +2,7 @@ package forms;
 
 public class IncomeForm {
 	private String description;
-	private int amount;
+	private double amount;
 	private int user_id;
 	private int type;
 	public String getDescription() {
@@ -11,10 +11,10 @@ public class IncomeForm {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public int getAmount() {
+	public double getAmount() {
 		return amount;
 	}
-	public void setAmount(int amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 	public int getUser_id() {
@@ -29,6 +29,7 @@ public class IncomeForm {
 	public void setType(int type) {
 		this.type = type;
 	}
+	
 	
 	
 	
