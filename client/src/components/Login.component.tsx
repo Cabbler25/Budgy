@@ -4,6 +4,7 @@ import { IUserState, IState } from '../redux';
 import { updateUserLoggedIn } from '../redux/actions';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import Axios from 'axios';
 
 interface ILoginProps {
   user: IUserState,
@@ -19,9 +20,35 @@ export function Login(props: ILoginProps) {
   const [pwErrorTxt, setPwErrorTxt] = useState('');
 
   // Placeholder
-  function logIn() {
-    alert('Logged in!');
-    props.updateUserLoggedIn(true);
+  async function logIn() {
+    const url = 'http://localhost:8080/login';
+    await Axios.post(url,{
+      username: usernameField,
+      password: pwField,
+    }).then(payload =>{
+      setPwError(false);
+      setUsernameError(false);
+      alert('Logged in!');
+      //Do something will payload
+      props.updateUserLoggedIn(true);
+    }).catch(err =>{
+      if(err.response.status === 404)
+      {
+        setPwError(false);
+        setUsernameError(false);
+        setUsernameError(true);
+        setUsernameErrorTxt(`User ${usernameField} not found!`);
+      }
+      else
+      {
+        setPwError(false);
+        setUsernameError(false);
+        setPwError(true);
+        setPwErrorTxt('Incorrect Password!');
+      }
+
+    });
+
   }
 
   const handleUsernameInput = (e: any) => {
