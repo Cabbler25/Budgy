@@ -47,6 +47,9 @@ export default function NewExpense(authorId:number) {
   }
 //   Request function for new expense here
   async function createNewExpense(){
+    //   Close the pop up
+    handleClose();
+    // Prepare request setup
     const url = 'http://localhost:8080/expense/create';
     const response = await Axios.post(url, {
       userId:authorId,
@@ -63,9 +66,6 @@ export default function NewExpense(authorId:number) {
   }
   function handleClose() {
     setState({ ...state, open: false });
-    // Function call to send the request for creating new expense
-    createNewExpense();
-
   }
 
   return (
@@ -115,7 +115,10 @@ export default function NewExpense(authorId:number) {
         </DialogContent>
         <DialogActions>
             <Button 
-            onClick={handleClose} 
+            onClick={
+            // Function call to send the request for creating new expense
+            createNewExpense
+            } 
             color="primary">
                 Ok
             </Button>

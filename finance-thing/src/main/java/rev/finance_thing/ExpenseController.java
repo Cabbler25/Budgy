@@ -25,7 +25,7 @@ import services.ExpenseService;
 
 @RestController
 @RequestMapping("expense")
-@CrossOrigin(origins="*",allowedHeaders = "*", methods = {RequestMethod.POST})
+@CrossOrigin(origins="*",allowedHeaders = "*", methods = {RequestMethod.POST,RequestMethod.GET,RequestMethod.PATCH})
 public class ExpenseController {
 //	Find expense by id. If not found, send message to the client
 	@GetMapping("/{id}")
