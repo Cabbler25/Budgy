@@ -1,8 +1,8 @@
 package rev.finance_thing;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,11 +31,15 @@ public class UserController {
 		return new ResponseEntity<>(UserService.GetUser(id), HttpStatus.OK);
 	}
 
+	@CrossOrigin
 	@PostMapping("/login")
 	public ResponseEntity<String> userLogin(@RequestBody LoginForm loginForm) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", UserService.LoginUser(loginForm));
-		return new ResponseEntity<>("User Logged in Successfully", headers, HttpStatus.OK);
+		String token = UserService.LoginUser(loginForm);
+		if (token == null)
+			return new ResponseEntity<>("Incorrect Password", HttpStatus.BAD_REQUEST);
+		if (token == "User not Found")
+			return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(token, HttpStatus.OK);
 
 	}
 
