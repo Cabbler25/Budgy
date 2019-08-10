@@ -2,7 +2,6 @@ package services;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +22,7 @@ import entities.Expense;
 import entities.ExpenseType;
 import exceptions.ExpenseNotFoundException;
 import forms.ExpenseForm;
+import forms.UpdateExpenseForm;
 import rev.finance_thing.ExpenseController;
 
 public class ExpenseService {
@@ -85,8 +85,6 @@ public class ExpenseService {
 		ExpenseType expenseType = getExpenseTypeById(expense.getType());
 		newExpense.setExpenseType(expenseType);
 		newExpense.setAmount(expense.getAmount());
-		System.out.println(expenseType);
-		System.out.println(newExpense);
 		try(Session session = sessionFactory.openSession()) {
 			Transaction tx = session.beginTransaction();
 			session.save(newExpense);
@@ -103,6 +101,51 @@ public class ExpenseService {
 			Hibernate.initialize(expenseType);
 //			Hibernate.initialize(expenseType.getExpenses());
 			return expenseType;
+		}
+	}
+	
+//	Update expense
+	public void updateExpense(UpdateExpenseForm expense) 
+			throws ParseException, ExpenseNotFoundException {
+		Expense updatedExpense;
+//		See if there is any expense with the provided id
+		try {
+			updatedExpense = getExpenseById(expense.getId());
+//			Only modify fields with values
+			if (expense.getUserId() != 0) {
+				updatedExpense.setUserId(expense.getUserId());
+			}
+			if (expense.getType() != 0) {
+//				Handle expense type
+				ExpenseType expenseType = getExpenseTypeById(expense.getType());
+				updatedExpense.setExpenseType(expenseType);
+			}
+			if (expense.getDescription() != null) {
+				updatedExpense.setDescription(expense.getDescription());
+			}
+			if (expense.getDate() != null) {
+//				Handle the date conversion
+				SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+				Date convertedDate;
+				try {
+					convertedDate = date.parse(expense.getDate());
+					updatedExpense.setDate(convertedDate);
+				} catch (ParseException e) {
+//					If date provided is wrongly formatted throw corresponding exception
+					throw e;
+				}
+			}
+			if (expense.getAmount() != 0) {
+				updatedExpense.setAmount(expense.getAmount());
+			}
+			try(Session session = sessionFactory.openSession()) {
+				Transaction tx = session.beginTransaction();
+				session.update(updatedExpense);
+				tx.commit();
+			}
+		} catch (ExpenseNotFoundException e1) {
+//			If not found exception with provided id, throw corresponding exception
+			throw e1;
 		}
 	}
 	
