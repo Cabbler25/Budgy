@@ -7,9 +7,9 @@ import { updateUserLoggedIn } from '../redux/actions';
 interface ILoginProps {
   user: IUserState,
   updateUserLoggedIn: (val: boolean) => void,
-  open: any,
-  anchorEl: any,
-  handleClose: any
+  handleClose: () => void,
+  open: boolean,
+  anchorEl: any
 }
 
 export function Login(props: ILoginProps) {
@@ -44,15 +44,15 @@ export function Login(props: ILoginProps) {
   }
 
   const handleLogin = () => {
-    if (usernameField == '') {
+    if (!usernameField) {
       setUsernameError(true);
       setUsernameErrorTxt('Missing field');
     }
-    if (pwField == '') {
+    if (!pwField) {
       setPwError(true);
       setPwErrorTxt('Missing field');
     }
-    if (usernameField != '' && pwField != '') logIn();
+    if (usernameField && pwField) logIn();
   }
 
   return (
