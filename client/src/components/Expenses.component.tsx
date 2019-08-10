@@ -1,19 +1,25 @@
 import React from 'react';
-import { Paper } from '@material-ui/core';
+import { Paper, Select } from '@material-ui/core';
 import { IUserState, IState } from '../redux';
 import { connect } from 'react-redux';
+import { Input, Label, Container, Row, Popover } from 'reactstrap';
+import NewExpense from './NewExpenseDialog';
 
 interface IExpenseProps {
   user: IUserState;
+  type:number;
+  date:string;
+  description:string;
+  amount:number;
 }
 
 function Expenses(props:IExpenseProps ) {
   return (
-    <div style={{ textAlign: 'center' }}>
-      <Paper style={{ display: 'inline-block', padding: '50px' }}>
-        <h1>See your expenses, {props.user.first}</h1>
-      </Paper>
-    </div>
+    <Container style={{ textAlign: 'center' }}>
+      <h2>Manage your expenses, {props.user.first}</h2>  
+      {NewExpense()}
+      <br/> 
+    </Container>
   );
 }
 
