@@ -6,12 +6,12 @@ import { updateUserLoggedIn, updateUserInfo } from '../redux/actions';
 import Axios from 'axios';
 
 interface ILoginProps {
-  user: IUserState,
-  updateUserLoggedIn: (val: boolean) => void,
-  updateUserInfo: (payload: any) => void,
-  handleClose: () => void,
-  open: boolean,
-  anchorEl: any
+  user: IUserState;
+  updateUserLoggedIn: (val: boolean) => void;
+  updateUserInfo: (payload: any) => void;
+  handleClose: () => void;
+  open: boolean;
+  anchorEl: any;
 }
 
 export function Login(props: ILoginProps) {
