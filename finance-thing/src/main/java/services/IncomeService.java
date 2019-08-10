@@ -1,5 +1,6 @@
 package services;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -10,6 +11,7 @@ import org.hibernate.service.ServiceRegistry;
 import entities.Income;
 import entities.IncomeTypes;
 import forms.IncomeForm;
+import forms.UpdateIncomeForm;
 import rev.finance_thing.IncomeController;
 
 
@@ -18,7 +20,7 @@ public class IncomeService {
 	static SessionFactory sessionFactory;
 	IncomeController income;
 	
-	public static Income GetIncome(int id) {
+	public static Income getIncome(int id) {
 		Income income = new Income();
 		
 		sessionFactory = configure();
@@ -36,15 +38,15 @@ public class IncomeService {
 		income.setUser_id(incomeForm.getUser_id());
 		income.setType(incomeForm.getType());
 		
-		IncomeTypes incomeTypes = new IncomeTypes();
-		incomeTypes.setType("");
-		System.out.println(income);
+		//IncomeTypes incomeTypes = new IncomeTypes();
+		//incomeTypes.setType("");
+		//System.out.println(income);
 		
 		sessionFactory = configure();
 		try(Session session = sessionFactory.openSession()){
 			Transaction tx = session.beginTransaction();
-			session.save(incomeTypes);
-			income.setType(incomeTypes.getId());
+			//session.save(incomeTypes);
+			//income.setType(incomeTypes.getId());
 			session.save(income);
 			tx.commit();
 		}
@@ -67,5 +69,31 @@ public class IncomeService {
 				.applySettings(configuration.getProperties()).build();
 		return configuration.buildSessionFactory(serviceRegistry);
 
+	}
+	
+	
+	public void updateIncome(UpdateIncomeForm income) {
+		Income updatedIncome;
+		
+		updatedIncome = getIncome(income.getId());
+		
+		if (income.getUser_id() !=0) {
+			updatedIncome.setUser_id(income.getUser_id());
+		}
+		if (income.getType() !=0) {
+			updatedIncome.setType(income.getType());;
+		}
+		if (income.getDescription() != null) {
+			updatedIncome.setDescription(income.getDescription());
+		}
+		if (income.getAmount() !=0) {
+			updatedIncome.setAmount(income.getAmount());
+		}
+		
+		try (Session session = sessionFactory.openSession()) {
+			Transaction tx = session.beginTransaction();
+			session.update(updatedIncome);
+			tx.commit();
+		}
 	}
 }
