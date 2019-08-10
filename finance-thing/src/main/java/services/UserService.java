@@ -125,14 +125,19 @@ public class UserService {
 			query.setParameter("un", loginForm.getUsername());
 			user = (User) query.uniqueResult();
 		}
-		if (user == null)
-			return null;
+		if (user == null) {
+			return "User not Found";
+		}
 
 		if (BCrypt.checkpw(loginForm.getPassword(), user.getPassword())) {
 
-			return createJWT(String.valueOf(user.getId()), user.getUsername(), String.valueOf(user.getFamilyRole()), 0);
-		} else
+			{
+				return createJWT(String.valueOf(user.getId()), user.getUsername(), String.valueOf(user.getFamilyRole()),
+						0);
+			}
+		} else {
 			return null;
+		}
 
 	}// Returns User Object for the time being TODO Change to token or whatever
 
