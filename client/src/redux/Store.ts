@@ -35,3 +35,4 @@ export const store: Store<any> = createStore(
 );
 
 export const persistor = persistStore(store);
+// persistor.purge();
