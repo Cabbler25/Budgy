@@ -4,29 +4,39 @@ import { MDBContainer } from "mdbreact";
 import { Container } from "reactstrap";
 import { IExpenseProps } from "./Expenses.component";
 import Axios from "axios";
+import ReactApexCharts from 'react-apexcharts';
+import { Stats } from "fs";
 
 export default function ExpensesGraph(props:IExpenseProps) {
     // Initialize state
     const state = {
-        dataDoughnut: {
-            labels: ["Bills", "Food", "Emergency", "For fun", "Other"],
-            datasets: [
-                {
-                    data: [0, 0, 0, 0, 0],
-                    backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1", "#4D5360"],
-                    hoverBackgroundColor: [
-                    "#FF5A5E",
-                    "#5AD3D1",
-                    "#FFC870",
-                    "#A8B3C5",
-                    "#616774"
-                    ],
-                    // Define onClick functions for each of the doughnut sections
-                }
-            ],
-            promiseResolved:false
+        options: {
+        dataLabels: {
+            enabled: false
+        },
+        
+        responsive: [{
+            breakpoint: 480,
+            options: {
+            chart: {
+                width: 200,
+
+            },
+            legend: {
+                show: false
+            }
+            }
+        }],
+        legend: {
+            position: 'right',
+            offsetY: 0,
+            height: 230,
         }
-    }
+        },
+        series: [0, 0, 0, 0,0],
+        labels: ["Apple", "Mango", "Banana", "Papaya", "Orange"],
+        promiseResolved:false
+      }
     const [expenses, setExpenses] = useState([{
         amount:0
     }]);
@@ -49,36 +59,42 @@ export default function ExpensesGraph(props:IExpenseProps) {
             switch(expense.expenseType.id) {
                 case 1: 
                     console.log(expense.expenseType.id);
-                    state.dataDoughnut.datasets[0].data[0] += Math.round(expense.amount);     
+                    state.labels[0] = expense.expenseType.type;
+                    state.series[0] += Math.round(expense.amount); 
                     break;    
                 case 2: 
-                    state.dataDoughnut.datasets[0].data[1] += Math.round(expense.amount);   
+                    state.labels[1] = expense.expenseType.type;
+                    state.series[1] += Math.round(expense.amount); 
                     break;      
                 case 3: 
-                    state.dataDoughnut.datasets[0].data[2] += Math.round(expense.amount); 
+                    state.labels[2] = expense.expenseType.type;
+                    state.series[2] += Math.round(expense.amount); 
                     break;
                 case 4: 
-                    state.dataDoughnut.datasets[0].data[3] += Math.round(expense.amount); 
+                    state.labels[3] = expense.expenseType.type;
+                    state.series[3] += Math.round(expense.amount); 
                     break;
                 case 5: 
-                    state.dataDoughnut.datasets[0].data[4] += Math.round(expense.amount);  
-                    
+                    state.labels[4] = expense.expenseType.type;
+                    state.series[4] += Math.round(expense.amount); 
                     break;          
             }
         }
         // Allow display
-        console.log(state.dataDoughnut.datasets[0].data);
-        state.dataDoughnut.promiseResolved = true;
+        console.log(state.series);
+        state.promiseResolved = true;
         }).catch((err: any) => {
         // Handle error by displaying something else
         });
     }
-      
+    
     return (
-        <div>
-            <Container>
-            <Doughnut data={state.dataDoughnut} options={{ responsive: true }}  />
-            </Container>
-        </div>
+        <Container>
+            <ReactApexCharts 
+                options={state.options} 
+                series={state.series} 
+                type="donut"
+            />
+        </Container>
     );
   }
