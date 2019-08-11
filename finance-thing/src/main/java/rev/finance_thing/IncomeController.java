@@ -2,6 +2,7 @@ package rev.finance_thing;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 
 import entities.Income;
 import forms.IncomeForm;
@@ -18,8 +22,10 @@ import forms.UpdateIncomeForm;
 import exceptions.IncomeNotFoundException;
 
 @RestController
+@RequestMapping("income")
+@CrossOrigin(origins="*",allowedHeaders = "*", methods = {RequestMethod.POST})
 public class IncomeController {
-	@GetMapping("/income/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<Income> getIncome(@PathVariable("id") int id) {
 		
 		try {
@@ -29,14 +35,14 @@ public class IncomeController {
 		}
 	}
 	
-	@PostMapping("/income")
+	@PostMapping("/create")
 	public ResponseEntity<Object> incomeInfo(@RequestBody IncomeForm incomeForm) {
 		
 		IncomeService.IncomeInfo(incomeForm);
 		return new ResponseEntity<>("Successfully Created",HttpStatus.CREATED);
 	}
 	
-	@PatchMapping("/income")
+	@PatchMapping("/update")
 	public ResponseEntity<String> updateIncome(@RequestBody UpdateIncomeForm income) {
 		IncomeService incomeService = new IncomeService();
 		try {
