@@ -96,9 +96,10 @@ export default function NewExpense(authorId:number) {
                         <TextField
                         name="amount"
                         className="new-expense-form"
-                        placeholder="amount"
+                        placeholder="$usd"
                         type="number" 
-                        onChange={handleChange("amount")}/>
+                        onChange={handleChange("amount")}
+                        />
                     </Row>
                     <Row className="new-expense-form">
                         <TextField
@@ -124,7 +125,7 @@ export default function NewExpense(authorId:number) {
             </Button>
           <Button 
           onClick={handleClose} 
-          color="primary">
+          color="secondary">
             Cancel
           </Button>
         </DialogActions>

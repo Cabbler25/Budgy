@@ -4,7 +4,7 @@ import { IUserState, IState } from '../redux';
 import { connect } from 'react-redux';
 import { Input, Label, Container, Row, Popover, Col } from 'reactstrap';
 import NewExpense from './NewExpenseDialog';
-import ExpensesTable from './ExpensesTablesComponent';
+import { ExpensesTable } from './ExpensesTablesComponent';
 
 export interface IExpenseProps {
   user: IUserState;
