@@ -19,6 +19,15 @@ export function CreateBudgetStepper(props: any) {
 
   function handleInputChange(e: any) {
     setHasError(false);
+    if (e.target.id == 'amount') {
+      if (e.target.value == '') {
+        setInputState({
+          ...inputState,
+          [e.target.id]: 0
+        })
+        return;
+      }
+    }
     setInputState({
       ...inputState,
       [e.target.id]: e.target.value
@@ -100,7 +109,7 @@ export function CreateBudgetStepper(props: any) {
             value={inputState.amount}
             label='Amount'
             variant='outlined'
-            type='numbers'
+            type='number'
             InputProps={{
               startAdornment: <InputAdornment position="start" > $</InputAdornment>
             }}
@@ -127,7 +136,7 @@ export function CreateBudgetStepper(props: any) {
       <div>
         {activeStep === steps.length ? (
           <div>
-            <Typography>All done!</Typography>
+            <Typography>All set!</Typography>
             <Button onClick={handleSubmit}>Submit</Button>
           </div>
         ) : (
