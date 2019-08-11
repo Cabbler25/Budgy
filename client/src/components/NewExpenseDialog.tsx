@@ -44,9 +44,11 @@ export default function NewExpense(authorId: number) {
   function handleClickOpen() {
     setState({ ...state, open: true });
   }
-
-  //   Request function for new expense here
-  async function createNewExpense() {
+//   Request function for new expense here
+  async function createNewExpense(){
+    //   Close the pop up
+    handleClose();
+    // Prepare request setup
     const url = 'http://localhost:8080/expense/create';
     const response = await Axios.post(url, {
       userId: authorId,
@@ -63,9 +65,6 @@ export default function NewExpense(authorId: number) {
   }
   function handleClose() {
     setState({ ...state, open: false });
-    // Function call to send the request for creating new expense
-    createNewExpense();
-
   }
 
   return (
@@ -91,37 +90,41 @@ export default function NewExpense(authorId: number) {
                 <MenuItem value={5}>Other</MenuItem>
               </Select>
               <Paper>
-                <Container>
-                  <Row className="new-expense-form">
-                    <TextField
-                      name="amount"
-                      className="new-expense-form"
-                      placeholder="amount"
-                      type="number"
-                      onChange={handleChange("amount")} />
-                  </Row>
-                  <Row className="new-expense-form">
-                    <TextField
-                      name="description"
-                      className="new-expense-form"
-                      placeholder="description"
-                      type="text"
-                      onChange={handleChange("description")} />
-                  </Row>
-                </Container>
+                  <Container>
+                    <Row className="new-expense-form">
+                        <TextField
+                        name="amount"
+                        className="new-expense-form"
+                        placeholder="$usd"
+                        type="number"
+                        onChange={handleChange("amount")}
+                        />
+                    </Row>
+                    <Row className="new-expense-form">
+                        <TextField
+                        name="description"
+                        className="new-expense-form"
+                        placeholder="description"
+                        type="text"
+                        onChange={handleChange("description")}/>
+                    </Row>
+                  </Container>
               </Paper>
             </FormControl>
           </form>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={handleClose}
-            color="secondary">
-            Ok
+            <Button
+            onClick={
+            // Function call to send the request for creating new expense
+            createNewExpense
+            }
+            color="primary">
+                Ok
             </Button>
           <Button
-            onClick={handleClose}
-            color="secondary">
+          onClick={handleClose}
+          color="secondary">
             Cancel
           </Button>
         </DialogActions>
