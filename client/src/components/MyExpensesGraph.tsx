@@ -11,30 +11,60 @@ export default function ExpensesGraph(props:IExpenseProps) {
     // Initialize state
     const state = {
         options: {
-        dataLabels: {
-            enabled: false
-        },
-        
-        responsive: [{
-            breakpoint: 480,
-            options: {
-            chart: {
-                width: 200,
-
+            dataLabels: {
+                enabled: true
             },
+            plotOptions: {
+                pie: {
+                    size:undefined,
+                    offsetX: 0,
+                    offsetY: 0,
+                    customScale:1,
+                    donut: {
+                      background:'transparent',  
+                      size: '65%',
+                      labels :{
+                          show:true,
+                          name:{show: true,
+                            fontSize: '22px',
+                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            color: undefined,
+                            offsetY: -10},
+                          value:{ show: true,
+                            fontSize: '16px',
+                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            color: undefined,
+                            offsetY: 16},
+                            total: {
+                                show: true,
+                                label: 'Total',
+                                color: 'black'
+                            }
+                      }
+                    }
+                  }
+            },
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 250,
+                    },
+                    legend: {
+                        show: false
+                    }
+                }
+            }],
             legend: {
-                show: false
-            }
-            }
-        }],
-        legend: {
-            position: 'right',
-            offsetY: 0,
-            height: 230,
-        }
+                position: 'right',
+                offsetY: 1,
+                height: 130,
+            },
+            labels: ['Apple', 'Mango', 'Orange', 'Watermelon','Pizza']
         },
-        series: [0, 0, 0, 0,0],
-        labels: ["Apple", "Mango", "Banana", "Papaya", "Orange"],
+        // series: [0, 0, 0, 0,0],
+        // Test data
+        series: [44, 55, 41, 17, 15],
         promiseResolved:false
       }
     const [expenses, setExpenses] = useState([{
@@ -58,24 +88,24 @@ export default function ExpensesGraph(props:IExpenseProps) {
             // Assign each data field to the corresponding amount value
             switch(expense.expenseType.id) {
                 case 1: 
-                    console.log(expense.expenseType.id);
-                    state.labels[0] = expense.expenseType.type;
+                    state.options.labels[0] = expense.expenseType.type;
                     state.series[0] += Math.round(expense.amount); 
+                    // state.options.plotOptions.pie.donut.labels.name=
                     break;    
                 case 2: 
-                    state.labels[1] = expense.expenseType.type;
+                    state.options.labels[1] = expense.expenseType.type;
                     state.series[1] += Math.round(expense.amount); 
                     break;      
                 case 3: 
-                    state.labels[2] = expense.expenseType.type;
+                    state.options.labels[2] = expense.expenseType.type;
                     state.series[2] += Math.round(expense.amount); 
                     break;
                 case 4: 
-                    state.labels[3] = expense.expenseType.type;
+                    state.options.labels[3] = expense.expenseType.type;
                     state.series[3] += Math.round(expense.amount); 
                     break;
                 case 5: 
-                    state.labels[4] = expense.expenseType.type;
+                    state.options.labels[4] = expense.expenseType.type;
                     state.series[4] += Math.round(expense.amount); 
                     break;          
             }
