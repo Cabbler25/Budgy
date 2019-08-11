@@ -79,7 +79,6 @@ export function Budget(props: IBudgetProps) {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      {console.log(budgets)};
       <Paper style={{ display: 'inline-block', padding: '20px 150px 150px 150px' }}>
         <b>Budgets allow you to set goals, easily visualize your spending and even earn </b>
         <Link to="/rewards">
