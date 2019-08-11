@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Input, Label, Container, Row, Popover, Col } from 'reactstrap';
 import NewExpense from './NewExpenseDialog';
 import { ExpensesTable } from './ExpensesTablesComponent';
+import ExpensesGraph from './MyExpensesGraph';
 
 export interface IExpenseProps {
   user: IUserState;
@@ -28,7 +29,8 @@ function Expenses(props:IExpenseProps ) {
         <br/> 
       </Container>
         {/* Show expenses in the table */}
-        {ExpensesTable(props)}
+        {ExpensesGraph(props)}
+        {/* {ExpensesTable(props)} */}
     </div>
   );
 }
