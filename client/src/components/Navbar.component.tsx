@@ -10,7 +10,6 @@ import { IState, IUiState, IUserState } from '../redux';
 import { setMobileView } from '../redux/actions';
 import Login from './LoginPopover.component';
 import { Sidebar } from './Sidebar.component';
-import { StaticContext } from 'react-router';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   navbar: {
