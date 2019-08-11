@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -27,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function NewIncome(authorId:number) {
+export default function NewIncome(authorId: number) {
   const classes = useStyles();
   const [state, setState] = React.useState({
     open: false,
@@ -46,18 +45,18 @@ export default function NewIncome(authorId:number) {
     setState({ ...state, open: true });
   }
 //   Request function for new income here
-  async function createNewIncome(){
+  async function createNewIncome() {
     const url = 'http://localhost:8080/income/create';
     const response = await Axios.post(url, {
-      userId:authorId,
-      type:state.type,
-      description:state.description,
-      amount:state.amount
+      user_id: authorId,
+      type: state.type,
+      description: state.description,
+      amount: state.amount
     });
     try {
         console.log(response.status);
     } catch {
-        console.log("ERRORS: ",response.data);
+        console.log("ERRORS: ", response.data);
     }
   }
   function handleClose() {
