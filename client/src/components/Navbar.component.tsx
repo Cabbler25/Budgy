@@ -10,7 +10,6 @@ import { IState, IUiState, IUserState } from '../redux';
 import { setMobileView } from '../redux/actions';
 import Login from './LoginPopover.component';
 import { Sidebar } from './Sidebar.component';
-import { StaticContext } from 'react-router';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   navbar: {
@@ -48,9 +47,6 @@ interface INavProps {
 function NavBar(props: INavProps) {
   const classes = useStyles(props);
 
-  // Mobile view query
-  const mediaQuery = window.matchMedia('(min-width: 700px)');
-
   // Login form
   const [loginOpen, setLoginOpen] = useState(false);
 
@@ -71,14 +67,18 @@ function NavBar(props: INavProps) {
   // Hook into React lifecycle methods.
   // Called only twice when component mounts/unmounts.
   useEffect(() => {
+    // Mobile view query
+    const mediaQuery = window.matchMedia('(min-width: 700px)');
     const listener = () => {
       props.setMobileView(!mediaQuery.matches);
     }
+    
     // Add listener to update view type
     mediaQuery.addListener(listener);
 
     // Remove listener when component unmounts
     return () => mediaQuery.removeListener(listener);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLoginOpen = () => {

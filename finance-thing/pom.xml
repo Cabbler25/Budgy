@@ -20,7 +20,7 @@
 		<version>2.0.1.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-
+ 
   <dependencies>
   <dependency>
     <groupId>javax.xml.bind</groupId>

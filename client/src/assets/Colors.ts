@@ -8,7 +8,7 @@ const colors = {
     orange: '#FF9800'
 }
 
-export const typeColors = {
+export const colorTypes = {
     // Specific colors for specific items.
     // Will be used randomly, so no need for super
     // organized styling sheets or anything.
