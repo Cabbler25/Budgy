@@ -60,7 +60,7 @@ export function CreateBudgetStepper(props: any) {
 
   function handleSubmit() {
     handleReset();
-    props.handleSubmit(inputState.type, inputState.description, inputState.amount);
+    props.handleSubmit(props.types.find((type: any) => type.id == inputState.type), inputState.description, inputState.amount);
   }
 
   function handleCancel() {

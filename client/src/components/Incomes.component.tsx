@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import NewIncome from './NewIncomesDialog';
 import { Container } from 'reactstrap';
 
-interface IIncomeProps{
+interface IIncomeProps {
   user: IUserState;
   type: number;
   description: string;
@@ -13,11 +13,10 @@ interface IIncomeProps{
 
 function Incomes(props: IIncomeProps) {
   return (
-    <Container style={{ textAlign: 'center'}}>
+    <Container style={{ textAlign: 'center' }}>
       <h2>Manage your Income, {props.user.first}</h2>
-
-      {NewIncome(props.user.id)}
-      <br/>
+      <NewIncome userId={props.user.id}/>
+      <br />
     </Container>
   )
 }

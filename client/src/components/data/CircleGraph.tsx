@@ -1,18 +1,22 @@
 import React from 'react';
-import { PieArcSeries, PieChart } from 'reaviz';
 import "reaviz/dist/index.css";
+import CanvasJSReact from '../../assets/canvasjs.react';
 
 export function CircleGraph(props: any) {
-  return (
-    <div style={{ margin: 'auto', maxHeight: '100%' }}>
-      <PieChart
-        width={350}
-        height={250}
-        data={props.data}
+  const CanvasJSChart = CanvasJSReact.CanvasJSChart;
+  const options = {
+    animationEnabled: true,
+    theme: "light1", // "light1", "dark1", "dark2"
+    data: [{
+      type: "pie",
+      indexLabel: "{label}: ${y}",
+      startAngle: -90,
+      dataPoints: props.data
+    }]
+  }
 
-        series={<PieArcSeries />}
-      />
-    </div>
+  return (
+    <CanvasJSChart style={{ margin: 'auto' }} options={options} />
   );
 }
 

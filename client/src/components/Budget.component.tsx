@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { IState, IUiState, IUserState } from '../redux';
 import { CreateBudgetStepper } from './forms/CreateBudgetStepper';
 import CircleGraph from './data/CircleGraph';
+import { elementType } from 'prop-types';
 
 interface IBudgetProps {
   user: IUserState;
@@ -16,7 +17,10 @@ export function Budget(props: IBudgetProps) {
   const [isCreatingBudget, setIsCreatingBudget] = useState(false);
   // Hold all budgets
   const [budgets, setBudgets] = useState([{
-    type: 0,
+    type: {
+      id: 0,
+      type: ''
+    },
     description: '',
     amount: 0
   }]);
@@ -48,24 +52,34 @@ export function Budget(props: IBudgetProps) {
     // Load budget types from db
     // Load budgets from db
     setBudgets([{
-      type: 1,
+      type: {
+        id: 1,
+        type: 'Bills'
+      },
       description: 'Test budget',
       amount: 25
     }, {
-      type: 3,
+      type: {
+        id: 3,
+        type: 'Emergency'
+      },
       description: 'Second test budget',
       amount: 100
     }]);
   }, [])
 
+  function getBudgetTypes() {
+    // setBudgetTypes();
+  }
+
   // Create budget in db
-  function createBudget(type: number, descr: string, amount: number) {
+  function createBudget(type: any, descr: string, amount: number) {
     const data = {
       type: type,
       description: descr,
       amount: Number(amount)
     }
-    setBudgets(budgets[0].type === 0 ? [data] : budgets.concat(data));
+    setBudgets(budgets[0].type.id === 0 ? [data] : budgets.concat(data));
     setIsCreatingBudget(false);
   }
 
@@ -73,19 +87,38 @@ export function Budget(props: IBudgetProps) {
     setIsCreatingBudget(false);
   }
 
+  // function createGraphData() {
+  //   return budgets.map((budget: any) => {
+  //     return ({
+  //       key: budget.type,
+  //       data: budget.amount
+  //     });
+  //   });
+  // }
+
   function createGraphData() {
-    return budgets.map((budget: any) => {
-      return ({
-        key: budget.type,
-        data: budget.amount
-      });
-    });
+    let data = budgetTypes.map((type: any) => {
+      return {
+        y: 0,
+        label: type.type
+      }
+    })
+
+    budgets.forEach((budget: any) => {
+      for (let i = 0; i < data.length; i++) {
+        if (budget.type.type == data[i].label) {
+          data[i].y += budget.amount;
+          break;
+        }
+      }
+    })
+
+    return data.filter((element: any) => element.y > 0);
   }
 
   return (
     <div style={{ textAlign: 'center' }}>
-      {console.log(budgets)}
-      <Paper style={{ display: 'inline-block', padding: '20px 150px 150px 150px' }}>
+      <Paper style={{ display: 'inline-block', padding: '20px' }}>
         <b>Budgets allow you to set goals, easily visualize your limits, and even earn </b>
         <Link to="/rewards">
           rewards!
@@ -95,7 +128,7 @@ export function Budget(props: IBudgetProps) {
         <Divider />
         <br />
         <br />
-        {budgets[0].type == 0 ? (
+        {budgets[0].type.id == 0 ? (
           <Fragment>
             <h2>Creating a budget is quick and easy.<br />To get started,</h2>
             {isCreatingBudget ? (
@@ -117,7 +150,7 @@ export function Budget(props: IBudgetProps) {
                     <br /> <b>Missing something?</b> <br />
                     <Button onClick={() => setIsCreatingBudget(true)} size="small" color="secondary">
                       Add another budget
-                  </Button>
+                    </Button>
                   </Fragment>
                 )}
             </Fragment>
