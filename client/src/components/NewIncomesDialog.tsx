@@ -26,13 +26,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function NewIncome(authorId: number) {
+export default function NewIncome(props: any) {
   const classes = useStyles();
   const [state, setState] = React.useState({
     open: false,
     type: 0,
-    description:'',
-    amount:0
+    description: '',
+    amount: 0
   });
 
   const handleChange = (name: keyof typeof state) => (
@@ -44,21 +44,22 @@ export default function NewIncome(authorId: number) {
   function handleClickOpen() {
     setState({ ...state, open: true });
   }
-//   Request function for new income here
+  //   Request function for new income here
   async function createNewIncome() {
     const url = 'http://localhost:8080/income/create';
     const response = await Axios.post(url, {
-      user_id: authorId,
+      user_id: props.userId,
       type: state.type,
       description: state.description,
       amount: state.amount
     });
     try {
-        console.log(response.status);
+      console.log(response.status);
     } catch {
-        console.log("ERRORS: ", response.data);
+      console.log("ERRORS: ", response.data);
     }
   }
+
   function handleClose() {
     setState({ ...state, open: false });
     // Function call to send the request for creating new income
@@ -88,37 +89,37 @@ export default function NewIncome(authorId: number) {
                 <MenuItem value={4}>Other</MenuItem>
               </Select>
               <Paper>
-                  <Container>
-                    <Row className="new-income-form">
-                        <TextField
-                        name="amount"
-                        className="new-income-form"
-                        placeholder="amount"
-                        type="number" 
-                        onChange={handleChange("amount")}/>
-                    </Row>
-                    <Row className="new-income-form">
-                        <TextField
-                        name="description"
-                        className="new-income-form"
-                        placeholder="description"
-                        type="text" 
-                        onChange={handleChange("description")}/>
-                    </Row>
-                  </Container>
+                <Container>
+                  <Row className="new-income-form">
+                    <TextField
+                      name="amount"
+                      className="new-income-form"
+                      placeholder="amount"
+                      type="number"
+                      onChange={handleChange("amount")} />
+                  </Row>
+                  <Row className="new-income-form">
+                    <TextField
+                      name="description"
+                      className="new-income-form"
+                      placeholder="description"
+                      type="text"
+                      onChange={handleChange("description")} />
+                  </Row>
+                </Container>
               </Paper>
             </FormControl>
           </form>
         </DialogContent>
         <DialogActions>
-            <Button 
-            onClick={handleClose} 
+          <Button
+            onClick={handleClose}
             color="primary">
-                Ok
+            Ok
             </Button>
-          <Button 
-          onClick={handleClose} 
-          color="primary">
+          <Button
+            onClick={handleClose}
+            color="primary">
             Cancel
           </Button>
         </DialogActions>
