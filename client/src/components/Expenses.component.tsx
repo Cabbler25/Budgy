@@ -18,10 +18,11 @@ export interface IExpenseProps {
   history:any;
 }
 
-
 function Expenses(props: IExpenseProps) {
   const [expenses, setExpenses] = useState([]);
   const [expenseTypes, setExpenseTypes] = useState([]);
+  const [expenseType, setExpenseType] = useState();
+  const [expensesByUserAndType,setExpensesByUserIdAndTypeId] = useState([]);
 
   useEffect(() => {
     getAllExpenses();
@@ -46,6 +47,24 @@ function Expenses(props: IExpenseProps) {
       .then((payload: any) => {
         // console.log(payload.data);
         setExpenseTypes(payload.data);
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+  }
+
+  function adjustExpenseType(typeId:number) {
+    console.log("Miguel",typeId);
+    getExpensesByUserIdAndTypeId(typeId);
+  }
+
+  // This function sends the request to get all user reimbursements
+  async function getExpensesByUserIdAndTypeId(typeId:number) {
+    const url = `http://localhost:8080/expense/user/${props.user.id}/type/${typeId}`;
+    await Axios.get(url)
+      .then((payload: any) => {
+        console.log(payload.data);
+        setExpensesByUserIdAndTypeId(payload.data);
+        setExpenseType(typeId);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
@@ -77,14 +96,30 @@ function Expenses(props: IExpenseProps) {
         <h2>Check your expenses, {props.user.first}</h2>
         {/* Show expenses in the table */}
         {/* Pass the expenses as property and the main expenses properties too */}
-        <ExpensesGraph types={expenseTypes} data={expenses} props={props} />
+        {/* Add logic: 
+          if an expense type is selected in the donut graph, then the table
+          is displayed */}
+          {
+            (expenseType) ? 
+            <ExpensesTable 
+            expenses = {expensesByUserAndType}
+            changeType = {adjustExpenseType}/> :
+            <ExpensesGraph 
+            types={expenseTypes} 
+            data={expenses} 
+            props={props}
+            changeType = {(n:number) => {adjustExpenseType(n)}}
+            />
+          }
         {/* Here is the create new expense form.
             The axios request is sent thru there. */}
         {/* Send the user Id to let the database know
             who made the expense. */}
             <br/>
             {/* <Divider /> */}
-        <NewExpense types={expenseTypes}  createExpense={createNewExpense} />
+        <NewExpense 
+        types={expenseTypes}  
+        createExpense={createNewExpense} />
         <br />
       </Container>
       {/* {ExpensesTable(props)} */}

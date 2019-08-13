@@ -83,26 +83,20 @@ export default function ExpensesGraph(props: any) {
           try{
             switch(elems[0]._index) {
               case 0:
-                // Call a dialog function component to display info
-                console.log("Mama mia 0");
-                const type = props.types.find((type:any) => type.id == 1);
-                props.props.history.push({
-                  pathname: '/expenses/type',
-                  state: { type:type,
-                           userId:props.props.user.id,}
-                });
+                props.changeType(1);
                 break;
               case 1:
                 console.log("Mama mia 1");
+                props.props.type = 2;
                 break;
               case 2:
-                console.log("Mama mia 2");
+                props.props.type = 3;
                 break; 
               case 3:
-                console.log("Mama mia 3");
+                  props.props.type = 4;
                 break;
               case 4:
-                console.log("Mama mia 4");
+                  props.props.type = 5;
                 break;       
             }
           } catch {

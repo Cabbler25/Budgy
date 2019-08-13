@@ -49,11 +49,14 @@ public class ExpenseController {
 		return expenseService.findExpenseTypeById(id);
 	}
 //	Endpoint for getting expenses by type id
-	@RequestMapping(value = "/user/{userId}/type/{typeId}", method = RequestMethod.GET)
-	public List<Expense> getExpenseByUserIdAndTypeId(@PathVariable int userId,
-												     @PathVariable int typeId) 
+	@RequestMapping(value = "/user/{userId}/type/{type}", method = RequestMethod.GET)
+	public List<Expense> getExpenseByUserIdAndExpenseType(@PathVariable int userId,
+														  @PathVariable int type) 
 	{
-		return expenseService.findExpenseByUserIdAndTypeId(userId, typeId);
+//		Receive the type from the request body
+		Optional<ExpenseType> expenseType = expenseService.findExpenseTypeById(type);
+//		System.out.println(expenseType);
+		return expenseService.findExpenseByUserIdAndExpenseType(userId, expenseType);
 	}
 //	Endpoint for getting expenses by type id
 	@RequestMapping(value = "/types", method = RequestMethod.GET)

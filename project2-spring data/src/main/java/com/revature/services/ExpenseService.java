@@ -40,8 +40,8 @@ public class ExpenseService {
 		return expenseTypeRepository.findById(id);
 	}
 	
-	public List<Expense> findExpenseByUserIdAndTypeId(int userId,int typeId) {
-		return expenseRepository.findByUserIdAndTypeId(userId,typeId);
+	public List<Expense> findExpenseByUserIdAndExpenseType(int userId,Optional<ExpenseType> expenseType) {
+		return expenseRepository.findByUserIdAndExpenseType(userId,expenseType);
 	}
 
 	public List<ExpenseType> findAllExpenseTypes() {
