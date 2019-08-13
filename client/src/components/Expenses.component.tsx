@@ -7,6 +7,7 @@ import { ExpensesTable } from './ExpensesTablesComponent';
 import ExpensesGraph from './MyExpensesGraph';
 import { IUserState, IState } from '../redux';
 import Axios from 'axios';
+import { Grid, Paper } from '@material-ui/core';
 
 export interface IExpenseProps {
   user: IUserState;
@@ -45,10 +46,22 @@ function Expenses(props: IExpenseProps) {
             who made the expense. */}
         {NewExpense(props.user.id)}
         <br />
-      </Container>
+      
       {/* Show expenses in the table */}
+      <Grid container>
+      <Grid item xs={12} lg={3}>
+        <Paper>
+          <h3>Total Expenses</h3>
+          <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
+        </Paper>
+
+      </Grid>
+      <Grid item xs={12} lg={9}>
       <ExpensesGraph data={expenses} />
       {/* {ExpensesTable(props)} */}
+      </Grid>
+      </Grid>
+      </Container>
     </div>
   );
 }

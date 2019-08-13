@@ -1,4 +1,4 @@
-import { Container, Paper, TextField } from '@material-ui/core';
+import { Container, Paper, TextField, InputAdornment } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -74,38 +74,47 @@ export default function NewExpense(authorId: number) {
         <DialogContent>
           <form className={classes.container}>
             <FormControl className={classes.formControl}>
-              <InputLabel htmlFor="expense-type">Type</InputLabel>
-              <Select
-                value={state.type}
-                onChange={handleChange('type')}
-                input={<Input id="expense-type" />}
-              >
-                <MenuItem value={0}>
-                  <em>Select</em>
-                </MenuItem>
-                <MenuItem value={1}>Bills</MenuItem>
-                <MenuItem value={2}>Food</MenuItem>
-                <MenuItem value={3}>Emergency</MenuItem>
-                <MenuItem value={4}>For fun</MenuItem>
-                <MenuItem value={5}>Other</MenuItem>
-              </Select>
               <Paper>
                   <Container>
+                    <Row className="new-expense-form">
+                      <Select
+                      value={state.type}
+                      onChange={handleChange('type')}
+                      input={<Input id="expense-type"
+                       />}
+                      >
+                        <MenuItem value={0}>
+                          <em>Select Expense Type</em>
+                        </MenuItem>
+                        <MenuItem value={1}>Bills</MenuItem>
+                        <MenuItem value={2}>Food</MenuItem>
+                        <MenuItem value={3}>Emergency</MenuItem>
+                        <MenuItem value={4}>For fun</MenuItem>
+                        <MenuItem value={5}>Other</MenuItem>
+                        </Select>
+                    </Row>
                     <Row className="new-expense-form">
                         <TextField
                         name="amount"
                         className="new-expense-form"
-                        placeholder="$usd"
+                        placeholder="0.00"
+                        label="Expense Amount"
                         type="number"
                         onChange={handleChange("amount")}
+                        InputProps={{
+                          startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                        }}
                         />
                     </Row>
                     <Row className="new-expense-form">
                         <TextField
                         name="description"
                         className="new-expense-form"
-                        placeholder="description"
+                        placeholder="A description of the expense..."
+                        label="Description"
                         type="text"
+                        multiline={true}
+                        rows={5}
                         onChange={handleChange("description")}/>
                     </Row>
                   </Container>
