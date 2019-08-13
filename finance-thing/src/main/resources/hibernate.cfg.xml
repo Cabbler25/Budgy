@@ -20,6 +20,10 @@
 				Hibernate -->
 		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 		<property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
+<<<<<<< HEAD
+=======
+		
+>>>>>>> 7968ef34e6645d9bbd74da458c0924c807810664
 		<!-- Configuration for hibernate to automatically update table structure
 		based on entity model definition -->
 		<!-- https://docs.jboss.org/hibernate/orm/5.2/userguide/html_single/Hibernate_User_Guide.html#configurations-hbmddl -->

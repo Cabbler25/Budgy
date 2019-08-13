@@ -40,7 +40,6 @@
         "react-virtualized": "^9.21.1",
         "reactstrap": "^8.0.1",
         "reaviz": "^2.4.10",
-        "recharts": "^1.7.0",
         "redux-logger": "^3.0.6",
         "redux-persist": "^5.10.0",
         "redux-thunk": "^2.3.0",
