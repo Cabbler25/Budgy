@@ -17,21 +17,27 @@ export function Budget(props: IBudgetProps) {
   // State for creation
   const [isCreatingBudget, setIsCreatingBudget] = useState(false);
   // Hold all budgets
-  const [budgets, setBudgets] = useState([{
-    budgetType: {
-      id: 0,
-      type: ''
-    },
-    description: '',
-    amount: 0
-  }]);
+  const [budgets, setBudgets] = useState([]);
 
   const [budgetTypes, setBudgetTypes] = useState([]);
 
   useEffect(() => {
 
+    // Load budgets from db
+    getAllBudgets();
+
     // Load budget types from db
-    let url = `http://localhost:8080/budget/user/${props.user.id}`;
+    const url = `http://localhost:8080/budget/types`;
+    Axios.get(url)
+      .then((payload: any) => {
+        setBudgetTypes(payload.data);
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+  }, [])
+
+  async function getAllBudgets() {
+    const url = `http://localhost:8080/budget/user/${props.user.id}`;
     Axios.get(url)
       .then((payload: any) => {
         if (payload.data.length != 0) {
@@ -40,16 +46,7 @@ export function Budget(props: IBudgetProps) {
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
-
-    // Load budgets from db
-    url = `http://localhost:8080/budget/types`;
-    Axios.get(url)
-      .then((payload: any) => {
-        setBudgetTypes(payload.data);
-      }).catch((err: any) => {
-        // Handle error by displaying something else
-      });
-  }, [])
+  }
 
   // Create budget in db
   function createBudget(type: any, descr: string, amount: number) {
@@ -63,10 +60,10 @@ export function Budget(props: IBudgetProps) {
     const url = `http://localhost:8080/budget`;
     Axios.post(url, data)
       .then((payload: any) => {
+        getAllBudgets();
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
-    setBudgets(budgets[0].budgetType.id === 0 ? [data] : budgets.concat(data));
     setIsCreatingBudget(false);
   }
 
@@ -106,7 +103,7 @@ export function Budget(props: IBudgetProps) {
         <Divider />
         <br />
         <br />
-        {budgets[0].budgetType.id == 0 ? (
+        {budgets.length == 0 ? (
           <Fragment>
             <h2>Creating a budget is quick and easy.<br />To get started,</h2>
             {isCreatingBudget ? (
