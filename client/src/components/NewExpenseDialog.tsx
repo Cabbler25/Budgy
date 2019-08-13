@@ -74,7 +74,7 @@ export default function NewExpense(props:any) {
                   <em>Select</em>
                 </MenuItem>
                 {props.types.map((t:any) => (
-                  <MenuItem value={t.id}>{t.type}</MenuItem>  
+                  <MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>  
                 ))}
               </Select>
               <Paper>

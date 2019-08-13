@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { MDBContainer } from "mdbreact";
 import { element } from "prop-types";
+import { ExpensesTable } from "./ExpensesTablesComponent";
 
 export default function ExpensesGraph(props: any) {
   // Initialize state
@@ -45,7 +46,6 @@ export default function ExpensesGraph(props: any) {
       switch (expense.expenseType.id) {
         case 1:
           dataCopy[0] += Math.round(expense.amount);
-          // state.options.plotOptions.pie.donut.labels.name=
           break;
         case 2:
           dataCopy[1] += Math.round(expense.amount);
@@ -78,7 +78,6 @@ export default function ExpensesGraph(props: any) {
       onElementsClick=
       {
         // Define a callback function per element
-
         (elems)=>{
           // Avoid exception if user clicks outside of the donut elements
           try{
@@ -86,6 +85,12 @@ export default function ExpensesGraph(props: any) {
               case 0:
                 // Call a dialog function component to display info
                 console.log("Mama mia 0");
+                const type = props.types.find((type:any) => type.id == 1);
+                props.props.history.push({
+                  pathname: '/expenses/type',
+                  state: { type:type,
+                           userId:props.props.user.id,}
+                });
                 break;
               case 1:
                 console.log("Mama mia 1");

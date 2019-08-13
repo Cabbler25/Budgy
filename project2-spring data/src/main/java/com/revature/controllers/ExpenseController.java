@@ -33,38 +33,45 @@ public class ExpenseController {
 		super();
 		this.expenseService = expenseService;
 	}
-
+//	Endpoint for getting expense by id
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public @ResponseBody Optional<Expense> getExpenseById(@PathVariable int id) {
 		return expenseService.getById(id);
 	}
-
+//	Endpoint for getting expenses by user id
 	@RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
 	public List<Expense> getExpenseByUserId(@PathVariable int userId) {
 		return expenseService.findByUserId(userId);
 	}
-
+//	Endpoint for getting expenses by type id
 	@RequestMapping(value = "/type/{id}", method = RequestMethod.GET)
 	public Optional<ExpenseType> getExpenseTypeById(@PathVariable int id) {
 		return expenseService.findExpenseTypeById(id);
 	}
-
+//	Endpoint for getting expenses by type id
+	@RequestMapping(value = "/user/{userId}/type/{typeId}", method = RequestMethod.GET)
+	public List<Expense> getExpenseByUserIdAndTypeId(@PathVariable int userId,
+												     @PathVariable int typeId) 
+	{
+		return expenseService.findExpenseByUserIdAndTypeId(userId, typeId);
+	}
+//	Endpoint for getting expenses by type id
 	@RequestMapping(value = "/types", method = RequestMethod.GET)
 	public List<ExpenseType> getExpenseTypes() {
 		return expenseService.findAllExpenseTypes();
 	}
-
+//	Endpoint for deleting expense by id
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public HttpStatus deleteExpense(@PathVariable int id) {
 		expenseService.deleteExpense(id);
 		return HttpStatus.NO_CONTENT;
 	}
-
+//	Endpoint for creating a new expense
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public HttpStatus insertExpense(@RequestBody Expense expense) {
 		return expenseService.addExpense(expense) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
 	}
-
+//	Endpoint for modifying an existing expense
 	@RequestMapping(value = "", method = RequestMethod.PUT)
 	public HttpStatus updateExpense(@RequestBody Expense expense) {
 		return expenseService.updateExpense(expense) ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;

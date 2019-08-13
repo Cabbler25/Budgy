@@ -9,6 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import Axios from 'axios';
 import { IUserState } from '../redux';
 import { IExpenseProps } from './Expenses.component';
+import { Button } from 'reactstrap';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -46,26 +47,32 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export function ExpensesTable(props: IExpenseProps) {
-  const classes = useStyles();
+export function ExpensesTable(props:any) {
+  const classes = useStyles(props);
   const [expenses, setExpenses] = useState([{
     amount:0
   }]);
 
   useEffect(() => {
-    getAllExpenses(props.user.id);
+    console.log('data from graph history: ',props.location.state);
+    getExpensesByUserIdAndTypeId(props.location.state.userId,
+                                 props.location.state.type.id);
   }, [])
 
   // This function sends the request to get all user reimbursements
-  async function getAllExpenses(userId: number) {
+  async function getExpensesByUserIdAndTypeId(userId:number,typeId:number) {
+    // const url = `http://localhost:8080/expense/user/${userId}/type/${typeId}`;
     const url = `http://localhost:8080/expense/user/${userId}`;
     await Axios.get(url)
       .then((payload: any) => {
-        console.log(payload.data);
+        // console.log(payload.data);
         setExpenses(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
+  }
+  function handleBackButton() {
+    // Go back to the donut graph component
   }
   return (
     <div>
@@ -94,6 +101,10 @@ export function ExpensesTable(props: IExpenseProps) {
               }
             </TableBody>
           </Table>
+          <Button 
+          onClick={handleBackButton}>
+            Back
+          </Button>
         </Paper>
     </div>
   );

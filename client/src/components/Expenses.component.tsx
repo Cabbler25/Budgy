@@ -15,6 +15,7 @@ export interface IExpenseProps {
   date: string;
   description: string;
   amount: number;
+  history:any;
 }
 
 
@@ -75,7 +76,8 @@ function Expenses(props: IExpenseProps) {
       <Container style={{ textAlign: 'center' }}>
         <h2>Check your expenses, {props.user.first}</h2>
         {/* Show expenses in the table */}
-        <ExpensesGraph data={expenses} />
+        {/* Pass the expenses as property and the main expenses properties too */}
+        <ExpensesGraph types={expenseTypes} data={expenses} props={props} />
         {/* Here is the create new expense form.
             The axios request is sent thru there. */}
         {/* Send the user Id to let the database know
