@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function NewExpense(authorId: number) {
-  const classes = useStyles();
+export default function NewExpense(props:any) {
+  const classes = useStyles(props);
   const [state, setState] = React.useState({
     open: false,
     type: 0,
@@ -44,25 +44,15 @@ export default function NewExpense(authorId: number) {
   function handleClickOpen() {
     setState({ ...state, open: true });
   }
-//   Request function for new expense here
-  async function createNewExpense(){
-    //   Close the pop up
+  
+  function handleSubmit() {
+    // Check state of elements using conditionals 
+    // const type = props.types.find((type:any) => type.id == state.type);
+    props.createExpense(props.types.find((type:any) => type.id == state.type),state.description,state.amount);
+    // Close popover
     handleClose();
-    // Prepare request setup
-    const url = 'http://localhost:8080/expense/create';
-    const response = await Axios.post(url, {
-      userId: authorId,
-      type: state.type,
-      date: new Date().toISOString().slice(0, 10),
-      description: state.description,
-      amount: state.amount
-    });
-    try {
-      console.log(response.status);
-    } catch {
-      console.log("ERRORS: ", response.data);
-    }
   }
+
   function handleClose() {
     setState({ ...state, open: false });
   }
@@ -83,11 +73,9 @@ export default function NewExpense(authorId: number) {
                 <MenuItem value={0}>
                   <em>Select</em>
                 </MenuItem>
-                <MenuItem value={1}>Bills</MenuItem>
-                <MenuItem value={2}>Food</MenuItem>
-                <MenuItem value={3}>Emergency</MenuItem>
-                <MenuItem value={4}>For fun</MenuItem>
-                <MenuItem value={5}>Other</MenuItem>
+                {props.types.map((t:any) => (
+                  <MenuItem value={t.id}>{t.type}</MenuItem>  
+                ))}
               </Select>
               <Paper>
                   <Container>
@@ -117,7 +105,7 @@ export default function NewExpense(authorId: number) {
             <Button
             onClick={
             // Function call to send the request for creating new expense
-            createNewExpense
+            handleSubmit
             }
             color="primary">
                 Ok

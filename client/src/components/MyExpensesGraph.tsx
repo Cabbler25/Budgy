@@ -11,7 +11,7 @@ export default function ExpensesGraph(props: any) {
       labels: ["Bills", "Food", "Emergency", "Entertainment", "Other"],
       datasets: [
         {
-          data: [300, 50, 100, 40, 120],
+          data: [0, 0, 0, 0, 0],
           backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1", "#4D5360"],
           hoverBackgroundColor: [
             "#FF5A5E",
@@ -33,11 +33,12 @@ export default function ExpensesGraph(props: any) {
   }, [props.data])
 
   function createGraphData() {
-    if (props.data.length == 1) return;
+    if (props.data.length == 0) return;
     // Create a copy of the dataset
     const dataSetsCopy = state.dataDoughnut.datasets;
     // Create a copy of the data property of dataset
     const dataCopy = dataSetsCopy[0].data.slice(0);
+    // console.log(props.data);
     for (let expense of props.data) {
       // Check expense type and assign to the corresponding one
       // Assign each data field to the corresponding amount value

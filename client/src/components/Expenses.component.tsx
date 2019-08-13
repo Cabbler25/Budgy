@@ -19,9 +19,12 @@ export interface IExpenseProps {
 
 
 function Expenses(props: IExpenseProps) {
-  const [expenses, setExpenses] = useState([{}]);
+  const [expenses, setExpenses] = useState([]);
+  const [expenseTypes, setExpenseTypes] = useState([]);
+
   useEffect(() => {
     getAllExpenses();
+    getAllExpenseTypes();
   }, [])
 
   // This function sends the request to get all user reimbursements
@@ -36,6 +39,37 @@ function Expenses(props: IExpenseProps) {
       });
   }
 
+  async function getAllExpenseTypes() {
+    const url = `http://localhost:8080/expense/types`;
+    await Axios.get(url)
+      .then((payload: any) => {
+        // console.log(payload.data);
+        setExpenseTypes(payload.data);
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+  }
+
+  //   Request function for new expense here
+  async function createNewExpense(newType:any,newDescripion:string,newAmount:number){
+    // Prepare request setup
+    const url = 'http://localhost:8080/expense';
+    const data = {
+      userId: props.user.id,
+      expenseType: newType,
+      date: new Date().toISOString().slice(0, 10),
+      description: newDescripion,
+      amount: newAmount
+    };
+    const response = await Axios.post(url, data);
+    try {
+      // console.log(response.status);
+      getAllExpenses();
+    } catch {
+      console.log("ERRORS: ", response.data);
+    }
+  }
+
   return (
     <div>
       <Container style={{ textAlign: 'center' }}>
@@ -48,7 +82,7 @@ function Expenses(props: IExpenseProps) {
             who made the expense. */}
             <br/>
             {/* <Divider /> */}
-        {NewExpense(props.user.id)}
+        <NewExpense types={expenseTypes}  createExpense={createNewExpense} />
         <br />
       </Container>
       {/* {ExpensesTable(props)} */}
