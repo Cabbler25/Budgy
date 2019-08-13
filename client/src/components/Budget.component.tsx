@@ -6,6 +6,7 @@ import { IState, IUiState, IUserState } from '../redux';
 import { CreateBudgetStepper } from './forms/CreateBudgetStepper';
 import CircleGraph from './data/CircleGraph';
 import { elementType } from 'prop-types';
+import Axios from 'axios';
 
 interface IBudgetProps {
   user: IUserState;
@@ -17,7 +18,7 @@ export function Budget(props: IBudgetProps) {
   const [isCreatingBudget, setIsCreatingBudget] = useState(false);
   // Hold all budgets
   const [budgets, setBudgets] = useState([{
-    type: {
+    budgetType: {
       id: 0,
       type: ''
     },
@@ -25,61 +26,47 @@ export function Budget(props: IBudgetProps) {
     amount: 0
   }]);
 
-  const [budgetTypes, setBudgetTypes] = useState([
-    {
-      id: 1,
-      type: 'Bills',
-    },
-    {
-      id: 2,
-      type: 'Food'
-    },
-    {
-      id: 3,
-      type: 'Emergency'
-    },
-    {
-      id: 4,
-      type: 'Entertainment'
-    },
-    {
-      id: 5,
-      type: 'Other'
-    }
-  ]);
+  const [budgetTypes, setBudgetTypes] = useState([]);
 
   useEffect(() => {
-    // Load budget types from db
-    // Load budgets from db
-    setBudgets([{
-      type: {
-        id: 1,
-        type: 'Bills'
-      },
-      description: 'Test budget',
-      amount: 25
-    }, {
-      type: {
-        id: 3,
-        type: 'Emergency'
-      },
-      description: 'Second test budget',
-      amount: 100
-    }]);
-  }, [])
 
-  function getBudgetTypes() {
-    // setBudgetTypes();
-  }
+    // Load budget types from db
+    let url = `http://localhost:8080/budget/user/${props.user.id}`;
+    Axios.get(url)
+      .then((payload: any) => {
+        if (payload.data.length != 0) {
+          setBudgets(payload.data);
+        }
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+
+    // Load budgets from db
+    url = `http://localhost:8080/budget/types`;
+    Axios.get(url)
+      .then((payload: any) => {
+        setBudgetTypes(payload.data);
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+  }, [])
 
   // Create budget in db
   function createBudget(type: any, descr: string, amount: number) {
     const data = {
-      type: type,
+      userId: props.user.id,
+      budgetType: type,
       description: descr,
       amount: Number(amount)
     }
-    setBudgets(budgets[0].type.id === 0 ? [data] : budgets.concat(data));
+
+    const url = `http://localhost:8080/budget`;
+    Axios.post(url, data)
+      .then((payload: any) => {
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+    setBudgets(budgets[0].budgetType.id === 0 ? [data] : budgets.concat(data));
     setIsCreatingBudget(false);
   }
 
@@ -87,26 +74,17 @@ export function Budget(props: IBudgetProps) {
     setIsCreatingBudget(false);
   }
 
-  // function createGraphData() {
-  //   return budgets.map((budget: any) => {
-  //     return ({
-  //       key: budget.type,
-  //       data: budget.amount
-  //     });
-  //   });
-  // }
-
   function createGraphData() {
-    let data = budgetTypes.map((type: any) => {
+    let data = budgetTypes.map((budgetType: any) => {
       return {
         y: 0,
-        label: type.type
+        label: budgetType.type
       }
     })
 
     budgets.forEach((budget: any) => {
       for (let i = 0; i < data.length; i++) {
-        if (budget.type.type == data[i].label) {
+        if (budget.budgetType.type == data[i].label) {
           data[i].y += budget.amount;
           break;
         }
@@ -128,7 +106,7 @@ export function Budget(props: IBudgetProps) {
         <Divider />
         <br />
         <br />
-        {budgets[0].type.id == 0 ? (
+        {budgets[0].budgetType.id == 0 ? (
           <Fragment>
             <h2>Creating a budget is quick and easy.<br />To get started,</h2>
             {isCreatingBudget ? (
