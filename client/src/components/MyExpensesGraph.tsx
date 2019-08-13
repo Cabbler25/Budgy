@@ -5,6 +5,7 @@ import { element } from "prop-types";
 
 export default function ExpensesGraph(props: any) {
   // Initialize state
+  // Define graph configuration
   const [state, setState] = useState({
     dataDoughnut: {
       labels: ["Bills", "Food", "Emergency", "Entertainment", "Other"],
@@ -26,6 +27,7 @@ export default function ExpensesGraph(props: any) {
   });
 
   // This function is being called when a property is updated
+  // Recall the function when a new expense is created
   useEffect(() => {
     createGraphData();
   }, [props.data])
@@ -70,26 +72,35 @@ export default function ExpensesGraph(props: any) {
   return (
     <MDBContainer>
       <Doughnut data={state.dataDoughnut} 
+      // Define functions called according to the section of the graph that's being
+      // clicked
       onElementsClick=
       {
         // Define a callback function per element
+
         (elems)=>{
-          switch(elems[0]._index) {
-            case 0:
-              console.log("Mama mia 0");
-              break;
-            case 1:
-              console.log("Mama mia 1");
-              break;
-            case 2:
-              console.log("Mama mia 2");
-              break; 
-            case 3:
-              console.log("Mama mia 3");
-              break;
-            case 4:
-              console.log("Mama mia 4");
-              break;       
+          // Avoid exception if user clicks outside of the donut elements
+          try{
+            switch(elems[0]._index) {
+              case 0:
+                // Call a dialog function component to display info
+                console.log("Mama mia 0");
+                break;
+              case 1:
+                console.log("Mama mia 1");
+                break;
+              case 2:
+                console.log("Mama mia 2");
+                break; 
+              case 3:
+                console.log("Mama mia 3");
+                break;
+              case 4:
+                console.log("Mama mia 4");
+                break;       
+            }
+          } catch {
+            // Don't know what to do
           }
         }
       } 

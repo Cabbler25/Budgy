@@ -7,6 +7,7 @@ import { ExpensesTable } from './ExpensesTablesComponent';
 import ExpensesGraph from './MyExpensesGraph';
 import { IUserState, IState } from '../redux';
 import Axios from 'axios';
+import { Divider } from 'material-ui';
 
 export interface IExpenseProps {
   user: IUserState;
@@ -28,7 +29,7 @@ function Expenses(props: IExpenseProps) {
     const url = `http://localhost:8080/expense/user/${props.user.id}`;
     await Axios.get(url)
       .then((payload: any) => {
-        console.log(payload.data);
+        // console.log(payload.data);
         setExpenses(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
@@ -38,16 +39,18 @@ function Expenses(props: IExpenseProps) {
   return (
     <div>
       <Container style={{ textAlign: 'center' }}>
-        <h2>Manage your expenses, {props.user.first}</h2>
+        <h2>Check your expenses, {props.user.first}</h2>
+        {/* Show expenses in the table */}
+        <ExpensesGraph data={expenses} />
         {/* Here is the create new expense form.
             The axios request is sent thru there. */}
         {/* Send the user Id to let the database know
             who made the expense. */}
+            <br/>
+            {/* <Divider /> */}
         {NewExpense(props.user.id)}
         <br />
       </Container>
-      {/* Show expenses in the table */}
-      <ExpensesGraph data={expenses} />
       {/* {ExpensesTable(props)} */}
     </div>
   );
