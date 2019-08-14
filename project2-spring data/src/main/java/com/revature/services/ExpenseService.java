@@ -33,15 +33,11 @@ public class ExpenseService {
 	}
 
 	public List<Expense> findByUserId(int userId) {
-		return expenseRepository.findByUserId(userId);
+		return expenseRepository.findByUserIdOrderByIdDesc(userId);
 	}
 
 	public Optional<ExpenseType> findExpenseTypeById(int id) {
 		return expenseTypeRepository.findById(id);
-	}
-	
-	public List<Expense> findExpenseByUserIdAndExpenseType(int userId,Optional<ExpenseType> expenseType) {
-		return expenseRepository.findByUserIdAndExpenseType(userId,expenseType);
 	}
 
 	public List<ExpenseType> findAllExpenseTypes() {
