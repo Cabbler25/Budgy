@@ -67,14 +67,17 @@ export default function NewExpense(props:any) {
 
               <Paper>
                   <Container style={{textAlign: "center"}}>
-                    <Row><h4>Add New Expense</h4></Row>
-
+                    <Row>
+                      <h4>
+                        {props.view ? "Add expense" : "Add New Expense" } 
+                      </h4>
+                    </Row>
                     <Row className="new-expense-form">
                         <TextField
                         name="amount"
                         className="new-expense-form"
                         placeholder="0.00"
-                        label="Expense Amount"
+                        label={props.view ? "Amount" : "Expense Amount"}
                         type="number"
                         onChange={handleChange("amount")}
                         InputProps={{
@@ -100,7 +103,9 @@ export default function NewExpense(props:any) {
                       input={<Input id="expense-type" />}
                       >
                         <MenuItem value={0}>
-                        <em>Select Expense Type</em>
+                        <em>
+                          {props.view ? "Type" : "Select expense type"}
+                        </em>
                         </MenuItem>
                         {props.types.map((t:any) => (
                         <MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>  
