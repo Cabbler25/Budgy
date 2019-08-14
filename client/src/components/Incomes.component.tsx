@@ -96,15 +96,19 @@ async function createNewIncome(newType: any, newDescripion: string, newAmount: n
 }
 
 return (
-  <div>
-    <Container style={{ textAlign: 'center'}}>
-      <h2>Check your income, {props.user.first}</h2>
+  <div style={{textAlign: 'center'}}>
+    <Paper style={{ margin: '30px', display: 'inline-block', padding: '60px', paddingBottom: '30px'}}>
+    {//<Container style={{ textAlign: 'center'}}> 
+    }
+      <h2>Manage your income, {props.user.first}</h2>
       <br/>
       <NewIncome
         types={incomeTypes}
         createIncome={createNewIncome} />
       <br />
-      <Grid item xs={12} md={9}>
+      
+      {//<Grid item xs={12} md={9}>
+      }
       <div>
             {showTable ? (
               <Fragment>
@@ -122,14 +126,19 @@ return (
                     handleElementClick={handleElementClick} />)}
                 </Fragment>
               )}
-            <br />
-            <NewIncome
-              types={incomeTypes}
-              createIncome={createNewIncome} />
-            <br />
+            {//
+           // <br />
+           // <NewIncome
+           //   types={incomeTypes}
+           //   createIncome={createNewIncome} />
+           // <br />
+            }
           </div>
-          </Grid>
-    </Container>
+        {//  </Grid>
+        }
+    {//</Container>
+    }
+    </Paper>
   </div>
 );
             }
