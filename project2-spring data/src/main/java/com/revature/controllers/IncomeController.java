@@ -57,7 +57,7 @@ public class IncomeController {
 		return HttpStatus.NO_CONTENT;
 	}
 
-	@RequestMapping(value = "/income", method = RequestMethod.POST)
+	@RequestMapping(value = "/income/create", method = RequestMethod.POST)
 	public HttpStatus insertIncome(@RequestBody Income income) {
 		return incomeService.addIncome(income) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
 	}
