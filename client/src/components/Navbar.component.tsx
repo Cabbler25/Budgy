@@ -114,7 +114,7 @@ function NavBar(props: INavProps) {
             </Button>}
           <Button className={classes.title} variant='text' component={Link} to="/">
             <img src={Logo} />
-            <Test />
+            
             <Typography variant={props.ui.isMobileView ? 'body1' : 'h5'}>Budgy</Typography>
           </Button>
           {!props.ui.isMobileView &&
