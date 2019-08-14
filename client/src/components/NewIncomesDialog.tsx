@@ -9,7 +9,7 @@ import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { Paper, TextField, Container } from '@material-ui/core';
+import { Paper, TextField, Container, InputAdornment } from '@material-ui/core';
 import { Row } from 'reactstrap';
 import Axios from 'axios';
 
@@ -30,7 +30,7 @@ export default function NewIncome(props: any) {
   const classes = useStyles();
   const [state, setState] = React.useState({
     open: false,
-    type: 0,
+    type: 0, //incomeType: {id: 0, type: ''},
     description: '',
     amount: 0
   });
@@ -45,11 +45,12 @@ export default function NewIncome(props: any) {
     setState({ ...state, open: true });
   }
   //   Request function for new income here
+  /*
   async function createNewIncome() {
     const url = 'http://localhost:8080/income/create';
     const response = await Axios.post(url, {
-      user_id: props.userId,
-      type: state.type,
+      userId: props.userId,
+      incomeType: state.type, //incomeType: state.type
       description: state.description,
       amount: state.amount
     });
@@ -59,13 +60,26 @@ export default function NewIncome(props: any) {
       console.log("ERRORS: ", response.data);
     }
   }
-
+*/
+/*
   function handleClose() {
     setState({ ...state, open: false });
     // Function call to send the request for creating new income
     createNewIncome();
 
   }
+  */
+
+  function handleSubmit() {
+    props.createIncome(props.types.find((type:any) => type.id == state.type),state.description,state.amount);
+
+    handleClose();
+  }
+
+  function handleClose() {
+    setState({ ...state, open: false});
+  }
+
 
   return (
     <div>
@@ -74,37 +88,48 @@ export default function NewIncome(props: any) {
         <DialogContent>
           <form className={classes.container}>
             <FormControl className={classes.formControl}>
-              <InputLabel htmlFor="income-type">Type</InputLabel>
-              <Select
-                value={state.type}
-                onChange={handleChange('type')}
-                input={<Input id="income-type" />}
-              >
-                <MenuItem value={0}>
-                  <em>Select</em>
-                </MenuItem>
-                <MenuItem value={1}>Allowance</MenuItem>
-                <MenuItem value={2}>Salary</MenuItem>
-                <MenuItem value={3}>Bonuses</MenuItem>
-                <MenuItem value={4}>Other</MenuItem>
-              </Select>
+              
               <Paper>
-                <Container>
+                <Container style={{textAlign: "center"}}>
+                  <Row><h4>Add New Income</h4></Row>
+                  
                   <Row className="new-income-form">
                     <TextField
                       name="amount"
                       className="new-income-form"
-                      placeholder="amount"
+                      placeholder="0.00"
+                      label="Income Amount"
                       type="number"
-                      onChange={handleChange("amount")} />
+                      onChange={handleChange("amount")} 
+                      InputProps={{
+                          startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                        }}
+                        />
                   </Row>
                   <Row className="new-income-form">
                     <TextField
                       name="description"
                       className="new-income-form"
                       placeholder="description"
+                      label="Description"
                       type="text"
+                      multiline={true}
+                      rows={5}
                       onChange={handleChange("description")} />
+                  </Row>
+                  <Row className="new-income-form">
+                    <Select
+                    value={state.type}
+                    onChange={handleChange('type')}
+                    input={<Input id="income-type" />}
+                    >
+                      <MenuItem value={0}>
+                        <em>Select Income Type</em>
+                      </MenuItem>
+                      {props.types.map((t:any) => (
+                      <MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>  
+                      ))}
+                      </Select>
                   </Row>
                 </Container>
               </Paper>
@@ -113,7 +138,7 @@ export default function NewIncome(props: any) {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={handleClose}
+            onClick={handleSubmit}
             color="primary">
             Ok
             </Button>

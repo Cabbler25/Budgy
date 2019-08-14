@@ -38,14 +38,6 @@ public class IncomeType {
 		this.id = id;
 	}
 
-	public List<Income> getIncomes() {
-		return Incomes;
-	}
-
-	public void setIncomes(List<Income> incomes) {
-		Incomes = incomes;
-	}
-
 	public String getType() {
 		return type;
 	}
@@ -90,13 +82,12 @@ public class IncomeType {
 
 	@Override
 	public String toString() {
-		return "IncomeType [id=" + id + ", Incomes=" + Incomes + ", type=" + type + "]";
+		return "IncomeType [id=" + id + ", type=" + type + "]";
 	}
 
-	public IncomeType(int id, List<Income> incomes, String type) {
+	public IncomeType(int id, String type) {
 		super();
 		this.id = id;
-		Incomes = incomes;
 		this.type = type;
 	}
 
@@ -105,6 +96,4 @@ public class IncomeType {
 		// TODO Auto-generated constructor stub
 	}
 
-	
-
-}
+}	

@@ -1,13 +1,12 @@
 import { Button, Divider, Paper } from '@material-ui/core';
 import Axios from 'axios';
-import React, { Fragment, useEffect, useState, createRef } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { BarLoader } from 'react-spinners';
 import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
-import HorizontalBarGraph from './data/HorizontalBarGraph';
 import { CreateBudgetStepper } from './forms/CreateBudgetStepper';
-import { BarLoader } from 'react-spinners';
 
 
 interface IBudgetProps {

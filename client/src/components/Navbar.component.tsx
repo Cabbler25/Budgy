@@ -10,6 +10,8 @@ import { IState, IUiState, IUserState } from '../redux';
 import { setMobileView } from '../redux/actions';
 import Login from './LoginPopover.component';
 import { Sidebar } from './Sidebar.component';
+import Logo from '../assets/Logo.svg';
+import { ReactComponent as Test } from '../assets/Logo.svg';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   navbar: {
@@ -72,7 +74,7 @@ function NavBar(props: INavProps) {
     const listener = () => {
       props.setMobileView(!mediaQuery.matches);
     }
-    
+
     // Add listener to update view type
     mediaQuery.addListener(listener);
 
@@ -111,7 +113,9 @@ function NavBar(props: INavProps) {
               <Icon style={{ fontSize: 30, color: colors.offWhite }}>menu</Icon>
             </Button>}
           <Button className={classes.title} variant='text' component={Link} to="/">
-            <Typography variant={props.ui.isMobileView ? 'body1' : 'h5'}>Wataname</Typography>
+            <img src={Logo} />
+            
+            <Typography variant={props.ui.isMobileView ? 'body1' : 'h5'}>Budgy</Typography>
           </Button>
           {!props.ui.isMobileView &&
             <Fragment>
