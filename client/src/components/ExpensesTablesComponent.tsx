@@ -6,11 +6,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Axios from 'axios';
-import { IUserState } from '../redux';
-import { IExpenseProps } from './Expenses.component';
-import { Button } from 'reactstrap';
-import { Link } from '@material-ui/core';
+
+import { Link, Button } from '@material-ui/core';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -37,9 +34,9 @@ const StyledTableRow = withStyles((theme: Theme) =>
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: '100%',
-      marginTop: theme.spacing(3),
+      marginTop: theme.spacing(2),
       overflowX: 'auto',
+      margin:"auto"
     },
     table: {
       minWidth: 700,
@@ -59,7 +56,7 @@ export function ExpensesTable(props:any) {
   // This function sends the request to get all user reimbursements
   function createTable() {
     setExpenses(props.expenses);
-    console.log(expenses);
+    // console.log(expenses);
   }
   // Go back to the expenses component
   function handleBackButton() {
@@ -68,7 +65,7 @@ export function ExpensesTable(props:any) {
   }
   return (
     <div>
-        <Button 
+        <Button
           color="secondary"
           onClick={handleBackButton}>
             Back
@@ -78,10 +75,18 @@ export function ExpensesTable(props:any) {
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
-                <StyledTableCell>amount (usd)</StyledTableCell>
-                <StyledTableCell>type</StyledTableCell>
-                <StyledTableCell>date</StyledTableCell>
-                <StyledTableCell align="right">description</StyledTableCell>
+                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
+                  amount (usd)
+                </StyledTableCell>
+                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
+                  type
+                </StyledTableCell>
+                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
+                  date
+                </StyledTableCell>
+                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
+                  description
+                </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -92,7 +97,7 @@ export function ExpensesTable(props:any) {
                     </StyledTableCell>
                     <StyledTableCell>{row.expenseType.type}</StyledTableCell>
                     <StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
-                    <StyledTableCell align="right">{row.description}</StyledTableCell>
+                    <StyledTableCell >{row.description}</StyledTableCell>
                   </StyledTableRow>
                 ))
               }
