@@ -86,11 +86,11 @@ export default function NewExpense(props:any) {
                         <TextField
                         name="description"
                         className="new-expense-form"
-                        placeholder="A description of the expense..."
+                        placeholder="A brief description of the expense..."
                         label="Description"
                         type="text"
                         multiline={true}
-                        rows={5}
+                        rows={props.view ? 4 : 5}
                         onChange={handleChange("description")}/>
                     </Row>
                     <Row className="new-expense-form">

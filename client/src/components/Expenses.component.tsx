@@ -10,7 +10,6 @@ import Axios from 'axios';
 import { Grid, Paper, Button } from '@material-ui/core';
 import DonutGraph from './data/DonutGraph';
 
-
 export interface IExpenseProps {
   user: IUserState;
   ui: IUiState;
@@ -113,7 +112,7 @@ function Expenses(props: IExpenseProps) {
         <Paper 
         style={{ margin: '5px auto',padding: '10px',
                  backgroundColor:"rgba(220,245,230,0.9)",
-                 width:props.ui.isMobileView ? "90%" : showTable ? '80%':'45%',
+                 width:props.ui.isMobileView ? "90%" : showTable ? '80%':'48%',
                  height:props.ui.isMobileView ? "90%" : '60%' }}
                  >
             <div>
@@ -129,19 +128,21 @@ function Expenses(props: IExpenseProps) {
                       <Col>
                         <Button
                           color="secondary"
-                          onClick={() => setShowTable(false)}>
+                          onClick={() => setShowTable(false)}
+                          style={{display:"inline-block"}}>
                           Back
-                        </Button>
+                        </Button> 
                       </Col>
                       <Col>
                         <NewExpense
                         types={expenseTypes}
-                        createExpense={createNewExpense} />
+                        createExpense={createNewExpense}
+                        view ={props.ui.isMobileView} />
                       </Col>
                     </Row>
                   </Container>
-                  <ExpensesTable expenses={expensesByUserAndType} />
-
+                  <ExpensesTable expenses={expensesByUserAndType}
+                                 view = {props.ui.isMobileView} />
                 </Fragment>
               ) : (
                   <Fragment>
@@ -155,7 +156,8 @@ function Expenses(props: IExpenseProps) {
                       handleElementClick={handleElementClick} />
                       <NewExpense
                       types={expenseTypes}
-                      createExpense={createNewExpense} />
+                      createExpense={createNewExpense}
+                      view ={props.ui.isMobileView} />
                       </div>}
                   </Fragment>
                 )}

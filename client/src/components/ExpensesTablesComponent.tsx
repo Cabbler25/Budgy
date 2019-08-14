@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -8,6 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 import { Link, Button } from '@material-ui/core';
+import { pencilTool } from '../assets/Icons';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -31,7 +32,8 @@ const StyledTableRow = withStyles((theme: Theme) =>
   }),
 )(TableRow);
 
-const useStyles = makeStyles((theme: Theme) =>
+export function ExpensesTable(props: any) {
+  const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       marginTop: theme.spacing(2),
@@ -39,14 +41,12 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: "auto"
     },
     table: {
-      minWidth: 700,
+      width: props.view ? "100%" : "90?",
       textAlign: "center"
     },
   }),
 );
-
-export function ExpensesTable(props: any) {
-  const classes = useStyles(props);
+const classes = useStyles(props);
 
   return (
     <div>
@@ -57,27 +57,49 @@ export function ExpensesTable(props: any) {
               <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
                 amount (usd)
                 </StyledTableCell>
-              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                type
-                </StyledTableCell>
-              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                date
-                </StyledTableCell>
+                {props.view ? 
+                <Fragment></Fragment>
+                :
+                <Fragment>
+                  <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+                    type
+                    </StyledTableCell>
+                  <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+                    date
+                    </StyledTableCell>
+                </Fragment>
+                }
               <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
                 description
                 </StyledTableCell>
-                
+                <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+                  edit
+                </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {props.expenses.map((row: any) => (
-              <StyledTableRow key={row.amount}>
+              <StyledTableRow key={row.id}>
                 <StyledTableCell component="th" scope="row">
                   {row.amount}
                 </StyledTableCell>
-                <StyledTableCell>{row.expenseType.type}</StyledTableCell>
-                <StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
+                {
+                  props.view ?
+                  <Fragment></Fragment>
+                  :
+                  <Fragment>
+                    <StyledTableCell>{row.expenseType.type}</StyledTableCell>
+                    <StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
+                  </Fragment>
+                }
                 <StyledTableCell >{row.description}</StyledTableCell>
+                <StyledTableCell>
+                  <svg xmlns={pencilTool}  width="24" height="24" viewBox="0 0 24 24">
+                  <path d={`M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.
+                        39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83
+                        3.75 3.75 1.83-1.83z`}/>
+                  </svg>
+                </StyledTableCell>
               </StyledTableRow>
             ))
             }
