@@ -109,6 +109,7 @@ function Expenses(props: IExpenseProps) {
           <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
         </Paper>
           </Grid>*/}
+<<<<<<< HEAD
         <Paper 
         style={{ margin: '5px auto',padding: '10px',
                  backgroundColor:"rgba(220,245,230,0.9)",
@@ -122,6 +123,20 @@ function Expenses(props: IExpenseProps) {
                 if an expense type is selected in the donut graph, then the table
                 is displayed */}
               {showTable ? (
+=======
+        <Grid item xs={12}>
+          <div>
+            {showTable ? (
+              <Fragment>
+                <Button
+                  color="secondary"
+                  onClick={() => setShowTable(false)}>
+                  Back
+                </Button>
+                <ExpensesTable expenses={expensesByUserAndType} />
+              </Fragment>
+            ) : (
+>>>>>>> 1ebd1ae934a9c5f13389418cfab04707958f29fa
                 <Fragment>
                   <Container>
                     <Row>

@@ -35,6 +35,15 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
+	@PostMapping("/register/verifyUser")
+	public ResponseEntity<Object> checkForUser(@RequestBody User user) {
+		if (userService.userExists(user.getUsername()))
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		if (userService.emailUsed(user.getEmail()))
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
 	@GetMapping("/user/{id}")
 	public ResponseEntity<Object> getUser(@PathVariable("id") int id) {
 
