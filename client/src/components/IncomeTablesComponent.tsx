@@ -75,9 +75,11 @@ export function IncomesTable(props: any) {
               <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
                 type
                 </StyledTableCell>
-              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                date
-                </StyledTableCell>
+              {//
+              //<StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+              //  date
+              //  </StyledTableCell>
+              }
               <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
                 description
                 </StyledTableCell>
@@ -90,7 +92,9 @@ export function IncomesTable(props: any) {
                   {row.amount}
                 </StyledTableCell>
                 <StyledTableCell>{row.incomeType.type}</StyledTableCell>
-                <StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
+                
+                {//<StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
+                }
                 <StyledTableCell >{row.description}</StyledTableCell>
               </StyledTableRow>
             ))
