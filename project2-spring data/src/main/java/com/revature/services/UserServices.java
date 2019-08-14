@@ -39,11 +39,36 @@ public class UserServices {
 		return null;
 	}
 
+	public boolean userExists(String un) {
+		Optional<User> user = userRepository.findByUsername(un);
+		if (user.isPresent()) {
+			return true;
+		}
+
+		return false;
+
+	}
+
+	public boolean emailUsed(String email) {
+		Optional<User> user = userRepository.findByEmail(email);
+		if (user.isPresent()) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean registerUser(User user) {
+		String pw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+		user.setPassword(pw);
 		return userRepository.save(user) != null;
 	}
 
 	public boolean updateUser(User user) {
+		if (user.getPassword() != null) {
+			String pw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+			user.setPassword(pw);
+		}
 		return userRepository.save(user) != null;
 	}
 
