@@ -47,22 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export function ExpensesTable(props: any) {
   const classes = useStyles(props);
-  const [expenses, setExpenses] = useState([]);
 
-  useEffect(() => {
-    createTable();
-  }, [])
-
-  // This function sends the request to get all user reimbursements
-  function createTable() {
-    setExpenses(props.expenses);
-    // console.log(expenses);
-  }
-  // Go back to the expenses component
-  function handleBackButton() {
-    // props.location.state.props.history.push("/expenses");
-    props.changeType(0);
-  }
   return (
     <div>
       <Paper className={classes.root}>
@@ -84,7 +69,7 @@ export function ExpensesTable(props: any) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {expenses.map((row: any) => (
+            {props.expenses.map((row: any) => (
               <StyledTableRow key={row.amount}>
                 <StyledTableCell component="th" scope="row">
                   {row.amount}

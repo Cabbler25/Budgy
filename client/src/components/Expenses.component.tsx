@@ -37,7 +37,6 @@ function Expenses(props: IExpenseProps) {
     const url = `http://localhost:8080/expense/user/${props.user.id}`;
     await Axios.get(url)
       .then((payload: any) => {
-        // console.log(payload.data);
         setExpenses(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
@@ -48,23 +47,11 @@ function Expenses(props: IExpenseProps) {
     const url = `http://localhost:8080/expense/types`;
     await Axios.get(url)
       .then((payload: any) => {
-        // console.log(payload.data);
         setExpenseTypes(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
   }
-
-  // function adjustExpenseType(typeId: number) {
-  //   getExpensesByUserIdAndTypeId(typeId);
-
-  // }
-
-  // // This function sends the request to get all user reimbursements
-  // function getExpensesByUserIdAndTypeId(typeId: number) {
-  //   setExpensesByUserIdAndTypeId(expenses.filter((e: any) => (e.expenseType.id === typeId)));
-  //   setExpenseType(typeId);
-  // }
 
   function createGraphData() {
     return expenses.map((i: any) => {
@@ -80,11 +67,9 @@ function Expenses(props: IExpenseProps) {
 
   async function handleElementClick(label: string) {
     const type = expenseTypes.find((type: any) => type.type == label);
-
     if (type) {
       const matchedExpenses = expenses.filter((expense: any) =>
         JSON.stringify(expense.expenseType) == JSON.stringify(type))
-      console.log(matchedExpenses);
       setExpensesByUserIdAndTypeId(matchedExpenses);
       setShowTable(true);
     }
@@ -101,105 +86,62 @@ function Expenses(props: IExpenseProps) {
       description: newDescripion,
       amount: newAmount
     };
-    const response = await Axios.post(url, data);
-    try {
-      // console.log(response.status);
+    Axios.post(url, data)
+    .then(() => {
+      const newExpense = {
+        id:Math.max.apply(Math, expenses.map(function(exp:any) { return exp.id; })) + 1,
+        ...data
+      };
       getAllExpenses();
-    } catch {
-      console.log("ERRORS: ", response.data);
-    }
+      if (showTable) {
+        setExpenses(expenses.push(newExpense));
+        handleElementClick(newExpense.expenseType.type);
+      }
+    });
   }
 
   return (
-    <div>
-      <Container style={{ textAlign: 'center' }}>
+    <div style={{ textAlign: 'center' }}>
         <h2>Check your expenses, {props.user.first}</h2>
-        {/* Logic: 
-          if an expense type is selected in the donut graph, then the table
-          is displayed */}
-<<<<<<< HEAD
-      
-      {/* Show expenses in the table */}
-      {/*<Grid container spacing={2}>
-=======
-
-
-        {/* Here is the create new expense form.
-            The axios request is sent thru there. */}
-        {/* Send the user Id to let the database know
-            who made the expense. */}
-        <br />
-        {/* <Divider /> */}
-        <NewExpense
-          types={expenseTypes}
-          createExpense={createNewExpense} />
-        <br />
-
         {/* Show expenses in the table */}
         {/*<Grid container spacing={2}>
->>>>>>> ad4eb2187fb12185f9934f4a1d56f060717720f4
       <Grid item xs={12} md={3}>
         <Paper>
           <h3>Total Expenses</h3>
           <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
         </Paper>
-
           </Grid>*/}
-<<<<<<< HEAD
-        <Grid item xs={12} md={9} style={{margin:"10px auto"}}>
-        {
-              (expenseType) 
-              ? 
-              <ExpensesTable 
-              expenses = {expensesByUserAndType}
-              changeType = {adjustExpenseType} /> 
-              :
+        <Container>
+            <Grid item xs={12} md={9}>
               <div>
-                <ExpensesGraph 
-                types={expenseTypes} 
-                data={expenses} 
-                props={props}
-                changeType = {(n:number) => {adjustExpenseType(n)}}
-                />
-                <br/>
-                {/* Here is the create new expense form.
-                The axios request is sent thru there. */}
-                <NewExpense 
-                types={expenseTypes}  
-                createExpense={createNewExpense} />
-                <br/>
+                {/* Logic: 
+                  if an expense type is selected in the donut graph, then the table
+                  is displayed */}
+                {showTable ? (
+                  <Fragment>
+                    <Button
+                      color="secondary"
+                      onClick={() => setShowTable(false)}>
+                      Back
+                    </Button>
+                    <ExpensesTable expenses={expensesByUserAndType} />
+                  </Fragment>
+                ) : (
+                    <Fragment>
+                      {expenses && 
+                      (<DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                        isMobileView={props.ui.isMobileView}
+                        handleElementClick={handleElementClick} />)}
+                    </Fragment>
+                  )}
+                <br />
+                <NewExpense
+                  types={expenseTypes}
+                  createExpense={createNewExpense} />
+                <br />
               </div>
-            }
-
-        {/*</Grid>*/}
-=======
-        <Grid item xs={12} md={9}>
-          <div>
-            {showTable ? (
-              <Fragment>
-                <Button
-                  color="secondary"
-                  onClick={() => setShowTable(false)}>
-                  Back
-                </Button>
-                <ExpensesTable expenses={expensesByUserAndType} />
-              </Fragment>
-            ) : (
-                <Fragment>
-                  {expenses && (<DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                    isMobileView={props.ui.isMobileView}
-                    handleElementClick={handleElementClick} />)}
-                </Fragment>
-              )}
-            <br />
-            <NewExpense
-              types={expenseTypes}
-              createExpense={createNewExpense} />
-            <br />
-          </div>
->>>>>>> ad4eb2187fb12185f9934f4a1d56f060717720f4
-        </Grid>
-      </Container>
+            </Grid>
+        </Container>
     </div >
   );
 }
