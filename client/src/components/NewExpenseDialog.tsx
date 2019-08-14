@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function NewExpense(props:any) {
+export default function NewExpense(props: any) {
   const classes = useStyles(props);
   const [state, setState] = React.useState({
     open: false,
@@ -44,11 +44,11 @@ export default function NewExpense(props:any) {
   function handleClickOpen() {
     setState({ ...state, open: true });
   }
-  
+
   function handleSubmit() {
     // Check state of elements using conditionals 
     // const type = props.types.find((type:any) => type.id == state.type);
-    props.createExpense(props.types.find((type:any) => type.id == state.type),state.description,state.amount);
+    props.createExpense(props.types.find((type: any) => type.id == state.type), state.description, state.amount);
     // Close popover
     handleClose();
   }
@@ -64,66 +64,64 @@ export default function NewExpense(props:any) {
         <DialogContent>
           <form className={classes.container}>
             <FormControl className={classes.formControl}>
-
               <Paper>
-                  <Container style={{textAlign: "center"}}>
-                    <Row><h4>Add New Expense</h4></Row>
-
-                    <Row className="new-expense-form">
-                        <TextField
-                        name="amount"
-                        className="new-expense-form"
-                        placeholder="0.00"
-                        label="Expense Amount"
-                        type="number"
-                        onChange={handleChange("amount")}
-                        InputProps={{
-                          startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                        }}
-                        />
-                    </Row>
-                    <Row className="new-expense-form">
-                        <TextField
-                        name="description"
-                        className="new-expense-form"
-                        placeholder="A brief description of the expense..."
-                        label="Description"
-                        type="text"
-                        multiline={true}
-                        rows={props.view ? 4 : 5}
-                        onChange={handleChange("description")}/>
-                    </Row>
-                    <Row className="new-expense-form">
-                      <Select
+                <Container style={{ textAlign: "center" }}>
+                  <Row><h4>Add New Expense</h4></Row>
+                  <Row className="new-expense-form">
+                    <TextField
+                      name="amount"
+                      className="new-expense-form"
+                      placeholder="0.00"
+                      label="Expense Amount"
+                      type="number"
+                      onChange={handleChange("amount")}
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      }}
+                    />
+                  </Row>
+                  <Row className="new-expense-form">
+                    <TextField
+                      name="description"
+                      className="new-expense-form"
+                      placeholder="A brief description of the expense..."
+                      label="Description"
+                      type="text"
+                      multiline={true}
+                      rows={props.view ? 4 : 5}
+                      onChange={handleChange("description")} />
+                  </Row>
+                  <Row className="new-expense-form">
+                    <Select
                       value={state.type}
                       onChange={handleChange('type')}
                       input={<Input id="expense-type" />}
-                      >
-                        <MenuItem value={0}>
+                    >
+                      <MenuItem value={0}>
                         <em>Select Expense Type</em>
-                        </MenuItem>
-                        {props.types.map((t:any) => (
-                        <MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>  
-                        ))}
-                      </Select>
-                    </Row>
-                  </Container>
+                      </MenuItem>
+                      {props.types.map((t: any) => (
+                        <MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>
+                      ))}
+                    </Select>
+                  </Row>
+                </Container>
               </Paper>
             </FormControl>
           </form>
         </DialogContent>
         <DialogActions>
-            <Button
+          <Button
             onClick={
-            // Function call to send the request for creating new expense
-            handleSubmit
+              // Function call to send the request for creating new expense
+              handleSubmit
             }
             color="primary">
-                Ok
+            Ok
             </Button>
           <Button
-          onClick={handleClose}
-          color="secondary">
+            onClick={handleClose}
+            color="secondary">
             Cancel
           </Button>
         </DialogActions>
