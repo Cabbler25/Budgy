@@ -6,9 +6,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Axios from 'axios';
-import { IUserState } from '../redux';
-import { IExpenseProps } from './Expenses.component';
+
+import { Link, Button } from '@material-ui/core';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -35,9 +34,9 @@ const StyledTableRow = withStyles((theme: Theme) =>
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: '100%',
-      marginTop: theme.spacing(3),
+      marginTop: theme.spacing(2),
       overflowX: 'auto',
+      margin:"auto"
     },
     table: {
       minWidth: 700,
@@ -46,49 +45,59 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export function ExpensesTable(props: IExpenseProps) {
-  const classes = useStyles();
-  const [expenses, setExpenses] = useState([{
-    amount:0
-  }]);
+export function ExpensesTable(props:any) {
+  const classes = useStyles(props);
+  const [expenses, setExpenses] = useState([]);
 
   useEffect(() => {
-    getAllExpenses(props.user.id);
+    createTable();
   }, [])
 
   // This function sends the request to get all user reimbursements
-  async function getAllExpenses(userId: number) {
-    const url = `http://localhost:8080/expense/user/${userId}`;
-    await Axios.get(url)
-      .then((payload: any) => {
-        console.log(payload.data);
-        setExpenses(payload.data);
-      }).catch((err: any) => {
-        // Handle error by displaying something else
-      });
+  function createTable() {
+    setExpenses(props.expenses);
+    // console.log(expenses);
+  }
+  // Go back to the expenses component
+  function handleBackButton() {
+    // props.location.state.props.history.push("/expenses");
+    props.changeType(0);
   }
   return (
     <div>
+        <Button
+          color="secondary"
+          onClick={handleBackButton}>
+            Back
+            {/* <Link to="/expense">Back</Link>  */}
+          </Button>
         <Paper className={classes.root}>
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
-                <StyledTableCell>amount (usd)</StyledTableCell>
-                <StyledTableCell>type</StyledTableCell>
-                <StyledTableCell>date</StyledTableCell>
-                <StyledTableCell align="right">description</StyledTableCell>
+                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
+                  amount (usd)
+                </StyledTableCell>
+                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
+                  type
+                </StyledTableCell>
+                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
+                  date
+                </StyledTableCell>
+                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
+                  description
+                </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {expenses.map((row: any) => (
-                  row.amount !== 0 &&
                   <StyledTableRow key={row.amount}>
                     <StyledTableCell component="th" scope="row">
                       {row.amount}
                     </StyledTableCell>
                     <StyledTableCell>{row.expenseType.type}</StyledTableCell>
                     <StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
-                    <StyledTableCell align="right">{row.description}</StyledTableCell>
+                    <StyledTableCell >{row.description}</StyledTableCell>
                   </StyledTableRow>
                 ))
               }

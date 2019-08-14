@@ -102,7 +102,6 @@ public class ExpenseService {
 		try(Session session = sessionFactory.openSession()) {
 			ExpenseType expenseType = session.load(ExpenseType.class, id);
 			Hibernate.initialize(expenseType);
-//			Hibernate.initialize(expenseType.getExpenses());
 			return expenseType;
 		}
 	}
