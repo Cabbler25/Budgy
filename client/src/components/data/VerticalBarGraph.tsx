@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { HorizontalBar } from 'react-chartjs-2';
+import { HorizontalBar, Bar } from 'react-chartjs-2';
 import "reaviz/dist/index.css";
 import { colorTypes } from '../../assets/Colors';
 
@@ -13,7 +13,7 @@ import { colorTypes } from '../../assets/Colors';
  * So long as the props adhere to the above specs the graph should work properly 
  */
 
-export function HorizontalBarGraph(props: any) {
+export function VerticalBarGraph(props: any) {
   const [data, setData] = useState();
   useEffect(() => {
     // Create the graph data.
@@ -44,9 +44,9 @@ export function HorizontalBarGraph(props: any) {
   }
 
   return (data ?
-    <HorizontalBar
+    <Bar
       width={props.isMobileView ? 300 : 300}
-      height={props.isMobileView ? 300 : 150}
+      height={props.isMobileView ? 400 : 150}
       data={data}
       getElementAtEvent={handleElementClick} /> : <Fragment />
   );
@@ -94,4 +94,4 @@ function shadeColor(col: string, amt: number) {
   return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
 }
 
-export default HorizontalBarGraph                            
+export default VerticalBarGraph                            

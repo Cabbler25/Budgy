@@ -1,20 +1,76 @@
-import { Button, Divider, Paper } from '@material-ui/core';
+import { AppBar, Box, Button, createStyles, Divider, makeStyles, Paper, Tab, Tabs, Theme, Typography } from '@material-ui/core';
 import Axios from 'axios';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, createRef } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
 import { CreateBudgetStepper } from './forms/CreateBudgetStepper';
+import HorizontalBarGraph from './data/HorizontalBarGraph';
+import colors from '../assets/Colors';
+import VerticalBarGraph from './data/VerticalBarGraph';
 
+interface HorizontalTabPanelProps {
+  children?: React.ReactNode;
+  index: any;
+  value: any;
+}
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: any;
+  value: any;
+}
 
 interface IBudgetProps {
   user: IUserState;
   ui: IUiState;
 }
 
+function HorizontalTabPanel(props: HorizontalTabPanelProps) {
+  const { children, value, index, ...other } = props;
+  return (
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      <Box p={3}>{children}</Box>
+    </Typography>
+  );
+}
+
+function VerticalTabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`vertical-tabpanel-${index}`}
+      aria-labelledby={`vertical-tab-${index}`}
+      {...other}
+    >
+      <Box p={3}>{children}</Box>
+    </Typography>
+  );
+}
+
+function a11yProps(index: any) {
+  return {
+    id: `tab-${index}`,
+    'aria-controls': `tabpanel-${index}`,
+  };
+}
+
+
 export function Budget(props: IBudgetProps) {
+  const [tabIndex, setTabIndex] = React.useState(0);
   const styles = {
     loadingDiv: {
       margin: props.ui.isMobileView ? '75px' : '150px',
@@ -28,14 +84,20 @@ export function Budget(props: IBudgetProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // Load budget types from db
+    getAllTypes();
+
+    if (!props.user.isLoggedIn) return;
     setIsLoading(true);
 
     // Load budgets from db
     getAllBudgets();
 
-    // Load budget types from db
-    getAllTypes();
-  }, [])
+  }, [props.user.isLoggedIn])
+
+  function handlePanelChange(e: any, newValue: number) {
+    setTabIndex(newValue);
+  }
 
   async function getAllTypes() {
     const url = `http://localhost:8080/budget/types`;
@@ -53,8 +115,8 @@ export function Budget(props: IBudgetProps) {
       .then((payload: any) => {
         if (payload.data.length != 0) {
           setBudgets(payload.data);
-          setIsLoading(false);
         }
+        setIsLoading(false);
       }).catch((err: any) => {
         setIsLoading(false);
         // Handle error by displaying something else
@@ -100,50 +162,77 @@ export function Budget(props: IBudgetProps) {
     if (type) {
       const matchedBudgets = budgets.filter((budget: any) =>
         JSON.stringify(budget.budgetType) == JSON.stringify(type))
-      console.log(matchedBudgets);
     }
   }
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <Paper style={{ margin: '10px', display: 'inline-block', padding: '20px', paddingBottom: '30px' }}>
-        <b>Budgets allow you to set goals, easily visualize your limits, and even earn </b>
-        <Link to="/rewards">
-          rewards!
-        </Link>
-        <br />
-        <br />
-        <Divider />
-        <br />
+      {!props.user.isLoggedIn && <Redirect to="/login" />}
+      <Paper style={{
+        minWidth: !props.ui.isMobileView ? '800px' : undefined,
+        margin: '10px', display: 'inline-block', padding: '20px', paddingBottom: '30px'
+      }}>
         {!budgets ? (
-          !isLoading ? (
-            <Fragment>
-              <h2>Creating a budget is quick and easy.<br />To get started,</h2>
-              {isCreatingBudget ? (
-                <CreateBudgetStepper
-                  isMobileView={props.ui.isMobileView} userId={props.user.id}
-                  types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
-              ) : (
-                  <Button onClick={() => setIsCreatingBudget(true)} size="large" color="secondary">
-                    Create a Budget
+          <Fragment>
+            <b>Budgets allow you to set goals, easily visualize your limits, and even earn </b>
+            <Link to="/rewards">
+              rewards!
+          </Link>
+            <br />
+            <br />
+            <Divider />
+            <br />
+            {!isLoading ? (
+              <Fragment>
+                <h2>Creating a budget is quick and easy.<br />To get started,</h2>
+                {isCreatingBudget ? (
+                  <CreateBudgetStepper
+                    isMobileView={props.ui.isMobileView} userId={props.user.id}
+                    types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
+                ) : (
+                    <Button style={{ marginBottom: '10px' }} onClick={() => setIsCreatingBudget(true)} size="large" color="secondary">
+                      Create a Budget
                   </Button>
-                )}
-            </Fragment>
-          ) : (
-              <div style={styles.loadingDiv}>
-                <BarLoader width={150} color={'#009688'} loading={isLoading} />
-              </div>
-            )
+                  )}
+              </Fragment>
+            ) : (
+                <div style={styles.loadingDiv}>
+                  <BarLoader width={150} color={'#009688'} loading={isLoading} />
+                </div>
+              )}
+          </Fragment>
         ) : (
             <Fragment>
-              <h2>Here's your budget, {props.user.first}</h2>
-              <i style={{ color: 'grey', fontSize: '14px' }}>Click a section of the pie to amend your budget.</i><br />
-              <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                isMobileView={props.ui.isMobileView}
-                handleElementClick={handleElementClick} />
-              {/* <HorizontalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                isMobileView={props.ui.isMobileView}
-                handleElementClick={handleElementClick} /> */}
+              <h2>Here's your monthly budget</h2>
+              <AppBar position="static">
+                <Tabs
+                  centered={!props.ui.isMobileView}
+                  value={tabIndex}
+                  onChange={handlePanelChange}
+                  variant={props.ui.isMobileView ? "fullWidth" : undefined}
+                >
+                  <Tab style={{ color: colors.offWhite }} label="Donut Chart" {...a11yProps(0)} />
+                  <Tab style={{ color: colors.offWhite }} label="Bar Chart" {...a11yProps(1)} />
+                </Tabs>
+              </AppBar>
+              <HorizontalTabPanel value={tabIndex} index={0}>
+                <i style={{ color: 'grey', fontSize: '14px' }}>Click a category to amend your budget.</i><br />
+                <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                  isMobileView={props.ui.isMobileView}
+                  handleElementClick={handleElementClick} />
+              </HorizontalTabPanel>
+              <HorizontalTabPanel value={tabIndex} index={1}>
+                <i style={{ color: 'grey', fontSize: '14px' }}>Click a category to amend your budget.</i><br />
+                {props.ui.isMobileView ? (
+                  <VerticalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                    isMobileView={props.ui.isMobileView}
+                    handleElementClick={handleElementClick} />
+                ) : (
+                    <HorizontalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                      isMobileView={props.ui.isMobileView}
+                      handleElementClick={handleElementClick} />
+                  )}
+              </HorizontalTabPanel>
               {isCreatingBudget ? (
                 <CreateBudgetStepper
                   isMobileView={props.ui.isMobileView} userId={props.user.id}
