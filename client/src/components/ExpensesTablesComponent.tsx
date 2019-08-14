@@ -66,6 +66,7 @@ export function ExpensesTable(props: any) {
               <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
                 description
                 </StyledTableCell>
+                
             </TableRow>
           </TableHead>
           <TableBody>

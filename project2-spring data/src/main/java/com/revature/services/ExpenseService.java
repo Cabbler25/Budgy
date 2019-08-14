@@ -33,7 +33,7 @@ public class ExpenseService {
 	}
 
 	public List<Expense> findByUserId(int userId) {
-		return expenseRepository.findByUserId(userId);
+		return expenseRepository.findByUserIdOrderById(userId);
 	}
 
 	public Optional<ExpenseType> findExpenseTypeById(int id) {
