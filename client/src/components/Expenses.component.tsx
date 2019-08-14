@@ -113,7 +113,7 @@ function Expenses(props: IExpenseProps) {
         </Paper>
 
           </Grid>*/}
-      <Grid item xs={12} md={9}>
+      <Grid item xs={12}>
       {
 
             (expenseType) 
