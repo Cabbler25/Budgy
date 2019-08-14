@@ -1,12 +1,14 @@
 import { Button, Divider, Paper } from '@material-ui/core';
-import React, { Fragment, useEffect, useState } from 'react';
+import Axios from 'axios';
+import React, { Fragment, useEffect, useState, createRef } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { IState, IUiState, IUserState } from '../redux';
+import DonutGraph from './data/DonutGraph';
+import HorizontalBarGraph from './data/HorizontalBarGraph';
 import { CreateBudgetStepper } from './forms/CreateBudgetStepper';
-import CircleGraph from './data/CircleGraph';
-import { elementType } from 'prop-types';
-import Axios from 'axios';
+import { BarLoader } from 'react-spinners';
+
 
 interface IBudgetProps {
   user: IUserState;
@@ -14,60 +16,67 @@ interface IBudgetProps {
 }
 
 export function Budget(props: IBudgetProps) {
-  // State for creation
-  const [isCreatingBudget, setIsCreatingBudget] = useState(false);
-  // Hold all budgets
-  const [budgets, setBudgets] = useState([{
-    budgetType: {
-      id: 0,
-      type: ''
-    },
-    description: '',
-    amount: 0
-  }]);
+  const styles = {
+    loadingDiv: {
+      margin: props.ui.isMobileView ? '75px' : '150px',
+      display: 'inline-block'
+    }
+  }
 
+  const [isCreatingBudget, setIsCreatingBudget] = useState(false);
+  const [budgets, setBudgets] = useState();
   const [budgetTypes, setBudgetTypes] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-
-    // Load budget types from db
-    let url = `http://localhost:8080/budget/user/${props.user.id}`;
-    Axios.get(url)
-      .then((payload: any) => {
-        if (payload.data.length != 0) {
-          setBudgets(payload.data);
-        }
-      }).catch((err: any) => {
-        // Handle error by displaying something else
-      });
+    setIsLoading(true);
 
     // Load budgets from db
-    url = `http://localhost:8080/budget/types`;
+    getAllBudgets();
+
+    // Load budget types from db
+    getAllTypes();
+  }, [])
+
+  async function getAllTypes() {
+    const url = `http://localhost:8080/budget/types`;
     Axios.get(url)
       .then((payload: any) => {
         setBudgetTypes(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
-  }, [])
+  }
 
-  // Create budget in db
-  function createBudget(type: any, descr: string, amount: number) {
-    const data = {
-      userId: props.user.id,
-      budgetType: type,
-      description: descr,
-      amount: Number(amount)
-    }
-
-    const url = `http://localhost:8080/budget`;
-    Axios.post(url, data)
+  async function getAllBudgets() {
+    const url = `http://localhost:8080/budget/user/${props.user.id}`;
+    await Axios.get(url)
       .then((payload: any) => {
+        if (payload.data.length != 0) {
+          setBudgets(payload.data);
+          setIsLoading(false);
+        }
       }).catch((err: any) => {
+        setIsLoading(false);
         // Handle error by displaying something else
       });
-    setBudgets(budgets[0].budgetType.id === 0 ? [data] : budgets.concat(data));
+  }
+
+  // Create budget in db
+  async function createBudget(data: any) {
     setIsCreatingBudget(false);
+    const url = `http://localhost:8080/budget`;
+    await Axios.post(url, data)
+      .then((payload: any) => {
+        setBudgets(!budgets ? [data] : budgets.concat(data));
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+        alert('Something went wrong. Please try again.')
+      });
+  }
+
+  function handleCreateBudget(e: any) {
+    setIsCreatingBudget(true);
   }
 
   function handleCancelCreate() {
@@ -75,28 +84,30 @@ export function Budget(props: IBudgetProps) {
   }
 
   function createGraphData() {
-    let data = budgetTypes.map((budgetType: any) => {
-      return {
-        y: 0,
-        label: budgetType.type
-      }
-    })
+    return budgets.map((i: any) => {
+      return { key: i.budgetType.type, data: i.amount }
+    });
+  }
 
-    budgets.forEach((budget: any) => {
-      for (let i = 0; i < data.length; i++) {
-        if (budget.budgetType.type == data[i].label) {
-          data[i].y += budget.amount;
-          break;
-        }
-      }
-    })
+  function createGraphLabels() {
+    return budgetTypes.map((i: any) => {
+      return i.type;
+    });
+  }
 
-    return data.filter((element: any) => element.y > 0);
+  async function handleElementClick(label: number) {
+    const type = budgetTypes.find((type: any) => type.type == label);
+
+    if (type) {
+      const matchedBudgets = budgets.filter((budget: any) =>
+        JSON.stringify(budget.budgetType) == JSON.stringify(type))
+      console.log(matchedBudgets);
+    }
   }
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <Paper style={{ display: 'inline-block', padding: '20px' }}>
+      <Paper style={{ margin: '10px', display: 'inline-block', padding: '20px', paddingBottom: '30px' }}>
         <b>Budgets allow you to set goals, easily visualize your limits, and even earn </b>
         <Link to="/rewards">
           rewards!
@@ -105,28 +116,45 @@ export function Budget(props: IBudgetProps) {
         <br />
         <Divider />
         <br />
-        <br />
-        {budgets[0].budgetType.id == 0 ? (
-          <Fragment>
-            <h2>Creating a budget is quick and easy.<br />To get started,</h2>
-            {isCreatingBudget ? (
-              <CreateBudgetStepper types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
-            ) : (
-                <Button onClick={() => setIsCreatingBudget(true)} size="large" color="secondary">
-                  Create a Budget
-                </Button>
-              )}
-          </Fragment>
+        {!budgets ? (
+          !isLoading ? (
+            <Fragment>
+              <h2>Creating a budget is quick and easy.<br />To get started,</h2>
+              {isCreatingBudget ? (
+                <CreateBudgetStepper
+                  isMobileView={props.ui.isMobileView} userId={props.user.id}
+                  types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
+              ) : (
+                  <Button onClick={() => setIsCreatingBudget(true)} size="large" color="secondary">
+                    Create a Budget
+                  </Button>
+                )}
+            </Fragment>
+          ) : (
+              <div style={styles.loadingDiv}>
+                <BarLoader width={150} color={'#009688'} loading={isLoading} />
+              </div>
+            )
         ) : (
             <Fragment>
               <h2>Here's your budget, {props.user.first}</h2>
-              <CircleGraph data={createGraphData()} />
+              <i style={{ color: 'grey', fontSize: '14px' }}>Click a section of the pie to amend your budget.</i><br />
+              <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                isMobileView={props.ui.isMobileView}
+                handleElementClick={handleElementClick} />
+              {/* <HorizontalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                isMobileView={props.ui.isMobileView}
+                handleElementClick={handleElementClick} /> */}
               {isCreatingBudget ? (
-                <CreateBudgetStepper types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
+                <CreateBudgetStepper
+                  isMobileView={props.ui.isMobileView} userId={props.user.id}
+                  types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
               ) : (
                   <Fragment>
-                    <br /> <b>Missing something?</b> <br />
-                    <Button onClick={() => setIsCreatingBudget(true)} size="small" color="secondary">
+                    <br /> <b style={{ marginTop: '10px' }}>Missing something?</b> <br />
+                    <Button
+                      style={{ marginTop: '10px' }} size="small" color="secondary"
+                      onClick={handleCreateBudget}>
                       Add another budget
                     </Button>
                   </Fragment>
@@ -138,8 +166,6 @@ export function Budget(props: IBudgetProps) {
   );
 }
 
-// Redux
-// Needed state
 const mapStateToProps = (state: IState) => {
   return {
     user: state.user,
