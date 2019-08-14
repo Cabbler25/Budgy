@@ -1,17 +1,10 @@
-package entities;
+package com.revature.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -21,12 +14,6 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
-	@Column(name = "family_id")
-	private int familyId;
-
-	@Column(name = "family_role")
-	private int familyRole;
 
 	@Column(nullable = false)
 	private String username;
@@ -49,22 +36,6 @@ public class User {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public int getFamilyId() {
-		return familyId;
-	}
-
-	public void setFamilyId(int familyId) {
-		this.familyId = familyId;
-	}
-
-	public int getFamilyRole() {
-		return familyRole;
-	}
-
-	public void setFamilyRole(int familyRole) {
-		this.familyRole = familyRole;
 	}
 
 	public String getUsername() {
@@ -112,8 +83,6 @@ public class User {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + familyId;
-		result = prime * result + familyRole;
 		result = prime * result + ((firstname == null) ? 0 : firstname.hashCode());
 		result = prime * result + id;
 		result = prime * result + ((lastname == null) ? 0 : lastname.hashCode());
@@ -135,10 +104,6 @@ public class User {
 			if (other.email != null)
 				return false;
 		} else if (!email.equals(other.email))
-			return false;
-		if (familyId != other.familyId)
-			return false;
-		if (familyRole != other.familyRole)
 			return false;
 		if (firstname == null) {
 			if (other.firstname != null)
@@ -167,17 +132,13 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", familyId=" + familyId + ", familyRole=" + familyRole + ", username=" + username
-				+ ", firstname=" + firstname + ", lastname=" + lastname + ", email=" + email + ", password=" + password
-				+ "]";
+		return "User [id=" + id + ", username=" + username + ", firstname=" + firstname + ", lastname=" + lastname
+				+ ", email=" + email + ", password=" + password + "]";
 	}
 
-	public User(int id, int familyId, int familyRole, String username, String firstname, String lastname, String email,
-			String password) {
+	public User(int id, String username, String firstname, String lastname, String email, String password) {
 		super();
 		this.id = id;
-		this.familyId = familyId;
-		this.familyRole = familyRole;
 		this.username = username;
 		this.firstname = firstname;
 		this.lastname = lastname;

@@ -7,7 +7,8 @@ import { ExpensesTable } from './ExpensesTablesComponent';
 import ExpensesGraph from './MyExpensesGraph';
 import { IUserState, IState } from '../redux';
 import Axios from 'axios';
-import { Divider } from 'material-ui';
+import { Grid, Paper } from '@material-ui/core';
+
 
 export interface IExpenseProps {
   user: IUserState;
@@ -90,7 +91,31 @@ function Expenses(props: IExpenseProps) {
         {/* Logic: 
           if an expense type is selected in the donut graph, then the table
           is displayed */}
-          {
+
+
+        {/* Here is the create new expense form.
+            The axios request is sent thru there. */}
+        {/* Send the user Id to let the database know
+            who made the expense. */}
+            <br/>
+            {/* <Divider /> */}
+        <NewExpense 
+        types={expenseTypes}  
+        createExpense={createNewExpense} />
+        <br />
+      
+      {/* Show expenses in the table */}
+      {/*<Grid container spacing={2}>
+      <Grid item xs={12} md={3}>
+        <Paper>
+          <h3>Total Expenses</h3>
+          <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
+        </Paper>
+
+          </Grid>*/}
+      <Grid item xs={12} md={9}>
+      {
+
             (expenseType) 
             ? 
             <ExpensesTable 
@@ -113,6 +138,11 @@ function Expenses(props: IExpenseProps) {
               <br/>
             </div>
           }
+
+
+      {/* {ExpensesTable(props)} */}
+      {/*</Grid>*/}
+      </Grid>
       </Container>
     </div>
   );

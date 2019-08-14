@@ -1,4 +1,4 @@
-package entities;
+package com.revature.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,41 +7,38 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "income_types")
-public class IncomeTypes {
+@Entity 
+@Table(name="families")
+public class Family {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@Column(name="type", nullable=false)
-	private String type;
-
+	@Column(nullable=false)
+	private String name;
+	
+	
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
-	public String getType() {
-		return type;
+	public String getName() {
+		return name;
 	}
-
-	public void setType(String type) {
-		this.type = type;
+	public void setName(String name) {
+		this.name = name;
 	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + id;
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -50,31 +47,31 @@ public class IncomeTypes {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		IncomeTypes other = (IncomeTypes) obj;
+		Family other = (Family) obj;
 		if (id != other.id)
 			return false;
-		if (type == null) {
-			if (other.type != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!type.equals(other.type))
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}
-
 	@Override
 	public String toString() {
-		return "IncomeType [id=" + id + ", type=" + type + "]";
+		return "Family [id=" + id + ", name=" + name + "]";
 	}
-
-	public IncomeTypes(int id, String type) {
+	public Family(int id, String name) {
 		super();
 		this.id = id;
-		this.type = type;
+		this.name = name;
 	}
-
-	public IncomeTypes() {
+	public Family() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
+	
+	
+
 }
