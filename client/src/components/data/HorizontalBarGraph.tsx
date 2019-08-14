@@ -39,8 +39,8 @@ export function HorizontalBarGraph(props: any) {
 
   function handleElementClick(e: any) {
     // Sends the corresponding label as a string
-    if (e[0] && props.handleElementClick)
-      props.handleElementClick(e[0]._index);
+    if (data && data.labels && e[0] && props.handleElementClick)
+      props.handleElementClick(data.labels[e[0]._index]);
   }
 
   return (data ?

@@ -36,16 +36,16 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       marginTop: theme.spacing(2),
       overflowX: 'auto',
-      margin:"auto"
+      margin: "auto"
     },
     table: {
       minWidth: 700,
-      textAlign:"center"
+      textAlign: "center"
     },
   }),
 );
 
-export function ExpensesTable(props:any) {
+export function ExpensesTable(props: any) {
   const classes = useStyles(props);
   const [expenses, setExpenses] = useState([]);
 
@@ -65,45 +65,39 @@ export function ExpensesTable(props:any) {
   }
   return (
     <div>
-        <Button
-          color="secondary"
-          onClick={handleBackButton}>
-            Back
-            {/* <Link to="/expense">Back</Link>  */}
-          </Button>
-        <Paper className={classes.root}>
-          <Table className={classes.table}>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
-                  amount (usd)
+      <Paper className={classes.root}>
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+                amount (usd)
                 </StyledTableCell>
-                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
-                  type
+              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+                type
                 </StyledTableCell>
-                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
-                  date
+              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+                date
                 </StyledTableCell>
-                <StyledTableCell style={{marginRight:'2px',marginLeft:'auto'}}>
-                  description
+              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+                description
                 </StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {expenses.map((row: any) => (
-                  <StyledTableRow key={row.amount}>
-                    <StyledTableCell component="th" scope="row">
-                      {row.amount}
-                    </StyledTableCell>
-                    <StyledTableCell>{row.expenseType.type}</StyledTableCell>
-                    <StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
-                    <StyledTableCell >{row.description}</StyledTableCell>
-                  </StyledTableRow>
-                ))
-              }
-            </TableBody>
-          </Table>
-        </Paper>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {expenses.map((row: any) => (
+              <StyledTableRow key={row.amount}>
+                <StyledTableCell component="th" scope="row">
+                  {row.amount}
+                </StyledTableCell>
+                <StyledTableCell>{row.expenseType.type}</StyledTableCell>
+                <StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
+                <StyledTableCell >{row.description}</StyledTableCell>
+              </StyledTableRow>
+            ))
+            }
+          </TableBody>
+        </Table>
+      </Paper>
     </div>
   );
 }

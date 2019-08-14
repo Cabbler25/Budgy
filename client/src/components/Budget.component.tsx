@@ -27,8 +27,6 @@ export function Budget(props: IBudgetProps) {
   const [budgets, setBudgets] = useState();
   const [budgetTypes, setBudgetTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const scrollRef = createRef();
-  const scrollToRef = (ref: any) => { ref && window.scrollTo(0, ref.offsetTop) }
 
   useEffect(() => {
     setIsLoading(true);
@@ -59,6 +57,7 @@ export function Budget(props: IBudgetProps) {
           setIsLoading(false);
         }
       }).catch((err: any) => {
+        setIsLoading(false);
         // Handle error by displaying something else
       });
   }
@@ -78,7 +77,6 @@ export function Budget(props: IBudgetProps) {
 
   function handleCreateBudget(e: any) {
     setIsCreatingBudget(true);
-    scrollToRef(scrollRef);
   }
 
   function handleCancelCreate() {
@@ -97,8 +95,8 @@ export function Budget(props: IBudgetProps) {
     });
   }
 
-  async function handleElementClick(id: number) {
-    const type = budgetTypes.find((type: any) => type.id == id);
+  async function handleElementClick(label: number) {
+    const type = budgetTypes.find((type: any) => type.type == label);
 
     if (type) {
       const matchedBudgets = budgets.filter((budget: any) =>
@@ -141,14 +139,14 @@ export function Budget(props: IBudgetProps) {
             <Fragment>
               <h2>Here's your budget, {props.user.first}</h2>
               <i style={{ color: 'grey', fontSize: '14px' }}>Click a section of the pie to amend your budget.</i><br />
-              {/* <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                isMobileView={props.ui.isMobileView}
-                handleElementClick={handleElementClick} /> */}
-              <HorizontalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+              <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
                 isMobileView={props.ui.isMobileView}
                 handleElementClick={handleElementClick} />
+              {/* <HorizontalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                isMobileView={props.ui.isMobileView}
+                handleElementClick={handleElementClick} /> */}
               {isCreatingBudget ? (
-                <CreateBudgetStepper ref={scrollRef}
+                <CreateBudgetStepper
                   isMobileView={props.ui.isMobileView} userId={props.user.id}
                   types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
               ) : (
