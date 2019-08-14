@@ -91,18 +91,6 @@ function Expenses(props: IExpenseProps) {
         {/* Logic: 
           if an expense type is selected in the donut graph, then the table
           is displayed */}
-
-
-        {/* Here is the create new expense form.
-            The axios request is sent thru there. */}
-        {/* Send the user Id to let the database know
-            who made the expense. */}
-            <br/>
-            {/* <Divider /> */}
-        <NewExpense 
-        types={expenseTypes}  
-        createExpense={createNewExpense} />
-        <br />
       
       {/* Show expenses in the table */}
       {/*<Grid container spacing={2}>
@@ -113,36 +101,33 @@ function Expenses(props: IExpenseProps) {
         </Paper>
 
           </Grid>*/}
-      <Grid item xs={12} md={9}>
-      {
+        <Grid item xs={12} md={9} style={{margin:"10px auto"}}>
+        {
+              (expenseType) 
+              ? 
+              <ExpensesTable 
+              expenses = {expensesByUserAndType}
+              changeType = {adjustExpenseType} /> 
+              :
+              <div>
+                <ExpensesGraph 
+                types={expenseTypes} 
+                data={expenses} 
+                props={props}
+                changeType = {(n:number) => {adjustExpenseType(n)}}
+                />
+                <br/>
+                {/* Here is the create new expense form.
+                The axios request is sent thru there. */}
+                <NewExpense 
+                types={expenseTypes}  
+                createExpense={createNewExpense} />
+                <br/>
+              </div>
+            }
 
-            (expenseType) 
-            ? 
-            <ExpensesTable 
-            expenses = {expensesByUserAndType}
-            changeType = {adjustExpenseType} /> 
-            :
-            <div>
-              <ExpensesGraph 
-              types={expenseTypes} 
-              data={expenses} 
-              props={props}
-              changeType = {(n:number) => {adjustExpenseType(n)}}
-              />
-              <br/>
-              {/* Here is the create new expense form.
-              The axios request is sent thru there. */}
-              <NewExpense 
-              types={expenseTypes}  
-              createExpense={createNewExpense} />
-              <br/>
-            </div>
-          }
-
-
-      {/* {ExpensesTable(props)} */}
-      {/*</Grid>*/}
-      </Grid>
+        {/*</Grid>*/}
+        </Grid>
       </Container>
     </div>
   );
