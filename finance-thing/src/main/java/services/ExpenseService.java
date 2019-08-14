@@ -66,6 +66,9 @@ public class ExpenseService {
 				return expenses;
 			}
 		}
+//		Get all expenses by userId and expense type (Use hql to simplify the query that
+//		matches 2 fields
+		
 	}
 	
 	public static void createNewExpense(ExpenseForm expense) throws ParseException {
@@ -99,7 +102,6 @@ public class ExpenseService {
 		try(Session session = sessionFactory.openSession()) {
 			ExpenseType expenseType = session.load(ExpenseType.class, id);
 			Hibernate.initialize(expenseType);
-//			Hibernate.initialize(expenseType.getExpenses());
 			return expenseType;
 		}
 	}
