@@ -15,7 +15,6 @@ import NavBar from './components/Navbar.component';
 import Register from './components/Register.component';
 import User from './components/User.component';
 import { persistor, store } from './redux/Store';
-import { ExpensesTable } from './components/ExpensesTablesComponent';
 
 
 // We will define our theme here, feel free to add to it.
@@ -67,7 +66,6 @@ const App: React.FC = () => {
             <Route path="/incomes" exact component={Incomes} />
             <Route path="/budget" exact component={Budget} />
             <Route path="/expenses" exact component={Expenses} />
-            <Route path="/expenses/type" exact component ={ExpensesTable} />
           </Router>
         </MuiThemeProvider>
       </PersistGate>

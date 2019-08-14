@@ -54,21 +54,14 @@ function Expenses(props: IExpenseProps) {
   }
 
   function adjustExpenseType(typeId:number) {
-    console.log("Miguel",typeId);
     getExpensesByUserIdAndTypeId(typeId);
+    
   }
 
   // This function sends the request to get all user reimbursements
-  async function getExpensesByUserIdAndTypeId(typeId:number) {
-    const url = `http://localhost:8080/expense/user/${props.user.id}/type/${typeId}`;
-    await Axios.get(url)
-      .then((payload: any) => {
-        console.log(payload.data);
-        setExpensesByUserIdAndTypeId(payload.data);
-        setExpenseType(typeId);
-      }).catch((err: any) => {
-        // Handle error by displaying something else
-      });
+  function getExpensesByUserIdAndTypeId(typeId:number) {
+    setExpensesByUserIdAndTypeId(expenses.filter((e:any)=>(e.expenseType.id===typeId)));
+    setExpenseType(typeId);
   }
 
   //   Request function for new expense here
@@ -95,11 +88,10 @@ function Expenses(props: IExpenseProps) {
     <div>
       <Container style={{ textAlign: 'center' }}>
         <h2>Check your expenses, {props.user.first}</h2>
-        {/* Show expenses in the table */}
-        {/* Pass the expenses as property and the main expenses properties too */}
-        {/* Add logic: 
+        {/* Logic: 
           if an expense type is selected in the donut graph, then the table
           is displayed */}
+
 
         {/* Here is the create new expense form.
             The axios request is sent thru there. */}
@@ -123,17 +115,30 @@ function Expenses(props: IExpenseProps) {
           </Grid>*/}
       <Grid item xs={12} md={9}>
       {
-            (expenseType) ? 
+
+            (expenseType) 
+            ? 
             <ExpensesTable 
             expenses = {expensesByUserAndType}
-            changeType = {adjustExpenseType}/> :
-            <ExpensesGraph 
-            types={expenseTypes} 
-            data={expenses} 
-            props={props}
-            changeType = {(n:number) => {adjustExpenseType(n)}}
-            />
+            changeType = {adjustExpenseType} /> 
+            :
+            <div>
+              <ExpensesGraph 
+              types={expenseTypes} 
+              data={expenses} 
+              props={props}
+              changeType = {(n:number) => {adjustExpenseType(n)}}
+              />
+              <br/>
+              {/* Here is the create new expense form.
+              The axios request is sent thru there. */}
+              <NewExpense 
+              types={expenseTypes}  
+              createExpense={createNewExpense} />
+              <br/>
+            </div>
           }
+
 
       {/* {ExpensesTable(props)} */}
       {/*</Grid>*/}

@@ -86,17 +86,16 @@ export default function ExpensesGraph(props: any) {
                 props.changeType(1);
                 break;
               case 1:
-                console.log("Mama mia 1");
-                props.props.type = 2;
+                props.changeType(2);
                 break;
               case 2:
-                props.props.type = 3;
+                props.changeType(3);
                 break; 
               case 3:
-                  props.props.type = 4;
+                props.changeType(4);
                 break;
               case 4:
-                  props.props.type = 5;
+                props.changeType(5);
                 break;       
             }
           } catch {
