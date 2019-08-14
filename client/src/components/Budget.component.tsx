@@ -61,12 +61,20 @@ function VerticalTabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: any) {
+function a11yHorizontalProps(index: any) {
   return {
     id: `tab-${index}`,
     'aria-controls': `tabpanel-${index}`,
   };
 }
+
+function a11yVerticalProps(index: any) {
+  return {
+    id: `vertical-tab-${index}`,
+    'aria-controls': `vertical-tabpanel-${index}`,
+  };
+}
+
 
 
 export function Budget(props: IBudgetProps) {
@@ -82,8 +90,11 @@ export function Budget(props: IBudgetProps) {
   const [budgets, setBudgets] = useState();
   const [budgetTypes, setBudgetTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [budgetCategory, setBudgetCategory] = useState();
 
   useEffect(() => {
+    if (showDetails) setShowDetails(false);
     // Load budget types from db
     getAllTypes();
 
@@ -156,12 +167,17 @@ export function Budget(props: IBudgetProps) {
     });
   }
 
-  async function handleElementClick(label: number) {
+  function handleElementClick(label: number) {
+
     const type = budgetTypes.find((type: any) => type.type == label);
 
     if (type) {
       const matchedBudgets = budgets.filter((budget: any) =>
-        JSON.stringify(budget.budgetType) == JSON.stringify(type))
+        JSON.stringify(budget.budgetType) == JSON.stringify(type));
+
+      setBudgetCategory(matchedBudgets.sort((a: any, b: any) => b.amount - a.amount));
+      setTabIndex(0);
+      setShowDetails(true);
     }
   }
 
@@ -203,36 +219,59 @@ export function Budget(props: IBudgetProps) {
           </Fragment>
         ) : (
             <Fragment>
-              <h2>Here's your monthly budget</h2>
-              <AppBar position="static">
-                <Tabs
-                  centered={!props.ui.isMobileView}
-                  value={tabIndex}
-                  onChange={handlePanelChange}
-                  variant={props.ui.isMobileView ? "fullWidth" : undefined}
-                >
-                  <Tab style={{ color: colors.offWhite }} label="Donut Chart" {...a11yProps(0)} />
-                  <Tab style={{ color: colors.offWhite }} label="Bar Chart" {...a11yProps(1)} />
-                </Tabs>
-              </AppBar>
-              <HorizontalTabPanel value={tabIndex} index={0}>
-                <i style={{ color: 'grey', fontSize: '14px' }}>Click a category to amend your budget.</i><br />
-                <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                  isMobileView={props.ui.isMobileView}
-                  handleElementClick={handleElementClick} />
-              </HorizontalTabPanel>
-              <HorizontalTabPanel value={tabIndex} index={1}>
-                <i style={{ color: 'grey', fontSize: '14px' }}>Click a category to amend your budget.</i><br />
-                {props.ui.isMobileView ? (
-                  <VerticalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                    isMobileView={props.ui.isMobileView}
-                    handleElementClick={handleElementClick} />
-                ) : (
-                    <HorizontalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+              {!showDetails ? (
+                <Fragment>
+                  <h2>Here's your monthly budget</h2>
+                  <AppBar position="static">
+                    <Tabs
+                      centered={!props.ui.isMobileView}
+                      value={tabIndex}
+                      onChange={handlePanelChange}
+                      variant={props.ui.isMobileView ? "fullWidth" : undefined}
+                    >
+                      <Tab style={{ color: colors.offWhite }} label="Donut Chart" {...a11yHorizontalProps(0)} />
+                      <Tab style={{ color: colors.offWhite }} label="Bar Chart" {...a11yHorizontalProps(1)} />
+                    </Tabs>
+                  </AppBar>
+                  <HorizontalTabPanel value={tabIndex} index={0}>
+                    <i style={{ color: 'grey', fontSize: '14px' }}>Click a category to amend your budget.</i><br />
+                    <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
                       isMobileView={props.ui.isMobileView}
                       handleElementClick={handleElementClick} />
-                  )}
-              </HorizontalTabPanel>
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel value={tabIndex} index={1}>
+                    <i style={{ color: 'grey', fontSize: '14px' }}>Click a category to amend your budget.</i><br />
+                    {props.ui.isMobileView ? (
+                      <VerticalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                        isMobileView={props.ui.isMobileView}
+                        handleElementClick={handleElementClick} />
+                    ) : (
+                        <HorizontalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                          isMobileView={props.ui.isMobileView}
+                          handleElementClick={handleElementClick} />
+                      )}
+                  </HorizontalTabPanel>
+                </Fragment>
+              ) : (
+                  <Fragment>
+                    <Tabs
+                      orientation="vertical"
+                      variant="scrollable"
+                      value={tabIndex}
+                      onChange={handlePanelChange}
+                      aria-label="Vertical tabs example"
+                    >
+                      {budgetCategory.map((budget: any, i: number) => (
+                        <Tab key={i} label={`${budget.budgetType.type}: $${budget.amount}`} {...a11yVerticalProps(i)} />
+                      ))}
+                    </Tabs>
+                    {budgetCategory.map((budget: any, i: number) => (
+                      <VerticalTabPanel key={i} value={tabIndex} index={i}>
+                        {budget.description}
+                      </VerticalTabPanel>
+                    ))}
+                  </Fragment>
+                )}
               {isCreatingBudget ? (
                 <CreateBudgetStepper
                   isMobileView={props.ui.isMobileView} userId={props.user.id}
