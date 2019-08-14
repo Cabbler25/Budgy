@@ -1,14 +1,12 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { connect } from 'react-redux';
-
-import { Input, Label, Container, Row, Popover, Col } from 'reactstrap';
-import NewExpense from './NewExpenseDialog';
-import { ExpensesTable } from './ExpensesTablesComponent';
-import ExpensesGraph from './MyExpensesGraph';
-import { IUserState, IState, IUiState } from '../redux';
+import { Button, Paper } from '@material-ui/core';
 import Axios from 'axios';
-import { Grid, Paper, Button } from '@material-ui/core';
+import React, { Fragment, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Col, Container, Row } from 'reactstrap';
+import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
+import { ExpensesTable } from './ExpensesTablesComponent';
+import NewExpense from './NewExpenseDialog';
 
 export interface IExpenseProps {
   user: IUserState;
@@ -86,99 +84,86 @@ function Expenses(props: IExpenseProps) {
       amount: newAmount
     };
     Axios.post(url, data)
-    .then(() => {
-      const newExpense = {
-        id:Math.max.apply(Math, expenses.map(function(exp:any) { return exp.id; })) + 1,
-        ...data
-      };
-      getAllExpenses();
-      if (showTable) {
-        setExpenses(expenses.push(newExpense));
-        handleElementClick(newExpense.expenseType.type);
-      }
-    });
+      .then(() => {
+        const newExpense = {
+          id: Math.max.apply(Math, expenses.map(function (exp: any) { return exp.id; })) + 1,
+          ...data
+        };
+        getAllExpenses();
+        if (showTable) {
+          setExpenses(expenses.push(newExpense));
+          handleElementClick(newExpense.expenseType.type);
+        }
+      });
   }
 
   return (
     <div style={{ textAlign: 'center' }}>
-        {/* Show expenses in the table */}
-        {/*<Grid container spacing={2}>
+      {/* Show expenses in the table */}
+      {/*<Grid container spacing={2}>
       <Grid item xs={12} md={3}>
         <Paper>
           <h3>Total Expenses</h3>
           <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
         </Paper>
           </Grid>*/}
-<<<<<<< HEAD
-        <Paper 
-        style={{ margin: '5px auto',padding: '10px',
-                 backgroundColor:"rgba(220,245,230,0.9)",
-                 width:props.ui.isMobileView ? "90%" : showTable ? '80%':'48%',
-                 height:props.ui.isMobileView ? "90%" : '60%' }}
-                 >
-            <div>
-            <h2>
+      <Paper
+        style={{
+          opacity: 0.85,
+          margin: '5px auto', padding: '10px',
+          width: props.ui.isMobileView ? "90%" : showTable ? '80%' : '48%',
+          height: props.ui.isMobileView ? "90%" : '60%'
+        }}
+      >
+        <div>
+          <h2>
             Check your expenses, {props.user.first}</h2>
-              {/* Logic: 
+          {/* Logic: 
                 if an expense type is selected in the donut graph, then the table
                 is displayed */}
-              {showTable ? (
-=======
-        <Grid item xs={12}>
-          <div>
-            {showTable ? (
+          {showTable ? (
+            <Fragment>
+              <Container>
+                <Row>
+                  <Col>
+                    <Button
+                      color="secondary"
+                      onClick={() => setShowTable(false)}
+                      style={{ display: "inline-block" }}>
+                      Back
+                        </Button>
+                  </Col>
+                  <Col>
+                    <NewExpense
+                      types={expenseTypes}
+                      createExpense={createNewExpense}
+                      view={props.ui.isMobileView} />
+                  </Col>
+                </Row>
+              </Container>
+              <ExpensesTable expenses={expensesByUserAndType}
+                view={props.ui.isMobileView} />
+            </Fragment>
+          ) : (
               <Fragment>
-                <Button
-                  color="secondary"
-                  onClick={() => setShowTable(false)}>
-                  Back
-                </Button>
-                <ExpensesTable expenses={expensesByUserAndType} />
-              </Fragment>
-            ) : (
->>>>>>> 1ebd1ae934a9c5f13389418cfab04707958f29fa
-                <Fragment>
-                  <Container>
-                    <Row>
-                      <Col>
-                        <Button
-                          color="secondary"
-                          onClick={() => setShowTable(false)}
-                          style={{display:"inline-block"}}>
-                          Back
-                        </Button> 
-                      </Col>
-                      <Col>
-                        <NewExpense
-                        types={expenseTypes}
-                        createExpense={createNewExpense}
-                        view ={props.ui.isMobileView} />
-                      </Col>
-                    </Row>
-                  </Container>
-                  <ExpensesTable expenses={expensesByUserAndType}
-                                 view = {props.ui.isMobileView} />
-                </Fragment>
-              ) : (
-                  <Fragment>
-                    {expenses && 
-                    <div>
-                      <DonutGraph 
-                      data={createGraphData()} 
+                {expenses &&
+                  <div>
+                    <DonutGraph
+                      data={createGraphData()}
                       labels={createGraphLabels()}
                       important='Emergency'
                       isMobileView={props.ui.isMobileView}
                       handleElementClick={handleElementClick} />
-                      <NewExpense
+                    <NewExpense
                       types={expenseTypes}
                       createExpense={createNewExpense}
-                      view ={props.ui.isMobileView} />
-                      </div>}
-                  </Fragment>
-                )}
-              <br />
-            </div>
-          </Paper>
+                      view={props.ui.isMobileView} />
+                  </div>}
+              </Fragment>
+            )}
+          <br />
+        </div>
+      </Paper>
     </div >
   );
 }

@@ -8,7 +8,7 @@ import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
 import { CreateBudgetStepper } from './forms/CreateBudgetStepper';
 import HorizontalBarGraph from './data/HorizontalBarGraph';
-import colors from '../assets/Colors';
+import colors, { colorTypes } from '../assets/Colors';
 import VerticalBarGraph from './data/VerticalBarGraph';
 
 interface HorizontalTabPanelProps {
@@ -185,8 +185,12 @@ export function Budget(props: IBudgetProps) {
     <div style={{ textAlign: 'center' }}>
       {!props.user.isLoggedIn && <Redirect to="/login" />}
       <Paper style={{
-        minWidth: !props.ui.isMobileView ? '800px' : undefined,
-        margin: '10px', display: 'inline-block', padding: '20px', paddingBottom: '30px'
+        opacity: 0.85,
+        width: props.ui.isMobileView ? '90%' : '70%',
+        height: props.ui.isMobileView ? '95%' : '70%',
+        maxWidth: '90%',
+        maxHeight: '95%',
+        margin: '10px auto', padding: '20px 10px 20px 10px'
       }}>
         {!budgets ? (
           <Fragment>

@@ -18,9 +18,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     marginRight: '5px'
   },
   navbar: {
-    maxHeight: '50%',
-    height: '50%',
-    marginLeft: '5px',
     color: 'primary'
   },
   title: {
@@ -109,7 +106,7 @@ function NavBar(props: INavProps) {
   return (
     <Fragment>
       <Sidebar open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} handleLogin={handleLoginOpen} />
-      <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined }} position='sticky'>
+      <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined, opacity: 0.97 }} position='sticky'>
         <Toolbar className={classes.navbar}>
           {props.ui.isMobileView &&
             <Button style={{ marginRight: '5px', maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>

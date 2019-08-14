@@ -45,8 +45,8 @@ export function VerticalBarGraph(props: any) {
 
   return (data ?
     <Bar
-      width={props.isMobileView ? 300 : 300}
-      height={props.isMobileView ? 400 : 150}
+      width={props.isMobileView ? 300 : 150}
+      height={props.isMobileView ? 300 : 300}
       data={data}
       getElementAtEvent={handleElementClick} /> : <Fragment />
   );
