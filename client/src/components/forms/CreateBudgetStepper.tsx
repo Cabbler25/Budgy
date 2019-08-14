@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Stepper, Step, StepLabel, Typography, Button, TextField, InputAdornment } from '@material-ui/core';
+import { Button, InputAdornment, Step, StepLabel, Stepper, TextField, Typography, ClickAwayListener } from '@material-ui/core';
+import React, { useState } from 'react';
 
 function getSteps() {
   return ['Describe your budget', 'Select a type', 'Set an amount'];
@@ -19,15 +19,6 @@ export function CreateBudgetStepper(props: any) {
 
   function handleInputChange(e: any) {
     setHasError(false);
-    if (e.target.id == 'amount') {
-      if (e.target.value == '') {
-        setInputState({
-          ...inputState,
-          [e.target.id]: 0
-        })
-        return;
-      }
-    }
     setInputState({
       ...inputState,
       [e.target.id]: e.target.value
@@ -41,7 +32,7 @@ export function CreateBudgetStepper(props: any) {
         else setActiveStep(prevActiveStep => prevActiveStep + 1);
         break;
       case 2:
-        if (inputState.amount === 0) setHasError(true);
+        if (!inputState.amount || inputState.amount === 0) setHasError(true);
         else setActiveStep(prevActiveStep => prevActiveStep + 1);
         break;
       default:
@@ -60,7 +51,13 @@ export function CreateBudgetStepper(props: any) {
 
   function handleSubmit() {
     handleReset();
-    props.handleSubmit(props.types.find((type: any) => type.id == inputState.type), inputState.description, inputState.amount);
+    const data = {
+      userId: props.userId,
+      budgetType: props.types.find((type: any) => type.id == inputState.type),
+      description: inputState.description,
+      amount: Number(inputState.amount)
+    }
+    props.handleSubmit(data);
   }
 
   function handleCancel() {
@@ -74,7 +71,7 @@ export function CreateBudgetStepper(props: any) {
         return (
           <TextField
             error={hasError}
-            style={{ width: '400px' }}
+            style={{ width: props.isMobileView ? '300px' : '400px' }}
             id='description'
             value={inputState.description}
             label='Description'
@@ -103,19 +100,23 @@ export function CreateBudgetStepper(props: any) {
         );
       case 2:
         return (
-          <TextField
-            error={hasError}
-            id='amount'
-            value={inputState.amount}
-            label='Amount'
-            variant='outlined'
-            type='number'
-            InputProps={{
-              startAdornment: <InputAdornment position="start" > $</InputAdornment>
-            }}
-            onChange={handleInputChange}
-            helperText={hasError ? 'Amount must be greater than 0' : undefined}
-          />
+          <ClickAwayListener onClickAway={() => {
+            if (!inputState.amount) setInputState({ ...inputState, amount: 0 })
+          }}>
+            <TextField
+              error={hasError}
+              id='amount'
+              label='Amount'
+              value={inputState.amount}
+              variant='outlined'
+              type='number'
+              InputProps={{
+                startAdornment: <InputAdornment position="start" >$ </InputAdornment>
+              }}
+              onChange={handleInputChange}
+              helperText={hasError ? 'Amount must be greater than 0' : undefined}
+            />
+          </ClickAwayListener >
         );
       default:
         return (
@@ -163,3 +164,5 @@ export function CreateBudgetStepper(props: any) {
     </div>
   );
 }
+
+export default CreateBudgetStepper;
