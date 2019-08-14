@@ -59,7 +59,7 @@ export default function NewExpense(props:any) {
 
   return (
     <div>
-      <Button onClick={handleClickOpen}>Add expense</Button>
+      <Button onClick={handleClickOpen}>+</Button>
       <Dialog disableBackdropClick disableEscapeKeyDown open={state.open} onClose={handleClose}>
         <DialogContent>
           <form className={classes.container}>
@@ -86,11 +86,11 @@ export default function NewExpense(props:any) {
                         <TextField
                         name="description"
                         className="new-expense-form"
-                        placeholder="A description of the expense..."
+                        placeholder="A brief description of the expense..."
                         label="Description"
                         type="text"
                         multiline={true}
-                        rows={5}
+                        rows={props.view ? 4 : 5}
                         onChange={handleChange("description")}/>
                     </Row>
                     <Row className="new-expense-form">
