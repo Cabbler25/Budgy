@@ -10,7 +10,6 @@ import Axios from 'axios';
 import { Grid, Paper, Button } from '@material-ui/core';
 import DonutGraph from './data/DonutGraph';
 
-
 export interface IExpenseProps {
   user: IUserState;
   ui: IUiState;
@@ -37,7 +36,6 @@ function Expenses(props: IExpenseProps) {
     const url = `http://localhost:8080/expense/user/${props.user.id}`;
     await Axios.get(url)
       .then((payload: any) => {
-        // console.log(payload.data);
         setExpenses(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
@@ -48,23 +46,11 @@ function Expenses(props: IExpenseProps) {
     const url = `http://localhost:8080/expense/types`;
     await Axios.get(url)
       .then((payload: any) => {
-        // console.log(payload.data);
         setExpenseTypes(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
   }
-
-  // function adjustExpenseType(typeId: number) {
-  //   getExpensesByUserIdAndTypeId(typeId);
-
-  // }
-
-  // // This function sends the request to get all user reimbursements
-  // function getExpensesByUserIdAndTypeId(typeId: number) {
-  //   setExpensesByUserIdAndTypeId(expenses.filter((e: any) => (e.expenseType.id === typeId)));
-  //   setExpenseType(typeId);
-  // }
 
   function createGraphData() {
     return expenses.map((i: any) => {
@@ -80,11 +66,9 @@ function Expenses(props: IExpenseProps) {
 
   async function handleElementClick(label: string) {
     const type = expenseTypes.find((type: any) => type.type == label);
-
     if (type) {
       const matchedExpenses = expenses.filter((expense: any) =>
         JSON.stringify(expense.expenseType) == JSON.stringify(type))
-      console.log(matchedExpenses);
       setExpensesByUserIdAndTypeId(matchedExpenses);
       setShowTable(true);
     }
@@ -101,35 +85,22 @@ function Expenses(props: IExpenseProps) {
       description: newDescripion,
       amount: newAmount
     };
-    const response = await Axios.post(url, data);
-    try {
-      // console.log(response.status);
+    Axios.post(url, data)
+    .then(() => {
+      const newExpense = {
+        id:Math.max.apply(Math, expenses.map(function(exp:any) { return exp.id; })) + 1,
+        ...data
+      };
       getAllExpenses();
-    } catch {
-      console.log("ERRORS: ", response.data);
-    }
+      if (showTable) {
+        setExpenses(expenses.push(newExpense));
+        handleElementClick(newExpense.expenseType.type);
+      }
+    });
   }
 
   return (
-    <div>
-      <Container style={{ textAlign: 'center' }}>
-        <h2>Check your expenses, {props.user.first}</h2>
-        {/* Logic: 
-          if an expense type is selected in the donut graph, then the table
-          is displayed */}
-
-
-        {/* Here is the create new expense form.
-            The axios request is sent thru there. */}
-        {/* Send the user Id to let the database know
-            who made the expense. */}
-        <br />
-        {/* <Divider /> */}
-        <NewExpense
-          types={expenseTypes}
-          createExpense={createNewExpense} />
-        <br />
-
+    <div style={{ textAlign: 'center' }}>
         {/* Show expenses in the table */}
         {/*<Grid container spacing={2}>
       <Grid item xs={12} md={3}>
@@ -137,8 +108,22 @@ function Expenses(props: IExpenseProps) {
           <h3>Total Expenses</h3>
           <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
         </Paper>
-
           </Grid>*/}
+<<<<<<< HEAD
+        <Paper 
+        style={{ margin: '5px auto',padding: '10px',
+                 backgroundColor:"rgba(220,245,230,0.9)",
+                 width:props.ui.isMobileView ? "90%" : showTable ? '80%':'48%',
+                 height:props.ui.isMobileView ? "90%" : '60%' }}
+                 >
+            <div>
+            <h2>
+            Check your expenses, {props.user.first}</h2>
+              {/* Logic: 
+                if an expense type is selected in the donut graph, then the table
+                is displayed */}
+              {showTable ? (
+=======
         <Grid item xs={12}>
           <div>
             {showTable ? (
@@ -151,20 +136,49 @@ function Expenses(props: IExpenseProps) {
                 <ExpensesTable expenses={expensesByUserAndType} />
               </Fragment>
             ) : (
+>>>>>>> 1ebd1ae934a9c5f13389418cfab04707958f29fa
                 <Fragment>
-                  {expenses && (<DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                    isMobileView={props.ui.isMobileView}
-                    handleElementClick={handleElementClick} />)}
+                  <Container>
+                    <Row>
+                      <Col>
+                        <Button
+                          color="secondary"
+                          onClick={() => setShowTable(false)}
+                          style={{display:"inline-block"}}>
+                          Back
+                        </Button> 
+                      </Col>
+                      <Col>
+                        <NewExpense
+                        types={expenseTypes}
+                        createExpense={createNewExpense}
+                        view ={props.ui.isMobileView} />
+                      </Col>
+                    </Row>
+                  </Container>
+                  <ExpensesTable expenses={expensesByUserAndType}
+                                 view = {props.ui.isMobileView} />
                 </Fragment>
-              )}
-            <br />
-            <NewExpense
-              types={expenseTypes}
-              createExpense={createNewExpense} />
-            <br />
-          </div>
-        </Grid>
-      </Container>
+              ) : (
+                  <Fragment>
+                    {expenses && 
+                    <div>
+                      <DonutGraph 
+                      data={createGraphData()} 
+                      labels={createGraphLabels()}
+                      important='Emergency'
+                      isMobileView={props.ui.isMobileView}
+                      handleElementClick={handleElementClick} />
+                      <NewExpense
+                      types={expenseTypes}
+                      createExpense={createNewExpense}
+                      view ={props.ui.isMobileView} />
+                      </div>}
+                  </Fragment>
+                )}
+              <br />
+            </div>
+          </Paper>
     </div >
   );
 }
