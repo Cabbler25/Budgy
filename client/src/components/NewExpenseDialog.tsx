@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function NewExpense(authorId: number) {
-  const classes = useStyles();
+export default function NewExpense(props:any) {
+  const classes = useStyles(props);
   const [state, setState] = React.useState({
     open: false,
     type: 0,
@@ -44,25 +44,15 @@ export default function NewExpense(authorId: number) {
   function handleClickOpen() {
     setState({ ...state, open: true });
   }
-//   Request function for new expense here
-  async function createNewExpense(){
-    //   Close the pop up
+  
+  function handleSubmit() {
+    // Check state of elements using conditionals 
+    // const type = props.types.find((type:any) => type.id == state.type);
+    props.createExpense(props.types.find((type:any) => type.id == state.type),state.description,state.amount);
+    // Close popover
     handleClose();
-    // Prepare request setup
-    const url = 'http://localhost:8080/expense/create';
-    const response = await Axios.post(url, {
-      userId: authorId,
-      type: state.type,
-      date: new Date().toISOString().slice(0, 10),
-      description: state.description,
-      amount: state.amount
-    });
-    try {
-      console.log(response.status);
-    } catch {
-      console.log("ERRORS: ", response.data);
-    }
   }
+
   function handleClose() {
     setState({ ...state, open: false });
   }
@@ -74,25 +64,11 @@ export default function NewExpense(authorId: number) {
         <DialogContent>
           <form className={classes.container}>
             <FormControl className={classes.formControl}>
+
               <Paper>
-                  <Container>
-                    <Row className="new-expense-form">
-                      <Select
-                      value={state.type}
-                      onChange={handleChange('type')}
-                      input={<Input id="expense-type"
-                       />}
-                      >
-                        <MenuItem value={0}>
-                          <em>Select Expense Type</em>
-                        </MenuItem>
-                        <MenuItem value={1}>Bills</MenuItem>
-                        <MenuItem value={2}>Food</MenuItem>
-                        <MenuItem value={3}>Emergency</MenuItem>
-                        <MenuItem value={4}>For fun</MenuItem>
-                        <MenuItem value={5}>Other</MenuItem>
-                        </Select>
-                    </Row>
+                  <Container style={{textAlign: "center"}}>
+                    <Row><h4>Add New Expense</h4></Row>
+
                     <Row className="new-expense-form">
                         <TextField
                         name="amount"
@@ -117,6 +93,20 @@ export default function NewExpense(authorId: number) {
                         rows={5}
                         onChange={handleChange("description")}/>
                     </Row>
+                    <Row className="new-expense-form">
+                      <Select
+                      value={state.type}
+                      onChange={handleChange('type')}
+                      input={<Input id="expense-type" />}
+                      >
+                        <MenuItem value={0}>
+                        <em>Select Expense Type</em>
+                        </MenuItem>
+                        {props.types.map((t:any) => (
+                        <MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>  
+                        ))}
+                      </Select>
+                    </Row>
                   </Container>
               </Paper>
             </FormControl>
@@ -126,7 +116,7 @@ export default function NewExpense(authorId: number) {
             <Button
             onClick={
             // Function call to send the request for creating new expense
-            createNewExpense
+            handleSubmit
             }
             color="primary">
                 Ok

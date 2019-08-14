@@ -1,4 +1,4 @@
-package entities;
+package com.revature.models;
 
 import java.util.Date;
 

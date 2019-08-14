@@ -1,5 +1,5 @@
 import React from 'react';
-import "reaviz/dist/index.css";
+// import "reaviz/dist/index.css";
 import CanvasJSReact from '../../assets/canvasjs.react';
 
 export function CircleGraph(props: any) {

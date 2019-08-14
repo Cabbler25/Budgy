@@ -9,6 +9,8 @@ import Paper from '@material-ui/core/Paper';
 import Axios from 'axios';
 import { IUserState } from '../redux';
 import { IExpenseProps } from './Expenses.component';
+import { Button } from 'reactstrap';
+import { Link } from '@material-ui/core';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -46,29 +48,32 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export function ExpensesTable(props: IExpenseProps) {
-  const classes = useStyles();
-  const [expenses, setExpenses] = useState([{
-    amount:0
-  }]);
+export function ExpensesTable(props:any) {
+  const classes = useStyles(props);
+  const [expenses, setExpenses] = useState([]);
 
   useEffect(() => {
-    getAllExpenses(props.user.id);
+    createTable();
   }, [])
 
   // This function sends the request to get all user reimbursements
-  async function getAllExpenses(userId: number) {
-    const url = `http://localhost:8080/expense/user/${userId}`;
-    await Axios.get(url)
-      .then((payload: any) => {
-        console.log(payload.data);
-        setExpenses(payload.data);
-      }).catch((err: any) => {
-        // Handle error by displaying something else
-      });
+  function createTable() {
+    setExpenses(props.expenses);
+    console.log(expenses);
+  }
+  // Go back to the expenses component
+  function handleBackButton() {
+    // props.location.state.props.history.push("/expenses");
+    props.changeType(0);
   }
   return (
     <div>
+        <Button 
+          color="secondary"
+          onClick={handleBackButton}>
+            Back
+            {/* <Link to="/expense">Back</Link>  */}
+          </Button>
         <Paper className={classes.root}>
           <Table className={classes.table}>
             <TableHead>
@@ -81,7 +86,6 @@ export function ExpensesTable(props: IExpenseProps) {
             </TableHead>
             <TableBody>
               {expenses.map((row: any) => (
-                  row.amount !== 0 &&
                   <StyledTableRow key={row.amount}>
                     <StyledTableCell component="th" scope="row">
                       {row.amount}
