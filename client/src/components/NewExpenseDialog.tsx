@@ -144,7 +144,7 @@ export default function NewExpense(props:any) {
                       >
                         <MenuItem value={0}>
                         <em style={
-                          {color:state.formFilled?"black":state.description?"black":"red"}
+                          {color:state.formFilled?"black":state.type?"black":"red"}
                           }>
                           { state.formFilled ?
                             props.view ? 
