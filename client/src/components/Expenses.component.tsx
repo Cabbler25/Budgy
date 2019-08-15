@@ -22,6 +22,7 @@ function Expenses(props: IExpenseProps) {
   const [expenses, setExpenses] = useState();
   const [expenseTypes, setExpenseTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
+  const [expenseType,setExpenseType] = useState();
   const [expensesByUserAndType, setExpensesByUserIdAndTypeId] = useState([]);
 
   useEffect(() => {
@@ -68,6 +69,8 @@ function Expenses(props: IExpenseProps) {
       const matchedExpenses = expenses.filter((expense: any) =>
         JSON.stringify(expense.expenseType) == JSON.stringify(type))
       setExpensesByUserIdAndTypeId(matchedExpenses);
+      setExpenseType(label);
+      // Show the table if a piece of the donut is clicked
       setShowTable(true);
     }
   }
@@ -154,8 +157,10 @@ function Expenses(props: IExpenseProps) {
                  height:props.ui.isMobileView ? "90%" : '60%' }}
                  >
             <div>
-            <h2>
-            Check your expenses, {props.user.first}</h2>
+              {showTable ? 
+              <h2>Your {expenseType} expenses, {props.user.first}</h2> :
+              <h2>Check your expenses, {props.user.first}</h2>
+              }
           {/* Logic: 
                 if an expense type is selected in the donut graph, then the table
                 is displayed */}

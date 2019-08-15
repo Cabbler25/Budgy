@@ -7,15 +7,15 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
-import { Link, Input } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
 import { TextField } from 'material-ui';
+import { Input } from '@material-ui/core';
 
 /*
 TODO: 
 - If user clicks on update or delete buttons, show a dialog that says
-are you sure?
+are you sure? OK - Cancel
 - Prevent column for resizing when is in edit mode and the Input field pops up in the cells
 */
 
@@ -73,7 +73,7 @@ export function ExpensesTable(props: any) {
       margin: "auto"
     },
     table: {
-      width: props.view ? "100%" : "90?",
+      width: props.view ? "100%" : "80?",
       textAlign: "center"
     },
   }),
@@ -88,13 +88,16 @@ const columnStyle = { marginRight: '2px', marginLeft: 'auto' };
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <StyledTableCell style={columnStyle}>amount (usd)</StyledTableCell>
+              <StyledTableCell 
+              style={columnStyle}
+              size='small'
+              >amount (usd)</StyledTableCell>
                 {props.view ? 
                 <Fragment></Fragment>
                 :
                 <Fragment>
-                  <StyledTableCell style={columnStyle}>type</StyledTableCell>
-                  <StyledTableCell style={columnStyle}>date</StyledTableCell>
+                  <StyledTableCell style={columnStyle}></StyledTableCell>
+                  <StyledTableCell style={columnStyle}>Submitted on</StyledTableCell>
                 </Fragment>
                 }
                 <StyledTableCell style={columnStyle}>description</StyledTableCell>
@@ -103,23 +106,24 @@ const columnStyle = { marginRight: '2px', marginLeft: 'auto' };
           </TableHead>
           <TableBody>
             {props.expenses.map((row: any) => (
-              <StyledTableRow key={row.id}>
-                <StyledTableCell component="th" scope="row">
+              <TableRow key={row.id}>
+                <TableCell component="th" scope="row"
+                size='small'>
                   {
                     // Check if row is in editable mode
                     (editableRow && editableRowKey === row.id) ?
-                    <Input 
+                    <Input
                     type="number"
                     defaultValue={row.amount}
                     name="amount"
                     onChange={(e:any)=>handleEditedExpenseChange(e)}/> :
                     row.amount
                   }
-                </StyledTableCell>
+                </TableCell>
                 {
                   props.view ? <Fragment></Fragment>:
                   <Fragment>
-                    <StyledTableCell>{row.expenseType.type}</StyledTableCell>
+                    <StyledTableCell style={columnStyle}></StyledTableCell>
                     <StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
                   </Fragment>
                 }
@@ -127,7 +131,7 @@ const columnStyle = { marginRight: '2px', marginLeft: 'auto' };
                 {
                     // Check if row is in editable mode
                     (editableRow && editableRowKey === row.id) ?
-                    <Input 
+                    <Input
                     defaultValue={row.description}
                     name="description"
                     onChange={(e:any)=>handleEditedExpenseChange(e)}/> :
@@ -173,7 +177,9 @@ const columnStyle = { marginRight: '2px', marginLeft: 'auto' };
                         </Button>
                         {/* Assign the onClick function to notify the parent which
                         expense will be deleted */}
-                        <Button onClick={() => props.deleteExpense(row)}>
+                        <Button 
+                        onClick={() => props.deleteExpense(row)}
+                        style={{backgroundColor:'red'}}>
                           <svg xmlns={removeTool}  
                           width="24" height="24" viewBox="0 0 24 24">
                           <path d={removePath}/>
@@ -182,7 +188,7 @@ const columnStyle = { marginRight: '2px', marginLeft: 'auto' };
                       </StyledTableCell>
                     </Fragment>
                   }
-              </StyledTableRow>
+              </TableRow>
             ))
             }
           </TableBody>
