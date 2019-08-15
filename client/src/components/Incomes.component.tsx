@@ -8,6 +8,7 @@ import { IncomesTable } from './IncomeTablesComponent';
 import { Grid, Paper, Button } from '@material-ui/core';
 import DonutGraph from './data/DonutGraph';
 import { Link, Redirect } from 'react-router-dom';
+import { thisExpression } from '@babel/types';
 
 
 
@@ -43,6 +44,29 @@ async function getAllIncomes() {
       });
 }
 
+async function deleteIncome(income: any) {
+  function checkId(inc:any) {
+    return inc.id === income.id;
+  }
+    const url = `http://localhost:8080/income/${income.id}`;
+    await Axios.delete(url, income)
+        .then(() => {
+          getAllIncomes();
+          if (showTable) {
+            const deletedIncomesIndex = incomes.findIndex(checkId);
+            setIncomes(incomes.splice(deletedIncomesIndex,1));
+            setShowTable(false)
+            handleElementClick(income.incomeType.type);
+           // console.log(income.incomeTypes.type)
+            //console.log(income.incomeType.type)
+          }
+        })
+        .catch((err: any) => {
+            //erros
+        });
+  
+}
+
 async function getAllIncomeTypes() {
   const url = `http://localhost:8080/income/types`;
   await Axios.get(url)
@@ -68,11 +92,11 @@ function createGraphLabels() {
 
 async function handleElementClick(label: string) {
   const type = incomeTypes.find((type: any) => type.type == label);
-
+ // console.log(type)
   if (type) {
     const matchedIncomes = incomes.filter((income: any) =>
       JSON.stringify(income.incomeType) == JSON.stringify(type))
-    console.log(matchedIncomes);
+   // console.log(matchedIncomes);
     setIncomeByUserIdAndTypeId(matchedIncomes);
     setShowTable(true);
   }
@@ -90,7 +114,7 @@ async function createNewIncome(newType: any, newDescripion: string, newAmount: n
   };
   const response = await Axios.post(url, data);
   try {
-    // console.log(response.status);
+    console.log(response.status);
     getAllIncomes();
   } catch {
     console.log("ERRORS: ", response.data);
@@ -121,7 +145,7 @@ return (
                   onClick={() => setShowTable(false)}>
                   Back
                 </Button>
-                <IncomesTable incomes={incomesByUserAndType} />
+                <IncomesTable incomes={incomesByUserAndType} deleteIncome={deleteIncome} />
               </Fragment>
             ) : (
                 <Fragment>
