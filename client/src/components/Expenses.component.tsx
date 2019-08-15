@@ -116,6 +116,26 @@ function Expenses(props: IExpenseProps) {
       }
     )
   }
+  // Request function to update an expense
+  async function updateExpense(expense:any) {
+    // Find the id of the updated expense
+    function checkId(exp:any) {
+      return exp.id === expense.id;
+    }
+    // Send the request
+    const url = `http://localhost:8080/expense`;
+    Axios.put(url,expense)
+    .then(() => {
+      getAllExpenses();
+      if (showTable) {
+        console.log(expense);
+        // Modify the expenses that are going to be shown in the table
+        const updatedExpenseIndex = expenses.findIndex(checkId);
+        expenses[updatedExpenseIndex] = expense;
+        setExpenses(expenses);
+      }
+    })
+  }
 
   return (
     <div style={{ textAlign: 'center' }}>
@@ -161,7 +181,8 @@ function Expenses(props: IExpenseProps) {
                   </Container>
                   <ExpensesTable expenses={expensesByUserAndType}
                                  view = {props.ui.isMobileView}
-                                 deleteExpense = {deleteExpense} />
+                                 deleteExpense = {deleteExpense} 
+                                 updateExpense = {updateExpense}/>
                 </Fragment>
               ) : (
                   <Fragment>
