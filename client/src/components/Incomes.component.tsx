@@ -67,6 +67,8 @@ async function deleteIncome(income: any) {
   
 }
 
+
+
 async function getAllIncomeTypes() {
   const url = `http://localhost:8080/income/types`;
   await Axios.get(url)
