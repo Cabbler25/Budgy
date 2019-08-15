@@ -2,11 +2,12 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { IUserState, IState, IUiState } from '../redux';
 import { connect } from 'react-redux';
 import NewIncome from './NewIncomesDialog';
-import { Container } from 'reactstrap';
+import { Col, Container, Row } from 'reactstrap';
 import Axios from 'axios';
 import { IncomesTable } from './IncomeTablesComponent';
 import { Grid, Paper, Button } from '@material-ui/core';
 import DonutGraph from './data/DonutGraph';
+
 
 
 interface IIncomeProps {
@@ -97,7 +98,8 @@ async function createNewIncome(newType: any, newDescripion: string, newAmount: n
 
 return (
   <div style={{textAlign: 'center'}}>
-    <Paper style={{ margin: '30px', display: 'inline-block', padding: '60px', paddingBottom: '30px'}}>
+    <Paper style={{opacity: .85, margin: '5px auto', padding: '10px', width: props.ui.isMobileView ? "90%" : showTable ? '80%' : '48%',
+                  height: props.ui.isMobileView ? "90%" : "60%"}}>
     {//<Container style={{ textAlign: 'center'}}> 
     }
       <h2>Manage your income, {props.user.first}</h2>
