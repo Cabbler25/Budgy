@@ -1,14 +1,12 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { connect } from 'react-redux';
-
-import { Input, Label, Container, Row, Popover, Col } from 'reactstrap';
-import NewExpense from './NewExpenseDialog';
-import { ExpensesTable } from './ExpensesTablesComponent';
-import ExpensesGraph from './MyExpensesGraph';
-import { IUserState, IState, IUiState } from '../redux';
+import { Button, Paper } from '@material-ui/core';
 import Axios from 'axios';
-import { Grid, Paper, Button } from '@material-ui/core';
+import React, { Fragment, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Col, Container, Row } from 'reactstrap';
+import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
+import { ExpensesTable } from './ExpensesTablesComponent';
+import NewExpense from './NewExpenseDialog';
 
 export interface IExpenseProps {
   user: IUserState;
@@ -86,23 +84,23 @@ function Expenses(props: IExpenseProps) {
       amount: newAmount
     };
     Axios.post(url, data)
-    .then(() => {
-      const newExpense = {
-        id:Math.max.apply(Math, expenses.map(function(exp:any) { return exp.id; })) + 1,
-        ...data
-      };
-      getAllExpenses();
-      if (showTable) {
-        setExpenses(expenses.push(newExpense));
-        handleElementClick(newExpense.expenseType.type);
-      }
-    });
+      .then(() => {
+        const newExpense = {
+          id: Math.max.apply(Math, expenses.map(function (exp: any) { return exp.id; })) + 1,
+          ...data
+        };
+        getAllExpenses();
+        if (showTable) {
+          setExpenses(expenses.push(newExpense));
+          handleElementClick(newExpense.expenseType.type);
+        }
+      });
   }
 
   return (
     <div style={{ textAlign: 'center' }}>
-        {/* Show expenses in the table */}
-        {/*<Grid container spacing={2}>
+      {/* Show expenses in the table */}
+      {/*<Grid container spacing={2}>
       <Grid item xs={12} md={3}>
         <Paper>
           <h3>Total Expenses</h3>
@@ -118,7 +116,7 @@ function Expenses(props: IExpenseProps) {
             <div>
             <h2>
             Check your expenses, {props.user.first}</h2>
-              {/* Logic: 
+          {/* Logic: 
                 if an expense type is selected in the donut graph, then the table
                 is displayed */}
               {showTable ? (
@@ -154,16 +152,16 @@ function Expenses(props: IExpenseProps) {
                       important='Emergency'
                       isMobileView={props.ui.isMobileView}
                       handleElementClick={handleElementClick} />
-                      <NewExpense
+                    <NewExpense
                       types={expenseTypes}
                       createExpense={createNewExpense}
-                      view ={props.ui.isMobileView} />
-                      </div>}
-                  </Fragment>
-                )}
-              <br />
-            </div>
-          </Paper>
+                      view={props.ui.isMobileView} />
+                  </div>}
+              </Fragment>
+            )}
+          <br />
+        </div>
+      </Paper>
     </div >
   );
 }

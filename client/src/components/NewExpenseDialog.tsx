@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function NewExpense(props:any) {
+export default function NewExpense(props: any) {
   const classes = useStyles(props);
   const [state, setState] = React.useState({
     open: false,
@@ -47,7 +47,7 @@ export default function NewExpense(props:any) {
   function handleClickOpen() {
     setState({ type:0,description:'',amount:0, open: true,formFilled:true });
   }
-  
+
   function handleSubmit() {
     // Check if form is filled properly
     if (state.type && state.description && state.amount) {
@@ -164,17 +164,17 @@ export default function NewExpense(props:any) {
           </form>
         </DialogContent>
         <DialogActions>
-            <Button
+          <Button
             onClick={
-            // Function call to send the request for creating new expense
-            handleSubmit
+              // Function call to send the request for creating new expense
+              handleSubmit
             }
             color="primary">
-                Ok
+            Ok
             </Button>
           <Button
-          onClick={handleClose}
-          color="secondary">
+            onClick={handleClose}
+            color="secondary">
             Cancel
           </Button>
         </DialogActions>

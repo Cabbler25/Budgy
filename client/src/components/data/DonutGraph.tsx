@@ -35,7 +35,7 @@ export function DonutGraph(props: any) {
         }]
       })
     }
-  }, [props.data, props.labels])
+  }, [props.data, props.labels, props.important,])
 
   function handleElementClick(e: any) {
     // Sends the corresponding label as a string
@@ -44,10 +44,11 @@ export function DonutGraph(props: any) {
   }
 
   return (data ?
-    <Doughnut options={{ tooltips: { enabled: true, backgroundColor: colors.teal } }} legend={{ position: 'top' }}
-      width={props.isMobileView ? 250 : undefined}
-      height={props.isMobileView ? 250 : undefined}
-      data={data} getElementAtEvent={handleElementClick} /> : <Fragment />
+    <Doughnut
+      width={props.isMobileView ? 250 : 300}
+      height={props.isMobileView ? 250 : 150}
+      data={data} getElementAtEvent={handleElementClick} />
+    : <Fragment />
   );
 }
 
