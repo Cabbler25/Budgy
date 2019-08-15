@@ -8,7 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 import { Link, Button } from '@material-ui/core';
-import { pencilTool, pencilPath } from '../assets/Icons';
+import { pencilTool, pencilPath, removeTool, removePath } from '../assets/Icons';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -26,13 +26,31 @@ const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
     root: {
       '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: theme.palette.background.paper,
       },
     },
   }),
 )(TableRow);
 
+
+// Listen for changes in the edited expense
+function handleEditedExpenseChange (event:any) {
+  
+}
+
 export function ExpensesTable(props: any) {
+  // Declare the expense to be edited (one at a time) and its event listener
+  const [editedExpense,setEditedExpense] = useState({});
+  // Declare the boolean that will change the display of the row from read only to write
+  const [editableRow,setEditableRow] = useState(false);
+
+  // Button used to enable edit fields in the table
+  function handleEditButton(expense:any) {
+    // Define the expense that's going to be edited
+    setEditedExpense(expense);
+    setEditableRow(true);
+    console.log(editedExpense);
+  }
   const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -73,7 +91,7 @@ const classes = useStyles(props);
                 description
                 </StyledTableCell>
                 <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                  edit
+                  
                 </StyledTableCell>
             </TableRow>
           </TableHead>
@@ -81,7 +99,9 @@ const classes = useStyles(props);
             {props.expenses.map((row: any) => (
               <StyledTableRow key={row.id}>
                 <StyledTableCell component="th" scope="row">
-                  {row.amount}
+                  {
+                    row.amount
+                  }
                 </StyledTableCell>
                 {
                   props.view ?
@@ -94,9 +114,16 @@ const classes = useStyles(props);
                 }
                 <StyledTableCell >{row.description}</StyledTableCell>
                 <StyledTableCell>
-                  <svg xmlns={pencilTool}  width="24" height="24" viewBox="0 0 24 24">
-                  <path d={pencilPath}/>
-                  </svg>
+                  <Button onClick={() => handleEditButton(row)}>
+                    <svg xmlns={pencilTool}  width="24" height="24" viewBox="0 0 24 24">
+                    <path d={pencilPath}/>
+                    </svg>
+                  </Button>
+                  <Button onClick={() => props.deleteExpense(row)}>
+                    <svg xmlns={removeTool}  width="24" height="24" viewBox="0 0 24 24">
+                    <path d={removePath}/>
+                    </svg>
+                  </Button>
                 </StyledTableCell>
               </StyledTableRow>
             ))

@@ -61,7 +61,7 @@ function Expenses(props: IExpenseProps) {
       return i.type;
     });
   }
-
+  // Function used to display the expenses in the table.
   async function handleElementClick(label: string) {
     const type = expenseTypes.find((type: any) => type.type == label);
     if (type) {
@@ -96,6 +96,26 @@ function Expenses(props: IExpenseProps) {
         }
       });
   }
+  // Request function to delete an existing expense
+  async function deleteExpense(expense:any) {
+    // Find the id of the removed expense
+    function checkId(exp:any) {
+      return exp.id === expense.id;
+    }
+    const url = `http://localhost:8080/expense/${expense.id}`;
+    Axios.delete(url,expense)
+      .then(() => {
+        getAllExpenses();
+        if (showTable) {
+          // Find the index of the to-be-removed expense
+          const deletedExpenseIndex = expenses.findIndex(checkId);
+          // Remove it from the expenses array so it can be removed visually from the table
+          setExpenses(expenses.splice(deletedExpenseIndex,1));
+          handleElementClick(expense.expenseType.type);
+        }
+      }
+    )
+  }
 
   return (
     <div style={{ textAlign: 'center' }}>
@@ -120,7 +140,7 @@ function Expenses(props: IExpenseProps) {
                 if an expense type is selected in the donut graph, then the table
                 is displayed */}
               {showTable ? (
-                <Fragment>
+                <Fragment> 
                   <Container>
                     <Row>
                       <Col>
@@ -140,7 +160,8 @@ function Expenses(props: IExpenseProps) {
                     </Row>
                   </Container>
                   <ExpensesTable expenses={expensesByUserAndType}
-                                 view = {props.ui.isMobileView} />
+                                 view = {props.ui.isMobileView}
+                                 deleteExpense = {deleteExpense} />
                 </Fragment>
               ) : (
                   <Fragment>
