@@ -51,15 +51,15 @@ public class BudgetController {
 		return budgetService.findAllBudgetTypes();
 	}
 
-	@RequestMapping(value = "/budget/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/budget/delete/{id}", method = RequestMethod.DELETE)
 	public HttpStatus deleteBudget(@PathVariable int id) {
 		budgetService.deleteBudget(id);
 		return HttpStatus.NO_CONTENT;
 	}
 
 	@RequestMapping(value = "/budget", method = RequestMethod.POST)
-	public HttpStatus insertBudget(@RequestBody Budget budget) {
-		return budgetService.addBudget(budget) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
+	public Budget insertBudget(@RequestBody Budget budget) {
+		return budgetService.addBudget(budget) ? budget : null;
 	}
 
 	@RequestMapping(value = "/budget", method = RequestMethod.PUT)
