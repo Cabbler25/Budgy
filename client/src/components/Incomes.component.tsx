@@ -7,6 +7,7 @@ import Axios from 'axios';
 import { IncomesTable } from './IncomeTablesComponent';
 import { Grid, Paper, Button } from '@material-ui/core';
 import DonutGraph from './data/DonutGraph';
+import { Link, Redirect } from 'react-router-dom';
 
 
 
@@ -98,7 +99,8 @@ async function createNewIncome(newType: any, newDescripion: string, newAmount: n
 
 return (
   <div style={{textAlign: 'center'}}>
-    <Paper style={{opacity: .85, margin: '5px auto', padding: '10px', width: props.ui.isMobileView ? "90%" : showTable ? '80%' : '48%',
+    {!props.user.isLoggedIn && <Redirect to="/login" />}
+    <Paper style={{opacity: .75, margin: '5px auto', padding: '10px', width: props.ui.isMobileView ? "90%" : showTable ? '80%' : '48%',
                   height: props.ui.isMobileView ? "90%" : "60%"}}>
     {//<Container style={{ textAlign: 'center'}}> 
     }
