@@ -107,49 +107,47 @@ function Expenses(props: IExpenseProps) {
           <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
         </Paper>
           </Grid>*/}
-      <Paper
-        style={{
-          opacity: 0.85,
-          margin: '5px auto', padding: '10px',
-          width: props.ui.isMobileView ? "90%" : showTable ? '80%' : '48%',
-          height: props.ui.isMobileView ? "90%" : '60%'
-        }}
-      >
-        <div>
-          <h2>
+        <Paper 
+        style={{ margin: '5px auto',padding: '10px',
+                 backgroundColor:"rgba(220,245,230,0.9)",
+                 width:props.ui.isMobileView ? "90%" : showTable ? '80%':'48%',
+                 height:props.ui.isMobileView ? "90%" : '60%' }}
+                 >
+            <div>
+            <h2>
             Check your expenses, {props.user.first}</h2>
           {/* Logic: 
                 if an expense type is selected in the donut graph, then the table
                 is displayed */}
-          {showTable ? (
-            <Fragment>
-              <Container>
-                <Row>
-                  <Col>
-                    <Button
-                      color="secondary"
-                      onClick={() => setShowTable(false)}
-                      style={{ display: "inline-block" }}>
-                      Back
-                        </Button>
-                  </Col>
-                  <Col>
-                    <NewExpense
-                      types={expenseTypes}
-                      createExpense={createNewExpense}
-                      view={props.ui.isMobileView} />
-                  </Col>
-                </Row>
-              </Container>
-              <ExpensesTable expenses={expensesByUserAndType}
-                view={props.ui.isMobileView} />
-            </Fragment>
-          ) : (
-              <Fragment>
-                {expenses &&
-                  <div>
-                    <DonutGraph
-                      data={createGraphData()}
+              {showTable ? (
+                <Fragment>
+                  <Container>
+                    <Row>
+                      <Col>
+                        <Button
+                          color="secondary"
+                          onClick={() => setShowTable(false)}
+                          style={{display:"inline-block"}}>
+                          Back
+                        </Button> 
+                      </Col>
+                      <Col>
+                        <NewExpense
+                        types={expenseTypes}
+                        createExpense={createNewExpense}
+                        view ={props.ui.isMobileView} />
+                      </Col>
+                    </Row>
+                  </Container>
+                  <ExpensesTable expenses={expensesByUserAndType}
+                                 view = {props.ui.isMobileView} />
+                </Fragment>
+              ) : (
+                  <Fragment>
+                    {expenses && 
+                    <div>
+                      <DonutGraph 
+                      data={createGraphData()} 
                       labels={createGraphLabels()}
                       important='Emergency'
                       isMobileView={props.ui.isMobileView}
