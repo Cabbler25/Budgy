@@ -32,25 +32,31 @@ export default function NewExpense(props:any) {
     open: false,
     type: 0,
     description: '',
-    amount: 0
+    amount: 0,
+    formFilled:true
   });
 
   const handleChange = (name: keyof typeof state) => (
     event: React.ChangeEvent<{ value: unknown }>,
   ) => {
-    setState({ ...state, [name]: event.target.value });
+    setState({ ...state, 
+      [name]: event.target.value
+    });
   };
 
   function handleClickOpen() {
-    setState({ ...state, open: true });
+    setState({ ...state, open: true,formFilled:true });
   }
   
   function handleSubmit() {
-    // Check state of elements using conditionals 
-    // const type = props.types.find((type:any) => type.id == state.type);
-    props.createExpense(props.types.find((type:any) => type.id == state.type),state.description,state.amount);
-    // Close popover
-    handleClose();
+    // Check if form is filled properly
+    if (state.type && state.description && state.amount) {
+      props.createExpense(props.types.find((type:any) => type.id == state.type),state.description,state.amount);
+      // Close popover
+      handleClose();
+    } else {
+      setState({...state,formFilled:false});
+    }
   }
 
   function handleClose() {
@@ -64,7 +70,7 @@ export default function NewExpense(props:any) {
         <DialogContent>
           <form className={classes.container}>
             <FormControl className={classes.formControl}>
-
+            {/* In each field, is checked if it's properly filled before sending the request */}
               <Paper>
                   <Container style={{textAlign: "center"}}>
                     <Row>
@@ -77,7 +83,21 @@ export default function NewExpense(props:any) {
                         name="amount"
                         className="new-expense-form"
                         placeholder="0.00"
-                        label={props.view ? "Amount" : "Expense Amount"}
+                        label={
+                          state.formFilled ?
+                          props.view ? "Amount" : "Expense Amount"
+                          :
+                          state.amount ?
+                          "Amount"
+                          :
+                          "Required"
+                        }
+                        error={state.formFilled?
+                          false
+                          :
+                          state.amount?
+                          false :
+                          true}
                         type="number"
                         onChange={handleChange("amount")}
                         InputProps={{
@@ -90,7 +110,21 @@ export default function NewExpense(props:any) {
                         name="description"
                         className="new-expense-form"
                         placeholder="A brief description of the expense..."
-                        label="Description"
+                        error={state.formFilled?
+                          false
+                          :
+                          state.description ?
+                          false :
+                          true}
+                        label={
+                          state.formFilled ?
+                          "Description"
+                          :
+                          state.description ?
+                          "Description"
+                          :
+                          "Required"
+                        }
                         type="text"
                         multiline={true}
                         rows={props.view ? 4 : 5}
@@ -101,10 +135,22 @@ export default function NewExpense(props:any) {
                       value={state.type}
                       onChange={handleChange('type')}
                       input={<Input id="expense-type" />}
+                      error={state.formFilled?
+                        false
+                        :
+                        state.type ?
+                        false :
+                        true}
                       >
                         <MenuItem value={0}>
-                        <em>
-                          {props.view ? "Type" : "Select expense type"}
+                        <em style={
+                          {color:state.formFilled?"black":state.description?"black":"red"}
+                          }>
+                          { state.formFilled ?
+                            props.view ? 
+                            "Type" : 
+                            "Select expense type":
+                            "Required"}
                         </em>
                         </MenuItem>
                         {props.types.map((t:any) => (
