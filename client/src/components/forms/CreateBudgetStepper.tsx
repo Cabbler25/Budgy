@@ -40,10 +40,6 @@ export function CreateBudgetStepper(props: any) {
         if (inputState.description == '') setHasError(true);
         else setActiveStep(prevActiveStep => prevActiveStep + 1);
         break;
-      case 2:
-        if (!inputState.amount || inputState.amount <= 0) setHasError(true);
-        else setActiveStep(prevActiveStep => prevActiveStep + 1);
-        break;
       default:
         setActiveStep(prevActiveStep => prevActiveStep + 1);
         break;
@@ -59,6 +55,10 @@ export function CreateBudgetStepper(props: any) {
   }
 
   function handleSubmit() {
+    if (!inputState.amount || inputState.amount <= 0) {
+      setHasError(true);
+      return;
+    }
     handleReset();
     const data = {
       userId: props.userId,
@@ -144,31 +144,23 @@ export function CreateBudgetStepper(props: any) {
         ))}
       </Stepper>
       <div>
-        {activeStep === steps.length ? (
-          <div>
-            <Typography>All set!</Typography>
-            <Button onClick={handleSubmit}>Submit</Button>
-          </div>
-        ) : (
-            <div>
-              {getStepContent()}
-              <div style={{ marginTop: '10px' }}>
-                <Button
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  color='inherit'>
-                  Back
+        {getStepContent()}
+        <div style={{ marginTop: '10px' }}>
+          <Button
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            color='inherit'>
+            Back
                 </Button>
-                <Button style={{ marginLeft: '10px' }} variant="contained" color="secondary" onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+          <Button style={{ marginLeft: '10px' }} variant="contained" color="secondary"
+            onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}>
+            {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+          </Button>
+          <br />
+          <Button ref={scrollRef} onClick={handleCancel} variant='text' color="secondary" style={{ marginTop: '10px' }}>
+            Cancel
                 </Button>
-                <br />
-                <Button ref={scrollRef} onClick={handleCancel} variant='text' color="secondary" style={{ marginTop: '10px' }}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          )}
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ const colors = {
     darkGreen: '#388E3C',
     green: '#4CAF50',
     lightGreen: '#63b175',
+    lighterGreen: '#c2e0c6',
     offWhite: '#FFFFFF',
     teal: '#009688',
     orange: '#FF9800',
