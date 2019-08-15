@@ -45,7 +45,7 @@ export default function NewExpense(props:any) {
   };
 
   function handleClickOpen() {
-    setState({ ...state, open: true,formFilled:true });
+    setState({ type:0,description:'',amount:0, open: true,formFilled:true });
   }
   
   function handleSubmit() {
