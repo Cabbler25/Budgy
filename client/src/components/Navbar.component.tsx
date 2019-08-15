@@ -105,7 +105,7 @@ function NavBar(props: INavProps) {
 
   return (
     <Fragment>
-      <Sidebar open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} handleLogin={handleLoginOpen} />
+      <Sidebar history={props.history} open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} />
       <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined, opacity: 0.97 }} position='sticky'>
         <Toolbar className={classes.navbar}>
           {props.ui.isMobileView &&
@@ -141,7 +141,7 @@ function NavBar(props: INavProps) {
                 <ListItem>
                   {props.ui.isMobileView ?
                     <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
-                      style={{ borderColor: colors.offWhite, fontSize: '12px' }}
+                      style={{ width: '90%', borderColor: colors.offWhite, fontSize: '12px' }}
                       component={Link} to='/login'>
                       Login
                     </Button>
@@ -152,7 +152,12 @@ function NavBar(props: INavProps) {
                     </Button>}
                   <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
                   <Button className={classes.nav_item} size='small' variant='contained' color='secondary'
-                    style={{ backgroundColor: colors.orange, fontSize: props.ui.isMobileView ? '12px' : undefined }}
+                    style={{
+                      marginRight: props.ui.isMobileView ? '-8px' : undefined,
+                      width: props.ui.isMobileView ? '90%' : undefined,
+                      backgroundColor: colors.orange,
+                      fontSize: props.ui.isMobileView ? '12px' : undefined
+                    }}
                     component={Link} to="/register">
                     Register
                   </Button>
