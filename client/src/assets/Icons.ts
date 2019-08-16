@@ -11,3 +11,9 @@ export const undoPath = "M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39
 // svg used for the confirm button in the expenses table
 export const okTool = "http://www.w3.org/2000/svg";
 export const okPath = "M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z";
+// svg used for show back the donut graph from the table perspective in expenses section
+export const donutTool = "http://www.w3.org/2000/svg";
+export const donutPath = "M11 5.08V2c-5 .5-9 4.81-9 10s4 9.5 9 10v-3.08c-3-.48-6-3.4-6-6.92s3-6.44 6-6.92zM18.97 11H22c-.47-5-4-8.53-9-9v3.08C16 5.51 18.54 8 18.97 11zM13 18.92V22c5-.47 8.53-4 9-9h-3.03c-.43 3-2.97 5.49-5.97 5.92z";
+// svg used for show the add button in the table perspective for the expenses component
+export const addTool = "http://www.w3.org/2000/svg";
+export const addPath = "M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z";

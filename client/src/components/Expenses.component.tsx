@@ -7,6 +7,7 @@ import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
 import { ExpensesTable } from './ExpensesTablesComponent';
 import NewExpense from './NewExpenseDialog';
+import { donutPath, donutTool } from '../assets/Icons';
 
 export interface IExpenseProps {
   user: IUserState;
@@ -153,7 +154,7 @@ function Expenses(props: IExpenseProps) {
         <Paper 
         style={{ margin: '5px auto',padding: '10px',
                  backgroundColor:"rgba(220,245,230,0.9)",
-                 width:props.ui.isMobileView ? "90%" : showTable ? '80%':'48%',
+                 width:props.ui.isMobileView ? "90%" : showTable ? '80%':'50%',
                  height:props.ui.isMobileView ? "90%" : '60%' }}
                  >
             <div>
@@ -172,11 +173,11 @@ function Expenses(props: IExpenseProps) {
                         <Button
                           color="secondary"
                           onClick={() => setShowTable(false)}
-                          style={{display:"inline-block"}}>
-                          Back
+                          style={{display:"inline-block",margin:'5px'}}>
+                          <svg xmlns={donutTool}  width="24" height="24" viewBox="0 0 24 24">
+                          <path d={donutPath}/>
+                          </svg>
                         </Button> 
-                      </Col>
-                      <Col>
                         <NewExpense
                         types={expenseTypes}
                         createExpense={createNewExpense}
