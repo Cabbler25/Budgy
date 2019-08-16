@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState,Fragment } from 'react';
 import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -6,9 +6,17 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+// import { Confirm } from 'semantic-ui-react';
+import Button from '@material-ui/core/Button';
+import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
+import { Input, Dialog, DialogContent,Container, DialogActions } from '@material-ui/core';
 
-import { Link, Button } from '@material-ui/core';
-import { pencilTool, pencilPath } from '../assets/Icons';
+/*
+TODO: 
+- If user clicks on update or delete buttons, show a dialog that says
+are you sure? OK - Cancel
+- Prevent column for resizing when is in edit mode and the Input field pops up in the cells
+*/
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -26,79 +34,191 @@ const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
     root: {
       '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: theme.palette.background.paper,
       },
     },
   }),
 )(TableRow);
 
+
 export function ExpensesTable(props: any) {
+  // Declare the boolean that will change the display of the row from read only to write
+  const [editableRow,setEditableRow] = useState(false);
+  // Define the row to be edited by its key in the table, in order to enable edition only
+  // in the clicked row
+  const [editableRowKey,setEditableRowKey] = useState(0);
+  // Define state and its update method to track changes of the editable expense row
+  const [state, setState] = useState();
+  // Define the appereance of the confirmation dialog
+  const [confirmDialog,setConfirmDialog] = useState(false); 
+  // Button used to enable edit fields in the table
+  function handleEditButton(expense:any) {
+    // Define the expense that's going to be edited
+    setState(expense);
+    // This will change the view of the row from read to write mode
+    setEditableRow(true);
+  }
+  // Function that listens for changes on any of the expenses
+  const handleEditedExpenseChange = (event:any) => 
+  {
+    setState({ ...state, 
+      [event.target.name]: event.target.value
+    });
+  };
+
+  // Define table styles
   const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      marginTop: theme.spacing(2),
+      marginTop: theme.spacing(1),
       overflowX: 'auto',
       margin: "auto"
     },
     table: {
-      width: props.view ? "100%" : "90?",
-      textAlign: "center"
+      width: props.view ? "100%" : "80?",
+      textAlign: "center",
+      background:"rgba(10,180,140,0.3)"
     },
   }),
 );
 const classes = useStyles(props);
+// Define style of each column
 
+const columnStyle = { marginRight: '2px', };
   return (
     <div>
       <Paper className={classes.root}>
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                amount (usd)
-                </StyledTableCell>
+              <StyledTableCell 
+              style={columnStyle}
+              size='small'
+              >amount (usd)</StyledTableCell>
                 {props.view ? 
                 <Fragment></Fragment>
                 :
                 <Fragment>
-                  <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                    type
-                    </StyledTableCell>
-                  <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                    date
-                    </StyledTableCell>
+                  <StyledTableCell style={columnStyle}>submitted on</StyledTableCell>
                 </Fragment>
                 }
-              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                description
-                </StyledTableCell>
-                <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                  edit
-                </StyledTableCell>
+                <StyledTableCell style={columnStyle}>description</StyledTableCell>
+                <StyledTableCell style={columnStyle}></StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {props.expenses.map((row: any) => (
-              <StyledTableRow key={row.id}>
-                <StyledTableCell component="th" scope="row">
-                  {row.amount}
-                </StyledTableCell>
+              <TableRow key={row.id}>
+                <TableCell component="th" scope="row"
+                size='small'>
+                    <Input
+                    fullWidth={false}
+                    disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
+                    style={{fontSize:'13.3px',
+                    color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
+                    type="number"
+                    defaultValue={
+                      (editableRow && (editableRowKey === row.id)) ?state.amount:row.amount}
+                    name="amount"
+                    onChange={(e:any)=>handleEditedExpenseChange(e)}/>
+                </TableCell>
                 {
-                  props.view ?
-                  <Fragment></Fragment>
-                  :
+                  props.view ? <Fragment></Fragment>:
                   <Fragment>
-                    <StyledTableCell>{row.expenseType.type}</StyledTableCell>
-                    <StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
+                    <TableCell>{row.date.slice(0, 10)}</TableCell>
                   </Fragment>
                 }
-                <StyledTableCell >{row.description}</StyledTableCell>
-                <StyledTableCell>
-                  <svg xmlns={pencilTool}  width="24" height="24" viewBox="0 0 24 24">
-                  <path d={pencilPath}/>
-                  </svg>
-                </StyledTableCell>
-              </StyledTableRow>
+                <TableCell component="th" scope="row">
+                  <Input
+                  fullWidth={false}
+                  disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
+                  style={{fontSize:'13.3px',
+                  color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
+                  multiline={true}
+                  defaultValue={
+                    (editableRow && (editableRowKey === row.id)) ?state.description:row.description}
+                  name="description"
+                  onChange={(e:any)=>handleEditedExpenseChange(e)}/>
+                </TableCell>
+                  {
+                    // Switch between edit button and OK button
+                    // Switch from delete button to undo button
+                    (editableRow && editableRowKey===row.id)  ?
+                    // If row is in edit mode
+                    <Fragment>
+                      <TableCell>
+                        <Button onClick={() => {props.updateExpense(state);
+                                                setEditableRow(false);
+                                                setEditableRowKey(0);}}>
+                          <svg xmlns={okTool}  width="24" height="24" viewBox="0 0 24 24">
+                          <path d={okPath}/>
+                          </svg>
+                        </Button>
+                        {/* Assign the onClick function to notify the parent which expense
+                        will be deleted */}
+                        <Button onClick={() => {
+                          setEditableRow(false);
+                          setEditableRowKey(0);
+                          setState(row);
+                          }}>
+                          <svg xmlns={undoTool}  
+                          width="24" height="24" viewBox="0 0 24 24">
+                          <path d={undoPath}/>
+                          </svg>
+                        </Button>
+                      </TableCell>
+                    </Fragment>
+                    :
+                    <Fragment>
+                      <TableCell>
+                        <Button onClick={() => {handleEditButton(row);setEditableRowKey(row.id);}}>
+                          <svg xmlns={pencilTool}  
+                          width="24" height="24" viewBox="0 0 24 24">
+                          <path d={pencilPath}/>
+                          </svg>
+                        </Button>
+                        {/* Assign the onClick function to notify the parent which
+                        expense will be deleted */}
+                        <Button 
+                        onClick={() => {setConfirmDialog(true);
+                                        setState(row);
+                                        }}>
+                          <svg xmlns={removeTool}  
+                          width="24" height="24" viewBox="0 0 24 24">
+                          <path d={removePath}/>
+                          </svg>
+                        </Button>
+                        {
+                          <Paper style={{textAlign: "center"}}>
+                            <Container>
+                              <Dialog open={confirmDialog}>
+                              <DialogContent>
+                              Are you sure?      
+                              <br/>
+                              </DialogContent>
+                              <DialogActions>
+                                <Button
+                                  onClick={
+                                    // Function call to send the request for creating new expense
+                                    ()=>props.deleteExpense(row)
+                                  }
+                                  color="primary">
+                                  Ok
+                                </Button>
+                                <Button
+                                  onClick={()=>setConfirmDialog(false)}
+                                  color="secondary">
+                                  Cancel
+                                </Button>
+                              </DialogActions>
+                            </Dialog>
+                          </Container>
+                        </Paper>
+                        }
+                      </TableCell>
+                    </Fragment>
+                  }
+              </TableRow>
             ))
             }
           </TableBody>

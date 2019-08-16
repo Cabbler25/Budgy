@@ -162,14 +162,12 @@ export function Budget(props: IBudgetProps) {
     updateBudget(data);
 
     let temp = budgets.map((budget: any) => {
-      if (budget.id === data.id) return data;
-      else return budget;
+      return budget.id === data.id ? data : budget;
     });
     setBudgets(temp);
 
     temp = tableData.map((budget: any) => {
-      if (budget.id === data.id) return data;
-      else return budget;
+      return budget.id === data.id ? data : budget;
     })
     setTableData(temp);
   }
