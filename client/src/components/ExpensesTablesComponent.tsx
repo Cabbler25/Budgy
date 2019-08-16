@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState,Fragment } from 'react';
 import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,8 +9,7 @@ import Paper from '@material-ui/core/Paper';
 // import { Confirm } from 'semantic-ui-react';
 import Button from '@material-ui/core/Button';
 import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
-import { TextField } from 'material-ui';
-import { Input, Dialog, DialogContent, FormControl, Container, DialogActions } from '@material-ui/core';
+import { Input, Dialog, DialogContent,Container, DialogActions } from '@material-ui/core';
 
 /*
 TODO: 
@@ -190,8 +189,8 @@ const columnStyle = { marginRight: '2px', };
                           </svg>
                         </Button>
                         {
-                          <Paper>
-                            <Container style={{textAlign: "center"}}>
+                          <Paper style={{textAlign: "center"}}>
+                            <Container>
                               <Dialog open={confirmDialog}>
                               <DialogContent>
                               Are you sure?      
