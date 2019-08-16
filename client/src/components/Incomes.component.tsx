@@ -13,7 +13,7 @@ import { url } from 'inspector';
 
 
 
-interface IIncomeProps {
+export interface IIncomeProps {
   user: IUserState;
   ui: IUiState;
   type: number;
@@ -70,7 +70,18 @@ async function deleteIncome(income: any) {
 }
 
 async function updateIncome(income: any) {
+  function checkId(inc: any) {
+    return inc.id === income.id;
+  }
   const url = `http://localhost:8080/income`
+  Axios.put(url, income)
+    .then(() => {
+      if (showTable) {
+        const updatedIncomeIndex = incomes.findIndex(checkId)
+        incomes[updatedIncomeIndex] = income;
+        setIncomes(incomes);
+      }
+    })
   
 }
 
