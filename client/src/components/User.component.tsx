@@ -1,4 +1,4 @@
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, InputAdornment, Paper, Snackbar, TextField } from '@material-ui/core';
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, InputAdornment, Paper, Snackbar, TextField, Container } from '@material-ui/core';
 import { Edit, Undo } from '@material-ui/icons';
 import Axios from 'axios';
 import React, { useState } from 'react';
@@ -214,7 +214,8 @@ export function User(props: IUserAcct) {
 
   return (
     
-    <div style={{ textAlign: 'center', width: '100%' }}>
+    <Grid container style={{ textAlign: 'center', width: '100%' }}>
+      <Grid item xs={12}>
       <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: '20px' }} >
         <h3>Profile Settings</h3>
         {updateFname ? 
@@ -354,6 +355,8 @@ export function User(props: IUserAcct) {
       </Snackbar>
           
       </Paper>
+      </Grid>
+      <Grid item xs={12}>
 
       <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: "20px"}}>
         <h3>Data Settings</h3>
@@ -433,8 +436,8 @@ export function User(props: IUserAcct) {
       </Snackbar>
       </Paper>
 
-      
-    </div>
+      </Grid>
+    </Grid>
 
   );
 }
