@@ -25,11 +25,11 @@ export function HorizontalBarGraph(props: any) {
       const labels = props.labels.filter((i: any) => dataArr[props.labels.indexOf(i)] > 0)
       dataArr = dataArr.filter((i: number) => i > 0);
 
-      console.log(dataArr);
       setData({
         labels: labels,
         datasets: [{
-          label: 'Budgets',
+          minSize: 4,
+          scales: { minBarLength: 4 },
           data: dataArr,
           backgroundColor: getBackgroundColors(labels, props.important),
           hoverBackgroundColor: getHoverColors(labels, props.important),
@@ -50,6 +50,18 @@ export function HorizontalBarGraph(props: any) {
       height={props.isMobileView ? 300 : 200}
       data={data}
       getElementAtEvent={handleElementClick}
+      legend={{ display: false }}
+      options={{
+        scales: {
+          xAxes: [{
+            display: true,
+            ticks: {
+              beginAtZero: true
+              // min: min
+            }
+          }]
+        },
+      }}
     /> : <Fragment />
   );
 }
