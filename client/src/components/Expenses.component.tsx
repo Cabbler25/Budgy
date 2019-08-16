@@ -11,7 +11,8 @@ import { donutPath, donutTool } from '../assets/Icons';
 
 /*
 TODO:
-- Add progress icon
+- Add feedback in case user has no expenses yet
+- 
 */
 
 export interface IExpenseProps {
@@ -155,7 +156,6 @@ function Expenses(props: IExpenseProps) {
   const classes = useStyles();
   return (
     <div style={{ textAlign: 'center' }}>
-      
       {/* Show expenses in the table */}
       {/*<Grid container spacing={2}>
       <Grid item xs={12} md={3}>
@@ -191,9 +191,10 @@ function Expenses(props: IExpenseProps) {
                           </svg>
                         </Button> 
                         <NewExpense
-                        types={expenseTypes}
-                        createExpense={createNewExpense}
-                        view ={props.ui.isMobileView} />
+                          types={expenseTypes}
+                          createExpense={createNewExpense}
+                          view ={props.ui.isMobileView} 
+                          type={expenseType}/>
                       </Col>
                     </Row>
                   </Container>
@@ -207,15 +208,15 @@ function Expenses(props: IExpenseProps) {
                     {expenses && 
                     <div>
                       <DonutGraph 
-                      data={createGraphData()} 
-                      labels={createGraphLabels()}
-                      important='Emergency'
-                      isMobileView={props.ui.isMobileView}
-                      handleElementClick={handleElementClick} />
-                    <NewExpense
-                      types={expenseTypes}
-                      createExpense={createNewExpense}
-                      view={props.ui.isMobileView} />
+                        data={createGraphData()} 
+                        labels={createGraphLabels()}
+                        important='Emergency'
+                        isMobileView={props.ui.isMobileView}
+                        handleElementClick={handleElementClick} />
+                      <NewExpense
+                        types={expenseTypes}
+                        createExpense={createNewExpense}
+                        view={props.ui.isMobileView} />
                   </div>}
               </Fragment>
             )}

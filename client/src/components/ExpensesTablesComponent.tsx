@@ -9,13 +9,12 @@ import Paper from '@material-ui/core/Paper';
 // import { Confirm } from 'semantic-ui-react';
 import Button from '@material-ui/core/Button';
 import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
-import { Input, Dialog, DialogContent,Container, DialogActions } from '@material-ui/core';
+import { Input,Typography, Card, Dialog, DialogContent,Container, DialogActions, CardContent } from '@material-ui/core';
 
 /*
 TODO: 
 - If user clicks on update or delete buttons, show a dialog that says
 are you sure? OK - Cancel
-- Prevent column for resizing when is in edit mode and the Input field pops up in the cells
 */
 
 const StyledTableCell = withStyles((theme: Theme) =>
@@ -81,7 +80,26 @@ export function ExpensesTable(props: any) {
     },
   }),
 );
+// Define card style that's going to appear when an expense is about to be deleted
+const cardStyles = makeStyles({
+  card: {
+    minWidth: '80%',
+  },
+  bullet: {
+    display: 'inline-block',
+    margin: '0 2px',
+    transform: 'scale(0.8)',
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+});
+
 const classes = useStyles(props);
+const cardClasses = cardStyles();
 // Define style of each column
 
 const columnStyle = { marginRight: '2px', };
@@ -189,11 +207,40 @@ const columnStyle = { marginRight: '2px', };
                           </svg>
                         </Button>
                         {
+                          
                           <Paper style={{textAlign: "center"}}>
                             <Container>
                               <Dialog open={confirmDialog}>
                               <DialogContent>
-                              Are you sure?      
+                              You are about to delete the following expense: 
+                              <br/> <br/>
+                              <Paper>
+                                <Card className={cardClasses.card}>
+                                  <CardContent>
+                                    <Typography className={cardClasses.title} 
+                                    color="textSecondary" gutterBottom>
+                                    amount:  
+                                    </Typography>
+                                    <Typography variant="h6" component="h4">
+                                      ${row.amount}
+                                    </Typography>
+                                    <Typography className={cardClasses.title} 
+                                    color="textSecondary" gutterBottom>
+                                      date submitted:  
+                                    </Typography>
+                                    <Typography variant="h6" component="h4">
+                                      {row.date.slice(0,10)}
+                                    </Typography>
+                                    <Typography className={cardClasses.title} 
+                                    color="textSecondary" gutterBottom>
+                                      description:  
+                                    </Typography>
+                                    <Typography variant="h6" component="h4">
+                                      {row.description}
+                                    </Typography>
+                                  </CardContent>
+                                </Card>
+                              </Paper>      
                               <br/>
                               </DialogContent>
                               <DialogActions>
@@ -203,7 +250,7 @@ const columnStyle = { marginRight: '2px', };
                                     ()=>props.deleteExpense(row)
                                   }
                                   color="primary">
-                                  Ok
+                                  Confirm
                                 </Button>
                                 <Button
                                   onClick={()=>setConfirmDialog(false)}
