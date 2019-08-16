@@ -9,6 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import Axios from 'axios'
 
 import { Link, Button } from '@material-ui/core';
+import { TextField } from 'material-ui';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -105,9 +106,10 @@ export function IncomesTable(props: any) {
               <StyledTableRow key={row.id}>
                 <StyledTableCell component="th" scope="row"> {row.amount}</StyledTableCell>
                 <StyledTableCell>{row.incomeType.type}</StyledTableCell>
-                <StyledTableCell >{row.description}</StyledTableCell>
-                <StyledTableCell> <Button>{row.id}</Button></StyledTableCell>
+                <StyledTableCell>{row.description}</StyledTableCell>
+                <StyledTableCell> <Button onClick={() =>props.updateIncome(row)}>update</Button></StyledTableCell>
                 <StyledTableCell> <Button onClick={() =>props.deleteIncome(row)}>X</Button></StyledTableCell>
+
               </StyledTableRow>
             ))
             }

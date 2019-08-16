@@ -9,6 +9,7 @@ import { Grid, Paper, Button } from '@material-ui/core';
 import DonutGraph from './data/DonutGraph';
 import { Link, Redirect } from 'react-router-dom';
 import { thisExpression } from '@babel/types';
+import { url } from 'inspector';
 
 
 
@@ -26,6 +27,7 @@ function Incomes(props: IIncomeProps) {
   const [incomeTypes, setIncomeTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [incomesByUserAndType, setIncomeByUserIdAndTypeId] = useState([]);
+  const [id, setId] = useState([]);
 
 
 useEffect(() => {
@@ -64,6 +66,11 @@ async function deleteIncome(income: any) {
         .catch((err: any) => {
             //erros
         });
+  
+}
+
+async function updateIncome(income: any) {
+  const url = `http://localhost:8080/income`
   
 }
 
@@ -147,7 +154,7 @@ return (
                   onClick={() => setShowTable(false)}>
                   Back
                 </Button>
-                <IncomesTable incomes={incomesByUserAndType} deleteIncome={deleteIncome} />
+                <IncomesTable incomes={incomesByUserAndType} deleteIncome={deleteIncome} updateIncome={updateIncome}/>
               </Fragment>
             ) : (
                 <Fragment>
