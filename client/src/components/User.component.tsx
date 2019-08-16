@@ -137,7 +137,7 @@ export function User(props: IUserAcct) {
   async function updateUser(body: any)
   {
     const url = 'http://localhost:8080/update';
-    await Axios.patch(url,body).then(payload => {  
+    await Axios.patch(url,body,{headers:{Authorization: props.user.token}}).then(payload => {  
       props.updateUserInfo({
         isLoggedIn: true,
         id: props.user.id,
@@ -193,7 +193,7 @@ export function User(props: IUserAcct) {
 
     if(toDelete.budget){
       const url = `http://localhost:8080/user/budget/${props.user.id}`;
-      await Axios.delete(url).then(payload => {
+      await Axios.delete(url,{headers:{Authorization: props.user.token}}).then(payload => {
 
           setOpenDelete(true);
     
@@ -201,14 +201,14 @@ export function User(props: IUserAcct) {
     }
     if(toDelete.expenses){
       const url = `http://localhost:8080/expense/user/expense/${props.user.id}`;
-      await Axios.delete(url).then(payload => {
+      await Axios.delete(url,{headers:{Authorization: props.user.token}}).then(payload => {
           setOpenDelete(true);
       });
 
     }
     if(toDelete.income){
       const url = `http://localhost:8080/user/income/${props.user.id}`;
-      await Axios.delete(url).then(payload => {
+      await Axios.delete(url,{headers:{Authorization: props.user.token}}).then(payload => {
           setOpenDelete(true);
       });
     }
@@ -218,12 +218,9 @@ export function User(props: IUserAcct) {
 
   return (
     
-    <div style={{ textAlign: 'center' }}>
-      <h1>Account Details</h1>
-      <Grid>
-      <Grid item xs={12}>
+    <div style={{ textAlign: 'center', width: '100%' }}>
       <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: '20px' }} >
-        <h3>Profile</h3>
+        <h3>Profile Settings</h3>
         {updateFname ? 
         <div> 
         <TextField
@@ -364,14 +361,14 @@ export function User(props: IUserAcct) {
           
           
       </Paper>
-      </Grid>
 
 
 
-      <Grid>
+
+
       <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: "20px"}}>
-        <h3>Clear Data</h3>
-        <FormControl component='fieldset'>
+        <h3>Data Settings</h3>
+        <FormControl>
         <FormLabel style={{margin:"20px"}}>Select Data to be Deleted</FormLabel>
         <FormGroup>
           {toDelete.selectAll ? 
@@ -446,8 +443,7 @@ export function User(props: IUserAcct) {
         />
       </Snackbar>
       </Paper>
-      </Grid>
-      </Grid>
+
       
     </div>
     

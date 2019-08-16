@@ -69,10 +69,10 @@ public class JWTService {
 
 	}
 
-	public static boolean checkAuthByRole(String token, int role) {
+	public static boolean checkAuthByUsername(String token, String un) {
 		try {
 			Jws<Claims> parsedToken = Jwts.parser().setSigningKey(System.getenv("A_SECRET_KEY")).parseClaimsJws(token);
-			if (Integer.parseInt(parsedToken.getBody().getAudience()) == role)
+			if (parsedToken.getBody().getSubject().equals(un))
 				return true;
 			else
 				return false;
