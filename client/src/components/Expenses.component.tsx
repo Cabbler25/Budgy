@@ -1,4 +1,4 @@
-import { Button, Paper } from '@material-ui/core';
+import { Button, Paper, CircularProgress, makeStyles, createStyles, Theme } from '@material-ui/core';
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -8,6 +8,11 @@ import DonutGraph from './data/DonutGraph';
 import { ExpensesTable } from './ExpensesTablesComponent';
 import NewExpense from './NewExpenseDialog';
 import { donutPath, donutTool } from '../assets/Icons';
+
+/*
+TODO:
+- Add progress icon
+*/
 
 export interface IExpenseProps {
   user: IUserState;
@@ -140,9 +145,17 @@ function Expenses(props: IExpenseProps) {
       }
     })
   }
-
+  const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+      progress: {
+        margin: theme.spacing(2),
+      },
+    }),
+  );
+  const classes = useStyles();
   return (
     <div style={{ textAlign: 'center' }}>
+      
       {/* Show expenses in the table */}
       {/*<Grid container spacing={2}>
       <Grid item xs={12} md={3}>
@@ -151,20 +164,19 @@ function Expenses(props: IExpenseProps) {
           <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
         </Paper>
           </Grid>*/}
+        {
+        showTable ? 
+        <h2>Your {expenseType} expenses, {props.user.first}</h2> :
+        <h2>Check your expenses, {props.user.first}</h2>
+        }  
         <Paper 
         style={{ margin: '5px auto',padding: '10px',
                  backgroundColor:"rgba(220,245,230,0.9)",
                  width:props.ui.isMobileView ? "90%" : showTable ? '80%':'50%',
                  height:props.ui.isMobileView ? "90%" : '60%' }}
                  >
+              { !expenses ? <CircularProgress className={classes.progress}/> :
             <div>
-              {showTable ? 
-              <h2>Your {expenseType} expenses, {props.user.first}</h2> :
-              <h2>Check your expenses, {props.user.first}</h2>
-              }
-          {/* Logic: 
-                if an expense type is selected in the donut graph, then the table
-                is displayed */}
               {showTable ? (
                 <Fragment> 
                   <Container>
@@ -209,7 +221,9 @@ function Expenses(props: IExpenseProps) {
             )}
           <br />
         </div>
+          }
       </Paper>
+        
     </div >
   );
 }
