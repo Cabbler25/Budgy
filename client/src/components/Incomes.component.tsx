@@ -2,11 +2,14 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { IUserState, IState, IUiState } from '../redux';
 import { connect } from 'react-redux';
 import NewIncome from './NewIncomesDialog';
-import { Container } from 'reactstrap';
+import { Col, Container, Row } from 'reactstrap';
 import Axios from 'axios';
 import { IncomesTable } from './IncomeTablesComponent';
 import { Grid, Paper, Button } from '@material-ui/core';
 import DonutGraph from './data/DonutGraph';
+import { Link, Redirect } from 'react-router-dom';
+import { thisExpression } from '@babel/types';
+
 
 
 interface IIncomeProps {
@@ -41,6 +44,31 @@ async function getAllIncomes() {
       });
 }
 
+async function deleteIncome(income: any) {
+  function checkId(inc:any) {
+    return inc.id === income.id;
+  }
+    const url = `http://localhost:8080/income/${income.id}`;
+    await Axios.delete(url, income)
+        .then(() => {
+          getAllIncomes();
+          if (showTable) {
+            const deletedIncomesIndex = incomes.findIndex(checkId);
+            setIncomes(incomes.splice(deletedIncomesIndex,1));
+            setShowTable(false)
+            handleElementClick(income.incomeType.type);
+           // console.log(income.incomeTypes.type)
+            //console.log(income.incomeType.type)
+          }
+        })
+        .catch((err: any) => {
+            //erros
+        });
+  
+}
+
+
+
 async function getAllIncomeTypes() {
   const url = `http://localhost:8080/income/types`;
   await Axios.get(url)
@@ -66,11 +94,11 @@ function createGraphLabels() {
 
 async function handleElementClick(label: string) {
   const type = incomeTypes.find((type: any) => type.type == label);
-
+ // console.log(type)
   if (type) {
     const matchedIncomes = incomes.filter((income: any) =>
       JSON.stringify(income.incomeType) == JSON.stringify(type))
-    console.log(matchedIncomes);
+   // console.log(matchedIncomes);
     setIncomeByUserIdAndTypeId(matchedIncomes);
     setShowTable(true);
   }
@@ -88,7 +116,7 @@ async function createNewIncome(newType: any, newDescripion: string, newAmount: n
   };
   const response = await Axios.post(url, data);
   try {
-    // console.log(response.status);
+    console.log(response.status);
     getAllIncomes();
   } catch {
     console.log("ERRORS: ", response.data);
@@ -97,7 +125,9 @@ async function createNewIncome(newType: any, newDescripion: string, newAmount: n
 
 return (
   <div style={{textAlign: 'center'}}>
-    <Paper style={{ margin: '30px', display: 'inline-block', padding: '60px', paddingBottom: '30px'}}>
+    {!props.user.isLoggedIn && <Redirect to="/login" />}
+    <Paper style={{opacity: .75, margin: '5px auto', padding: '10px', width: props.ui.isMobileView ? "90%" : showTable ? '80%' : '48%',
+                  height: props.ui.isMobileView ? "90%" : "60%"}}>
     {//<Container style={{ textAlign: 'center'}}> 
     }
       <h2>Manage your income, {props.user.first}</h2>
@@ -117,7 +147,7 @@ return (
                   onClick={() => setShowTable(false)}>
                   Back
                 </Button>
-                <IncomesTable incomes={incomesByUserAndType} />
+                <IncomesTable incomes={incomesByUserAndType} deleteIncome={deleteIncome} />
               </Fragment>
             ) : (
                 <Fragment>

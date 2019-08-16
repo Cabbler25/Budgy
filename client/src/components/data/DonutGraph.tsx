@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import "reaviz/dist/index.css";
-import colors, { colorTypes } from '../../assets/Colors';
+import { colorTypes } from '../../assets/Colors';
 
 /**
  * Main Function
@@ -42,7 +41,6 @@ export function DonutGraph(props: any) {
     if (data && data.labels && e[0] && props.handleElementClick)
       props.handleElementClick(data.labels[e[0]._index]);
   }
-
   return (data ?
     <Doughnut
       width={props.isMobileView ? 250 : 300}
