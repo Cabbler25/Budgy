@@ -194,29 +194,22 @@ export function User(props: IUserAcct) {
     if(toDelete.budget){
       const url = `http://localhost:8080/user/budget/${props.user.id}`;
       await Axios.delete(url).then(payload => {
-        if(payload.status === 204)
-        {
+
           setOpenDelete(true);
-        }
+    
       })
     }
     if(toDelete.expenses){
       const url = `http://localhost:8080/expense/user/expense/${props.user.id}`;
       await Axios.delete(url).then(payload => {
-        if(payload.status === 204)
-        {
           setOpenDelete(true);
-        }
       });
 
     }
     if(toDelete.income){
       const url = `http://localhost:8080/user/income/${props.user.id}`;
       await Axios.delete(url).then(payload => {
-        if(payload.status === 204)
-        {
           setOpenDelete(true);
-        }
       });
     }
   }
