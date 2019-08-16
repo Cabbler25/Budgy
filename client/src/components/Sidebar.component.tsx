@@ -8,7 +8,7 @@ import colors from '../assets/Colors';
 
 export function Sidebar(props: any) {
   return (
-    <div role="presentation" onClick={props.handleClose} onKeyDown={props.handleClose} >
+    <div role="presentation" onClick={props.handleClose} onKeyDown={props.handleClose}>
       <Drawer open={props.open} onClose={() => props.handleClose()}>
         <div style={{ backgroundColor: colors.lighterGreen }}>
           <div style={{ minWidth: '250px', maxWidth: '250px' }} />
@@ -21,7 +21,7 @@ export function Sidebar(props: any) {
           <div style={{ textAlign: 'center' }}>
             {props.isLoggedIn ?
               <Button color="primary" style={{ color: colors.offWhite }} component={Link} to="/user">
-                My Profile
+                My Account
             </Button>
               :
               <Button variant="outlined" onClick={() => props.history.push('/login')}>

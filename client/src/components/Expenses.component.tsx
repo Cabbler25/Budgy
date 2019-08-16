@@ -1,4 +1,4 @@
-import { Button, Paper } from '@material-ui/core';
+import { Button, Paper, CircularProgress, makeStyles, createStyles, Theme } from '@material-ui/core';
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -7,6 +7,12 @@ import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
 import { ExpensesTable } from './ExpensesTablesComponent';
 import NewExpense from './NewExpenseDialog';
+import { donutPath, donutTool } from '../assets/Icons';
+
+/*
+TODO:
+- Add progress icon
+*/
 
 export interface IExpenseProps {
   user: IUserState;
@@ -22,6 +28,7 @@ function Expenses(props: IExpenseProps) {
   const [expenses, setExpenses] = useState();
   const [expenseTypes, setExpenseTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
+  const [expenseType,setExpenseType] = useState();
   const [expensesByUserAndType, setExpensesByUserIdAndTypeId] = useState([]);
 
   useEffect(() => {
@@ -61,13 +68,15 @@ function Expenses(props: IExpenseProps) {
       return i.type;
     });
   }
-
+  // Function used to display the expenses in the table.
   async function handleElementClick(label: string) {
     const type = expenseTypes.find((type: any) => type.type == label);
     if (type) {
       const matchedExpenses = expenses.filter((expense: any) =>
         JSON.stringify(expense.expenseType) == JSON.stringify(type))
       setExpensesByUserIdAndTypeId(matchedExpenses);
+      setExpenseType(label);
+      // Show the table if a piece of the donut is clicked
       setShowTable(true);
     }
   }
@@ -96,9 +105,57 @@ function Expenses(props: IExpenseProps) {
         }
       });
   }
-
+  // Request function to delete an existing expense
+  async function deleteExpense(expense:any) {
+    // Find the id of the removed expense
+    function checkId(exp:any) {
+      return exp.id === expense.id;
+    }
+    const url = `http://localhost:8080/expense/${expense.id}`;
+    Axios.delete(url,expense)
+      .then(() => {
+        getAllExpenses();
+        if (showTable) {
+          // Find the index of the to-be-removed expense
+          const deletedExpenseIndex = expenses.findIndex(checkId);
+          // Remove it from the expenses array so it can be removed visually from the table
+          setExpenses(expenses.splice(deletedExpenseIndex,1));
+          handleElementClick(expense.expenseType.type);
+        }
+      }
+    )
+  }
+  // Request function to update an expense
+  async function updateExpense(expense:any) {
+    // Find the id of the updated expense
+    function checkId(exp:any) {
+      return exp.id === expense.id;
+    }
+    // Send the request
+    const url = `http://localhost:8080/expense`;
+    Axios.put(url,expense)
+    .then(() => {
+      getAllExpenses();
+      if (showTable) {
+        console.log(expense);
+        // Modify the expenses that are going to be shown in the table
+        const updatedExpenseIndex = expenses.findIndex(checkId);
+        expenses[updatedExpenseIndex] = expense;
+        setExpenses(expenses);
+      }
+    })
+  }
+  const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+      progress: {
+        margin: theme.spacing(2),
+      },
+    }),
+  );
+  const classes = useStyles();
   return (
     <div style={{ textAlign: 'center' }}>
+      
       {/* Show expenses in the table */}
       {/*<Grid container spacing={2}>
       <Grid item xs={12} md={3}>
@@ -107,31 +164,32 @@ function Expenses(props: IExpenseProps) {
           <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
         </Paper>
           </Grid>*/}
+        {
+        showTable ? 
+        <h2>Your {expenseType} expenses, {props.user.first}</h2> :
+        <h2>Check your expenses, {props.user.first}</h2>
+        }  
         <Paper 
         style={{ margin: '5px auto',padding: '10px',
                  backgroundColor:"rgba(220,245,230,0.9)",
-                 width:props.ui.isMobileView ? "90%" : showTable ? '80%':'48%',
+                 width:props.ui.isMobileView ? "90%" : showTable ? '80%':'50%',
                  height:props.ui.isMobileView ? "90%" : '60%' }}
                  >
+              { !expenses ? <CircularProgress className={classes.progress}/> :
             <div>
-            <h2>
-            Check your expenses, {props.user.first}</h2>
-          {/* Logic: 
-                if an expense type is selected in the donut graph, then the table
-                is displayed */}
               {showTable ? (
-                <Fragment>
+                <Fragment> 
                   <Container>
                     <Row>
                       <Col>
                         <Button
                           color="secondary"
                           onClick={() => setShowTable(false)}
-                          style={{display:"inline-block"}}>
-                          Back
+                          style={{display:"inline-block",margin:'5px'}}>
+                          <svg xmlns={donutTool}  width="24" height="24" viewBox="0 0 24 24">
+                          <path d={donutPath}/>
+                          </svg>
                         </Button> 
-                      </Col>
-                      <Col>
                         <NewExpense
                         types={expenseTypes}
                         createExpense={createNewExpense}
@@ -140,7 +198,9 @@ function Expenses(props: IExpenseProps) {
                     </Row>
                   </Container>
                   <ExpensesTable expenses={expensesByUserAndType}
-                                 view = {props.ui.isMobileView} />
+                                 view = {props.ui.isMobileView}
+                                 deleteExpense = {deleteExpense} 
+                                 updateExpense = {updateExpense}/>
                 </Fragment>
               ) : (
                   <Fragment>
@@ -161,7 +221,9 @@ function Expenses(props: IExpenseProps) {
             )}
           <br />
         </div>
+          }
       </Paper>
+        
     </div >
   );
 }

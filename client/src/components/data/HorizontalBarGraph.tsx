@@ -28,10 +28,12 @@ export function HorizontalBarGraph(props: any) {
       setData({
         labels: labels,
         datasets: [{
+          minSize: 4,
+          scales: { minBarLength: 4 },
           data: dataArr,
           backgroundColor: getBackgroundColors(labels, props.important),
           hoverBackgroundColor: getHoverColors(labels, props.important),
-        }]
+        }],
       })
     }
   }, [props.data, props.labels, props.important])
@@ -44,10 +46,23 @@ export function HorizontalBarGraph(props: any) {
 
   return (data ?
     <HorizontalBar
-      width={props.isMobileView ? 300 : 300}
-      height={props.isMobileView ? 300 : 150}
+      width={props.isMobileView ? 300 : 500}
+      height={props.isMobileView ? 300 : 200}
       data={data}
-      getElementAtEvent={handleElementClick} /> : <Fragment />
+      getElementAtEvent={handleElementClick}
+      legend={{ display: false }}
+      options={{
+        scales: {
+          xAxes: [{
+            display: true,
+            ticks: {
+              beginAtZero: true
+              // min: min
+            }
+          }]
+        },
+      }}
+    /> : <Fragment />
   );
 }
 
