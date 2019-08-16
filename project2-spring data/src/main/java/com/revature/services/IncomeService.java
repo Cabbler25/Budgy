@@ -33,7 +33,7 @@ public class IncomeService {
 	}
 
 	public List<Income> findByUserId(int userId) {
-		return incomeRepository.findByUserId(userId);
+		return incomeRepository.findByUserIdOrderByIdDesc(userId);
 	}
 
 	public Optional<IncomeType> findIncomeTypeById(int id) {

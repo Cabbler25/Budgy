@@ -6,24 +6,26 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import colors from '../assets/Colors';
+import Logo from '../assets/Logo.svg';
 import { IState, IUiState, IUserState } from '../redux';
 import { setMobileView } from '../redux/actions';
 import Login from './LoginPopover.component';
 import { Sidebar } from './Sidebar.component';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  navbar: {
-    maxHeight: '50%',
-    height: '50%',
+  logo: {
     marginLeft: '5px',
+    marginRight: '5px'
+  },
+  navbar: {
     color: 'primary'
   },
   title: {
-    marginRight: '50px',
     textTransform: 'initial',
     color: colors.offWhite
   },
   nav_item: {
+    width: '85px',
     marginLeft: '10px',
     textTransform: 'initial',
     fontSize: '16px',
@@ -72,7 +74,7 @@ function NavBar(props: INavProps) {
     const listener = () => {
       props.setMobileView(!mediaQuery.matches);
     }
-    
+
     // Add listener to update view type
     mediaQuery.addListener(listener);
 
@@ -103,27 +105,28 @@ function NavBar(props: INavProps) {
 
   return (
     <Fragment>
-      <Sidebar open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} handleLogin={handleLoginOpen} />
-      <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined }} position='sticky'>
+      <Sidebar history={props.history} open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} />
+      <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined, opacity: 0.97 }} position='sticky'>
         <Toolbar className={classes.navbar}>
           {props.ui.isMobileView &&
             <Button style={{ marginRight: '5px', maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>
               <Icon style={{ fontSize: 30, color: colors.offWhite }}>menu</Icon>
             </Button>}
           <Button className={classes.title} variant='text' component={Link} to="/">
-            <Typography variant={props.ui.isMobileView ? 'body1' : 'h5'}>Wataname</Typography>
+            <img width='30px' height='30px' src={Logo} />
+            <Typography style={{ fontSize: '20px', textTransform: 'initial' }} variant='button'>Budgy</Typography>
           </Button>
           {!props.ui.isMobileView &&
             <Fragment>
               <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/budget"
-                style={{ textDecoration: onPage('/budget') ? `underline` : undefined }}>
+                style={{ marginLeft: '50px', textDecoration: onPage('/budget') ? `underline` : undefined }}>
                 Budget
-              </Button>
-              <Button className={classes.nav_item} variant='text' component={Link} to="/expenses"
+                </Button>
+              <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/expenses"
                 style={{ textDecoration: onPage('/expenses') ? `underline` : undefined }}>
                 Expenses
               </Button>
-              <Button className={classes.nav_item} variant='text' component={Link} to="/incomes"
+              <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/incomes"
                 style={{ textDecoration: onPage('/incomes') ? `underline` : undefined }}>
                 Incomes
               </Button>
@@ -143,7 +146,7 @@ function NavBar(props: INavProps) {
                 <ListItem>
                   {props.ui.isMobileView ?
                     <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
-                      style={{ borderColor: colors.offWhite, fontSize: '12px' }}
+                      style={{ width: '90%', borderColor: colors.offWhite, fontSize: '12px' }}
                       component={Link} to='/login'>
                       Login
                     </Button>
@@ -154,7 +157,12 @@ function NavBar(props: INavProps) {
                     </Button>}
                   <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
                   <Button className={classes.nav_item} size='small' variant='contained' color='secondary'
-                    style={{ backgroundColor: colors.orange, fontSize: props.ui.isMobileView ? '12px' : undefined }}
+                    style={{
+                      marginRight: props.ui.isMobileView ? '-8px' : undefined,
+                      width: props.ui.isMobileView ? '90%' : undefined,
+                      backgroundColor: colors.orange,
+                      fontSize: props.ui.isMobileView ? '12px' : undefined
+                    }}
                     component={Link} to="/register">
                     Register
                   </Button>

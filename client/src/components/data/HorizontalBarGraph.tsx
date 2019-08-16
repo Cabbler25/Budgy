@@ -1,11 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { HorizontalBar } from 'react-chartjs-2';
-import "reaviz/dist/index.css";
 import { colorTypes } from '../../assets/Colors';
 
 /**
  * Main Function
- * @function CircleGraph
+ * @function VerticalBarGraph
  * @param props.labels - array of strings
  * @param props.data - array of objects of type { key: string, data: number }
  * @param props.isMobileView - should be provided so the graph can properly scale itself
@@ -35,7 +34,7 @@ export function HorizontalBarGraph(props: any) {
         }]
       })
     }
-  }, [props.data, props.labels])
+  }, [props.data, props.labels, props.important])
 
   function handleElementClick(e: any) {
     // Sends the corresponding label as a string
@@ -45,8 +44,8 @@ export function HorizontalBarGraph(props: any) {
 
   return (data ?
     <HorizontalBar
-      width={props.isMobileView ? 250 : undefined}
-      height={props.isMobileView ? 200 : undefined}
+      width={props.isMobileView ? 300 : 300}
+      height={props.isMobileView ? 300 : 150}
       data={data}
       getElementAtEvent={handleElementClick} /> : <Fragment />
   );

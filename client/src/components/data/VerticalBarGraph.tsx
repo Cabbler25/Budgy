@@ -1,10 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Doughnut } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import { colorTypes } from '../../assets/Colors';
 
 /**
  * Main Function
- * @function CircleGraph
+ * @function VerticalBarGraph
  * @param props.labels - array of strings
  * @param props.data - array of objects of type { key: string, data: number }
  * @param props.isMobileView - should be provided so the graph can properly scale itself
@@ -12,11 +12,11 @@ import { colorTypes } from '../../assets/Colors';
  * So long as the props adhere to the above specs the graph should work properly 
  */
 
-export function DonutGraph(props: any) {
+export function VerticalBarGraph(props: any) {
   const [data, setData] = useState();
   useEffect(() => {
     // Create the graph data.
-    if (props.data && props.labels && props.data.length !== 0) {
+    if (props.data.length !== 0) {
       let dataArr = Array.from(props.labels, () => 0);
       props.data.forEach((e: any) => {
         dataArr[props.labels.indexOf(e.key)] += e.data;
@@ -34,19 +34,20 @@ export function DonutGraph(props: any) {
         }]
       })
     }
-  }, [props.data, props.labels, props.important,])
+  }, [props.data, props.labels, props.important])
 
   function handleElementClick(e: any) {
     // Sends the corresponding label as a string
     if (data && data.labels && e[0] && props.handleElementClick)
       props.handleElementClick(data.labels[e[0]._index]);
   }
+
   return (data ?
-    <Doughnut
-      width={props.isMobileView ? 250 : 300}
-      height={props.isMobileView ? 250 : 150}
-      data={data} getElementAtEvent={handleElementClick} />
-    : <Fragment />
+    <Bar
+      width={props.isMobileView ? 300 : 150}
+      height={props.isMobileView ? 300 : 300}
+      data={data}
+      getElementAtEvent={handleElementClick} /> : <Fragment />
   );
 }
 
@@ -92,4 +93,4 @@ function shadeColor(col: string, amt: number) {
   return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
 }
 
-export default DonutGraph                            
+export default VerticalBarGraph                            

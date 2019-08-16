@@ -26,31 +26,37 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function NewExpense(props:any) {
+export default function NewExpense(props: any) {
   const classes = useStyles(props);
   const [state, setState] = React.useState({
     open: false,
     type: 0,
     description: '',
-    amount: 0
+    amount: 0,
+    formFilled:true
   });
 
   const handleChange = (name: keyof typeof state) => (
     event: React.ChangeEvent<{ value: unknown }>,
   ) => {
-    setState({ ...state, [name]: event.target.value });
+    setState({ ...state, 
+      [name]: event.target.value
+    });
   };
 
   function handleClickOpen() {
-    setState({ ...state, open: true });
+    setState({ type:0,description:'',amount:0, open: true,formFilled:true });
   }
-  
+
   function handleSubmit() {
-    // Check state of elements using conditionals 
-    // const type = props.types.find((type:any) => type.id == state.type);
-    props.createExpense(props.types.find((type:any) => type.id == state.type),state.description,state.amount);
-    // Close popover
-    handleClose();
+    // Check if form is filled properly
+    if (state.type && state.description && state.amount) {
+      props.createExpense(props.types.find((type:any) => type.id == state.type),state.description,state.amount);
+      // Close popover
+      handleClose();
+    } else {
+      setState({...state,formFilled:false});
+    }
   }
 
   function handleClose() {
@@ -59,22 +65,39 @@ export default function NewExpense(props:any) {
 
   return (
     <div>
-      <Button onClick={handleClickOpen}>Add expense</Button>
+      <Button onClick={handleClickOpen}>+</Button>
       <Dialog disableBackdropClick disableEscapeKeyDown open={state.open} onClose={handleClose}>
         <DialogContent>
           <form className={classes.container}>
             <FormControl className={classes.formControl}>
-
+            {/* In each field, is checked if it's properly filled before sending the request */}
               <Paper>
                   <Container style={{textAlign: "center"}}>
-                    <Row><h4>Add New Expense</h4></Row>
-
+                    <Row>
+                      <h4>
+                        {props.view ? "Add expense" : "Add New Expense" } 
+                      </h4>
+                    </Row>
                     <Row className="new-expense-form">
                         <TextField
                         name="amount"
                         className="new-expense-form"
                         placeholder="0.00"
-                        label="Expense Amount"
+                        label={
+                          state.formFilled ?
+                          props.view ? "Amount" : "Expense Amount"
+                          :
+                          state.amount ?
+                          "Amount"
+                          :
+                          "Required"
+                        }
+                        error={state.formFilled?
+                          false
+                          :
+                          state.amount?
+                          false :
+                          true}
                         type="number"
                         onChange={handleChange("amount")}
                         InputProps={{
@@ -86,11 +109,25 @@ export default function NewExpense(props:any) {
                         <TextField
                         name="description"
                         className="new-expense-form"
-                        placeholder="A description of the expense..."
-                        label="Description"
+                        placeholder="A brief description of the expense..."
+                        error={state.formFilled?
+                          false
+                          :
+                          state.description ?
+                          false :
+                          true}
+                        label={
+                          state.formFilled ?
+                          "Description"
+                          :
+                          state.description ?
+                          "Description"
+                          :
+                          "Required"
+                        }
                         type="text"
                         multiline={true}
-                        rows={5}
+                        rows={props.view ? 4 : 5}
                         onChange={handleChange("description")}/>
                     </Row>
                     <Row className="new-expense-form">
@@ -98,9 +135,23 @@ export default function NewExpense(props:any) {
                       value={state.type}
                       onChange={handleChange('type')}
                       input={<Input id="expense-type" />}
+                      error={state.formFilled?
+                        false
+                        :
+                        state.type ?
+                        false :
+                        true}
                       >
                         <MenuItem value={0}>
-                        <em>Select Expense Type</em>
+                        <em style={
+                          {color:state.formFilled?"black":state.type?"black":"red"}
+                          }>
+                          { state.formFilled ?
+                            props.view ? 
+                            "Type" : 
+                            "Select expense type":
+                            "Required"}
+                        </em>
                         </MenuItem>
                         {props.types.map((t:any) => (
                         <MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>  
@@ -113,17 +164,17 @@ export default function NewExpense(props:any) {
           </form>
         </DialogContent>
         <DialogActions>
-            <Button
+          <Button
             onClick={
-            // Function call to send the request for creating new expense
-            handleSubmit
+              // Function call to send the request for creating new expense
+              handleSubmit
             }
             color="primary">
-                Ok
+            Ok
             </Button>
           <Button
-          onClick={handleClose}
-          color="secondary">
+            onClick={handleClose}
+            color="secondary">
             Cancel
           </Button>
         </DialogActions>

@@ -1,5 +1,5 @@
-import { Button, InputAdornment, Step, StepLabel, Stepper, TextField, Typography, ClickAwayListener } from '@material-ui/core';
-import React, { useState } from 'react';
+import { Button, ClickAwayListener, InputAdornment, Step, StepLabel, Stepper, TextField, Typography } from '@material-ui/core';
+import React, { createRef, Fragment, useState, useEffect } from 'react';
 
 function getSteps() {
   return ['Describe your budget', 'Select a type', 'Set an amount'];
@@ -11,11 +11,20 @@ export function CreateBudgetStepper(props: any) {
   const [activeStep, setActiveStep] = useState(0);
   const steps = getSteps();
 
+  const scrollRef: any = createRef();
+
   const [inputState, setInputState] = useState({
     type: 1,
     description: '',
     amount: 0
   })
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   function handleInputChange(e: any) {
     setHasError(false);
@@ -29,10 +38,6 @@ export function CreateBudgetStepper(props: any) {
     switch (activeStep) {
       case 0:
         if (inputState.description == '') setHasError(true);
-        else setActiveStep(prevActiveStep => prevActiveStep + 1);
-        break;
-      case 2:
-        if (!inputState.amount || inputState.amount === 0) setHasError(true);
         else setActiveStep(prevActiveStep => prevActiveStep + 1);
         break;
       default:
@@ -50,6 +55,10 @@ export function CreateBudgetStepper(props: any) {
   }
 
   function handleSubmit() {
+    if (!inputState.amount || inputState.amount <= 0) {
+      setHasError(true);
+      return;
+    }
     handleReset();
     const data = {
       userId: props.userId,
@@ -120,7 +129,7 @@ export function CreateBudgetStepper(props: any) {
         );
       default:
         return (
-          <div />
+          <Fragment />
         );
     }
   }
@@ -128,38 +137,30 @@ export function CreateBudgetStepper(props: any) {
   return (
     <div>
       <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map(label => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
+        {steps.map(step => (
+          <Step key={step}>
+            <StepLabel>{step}</StepLabel>
           </Step>
         ))}
       </Stepper>
       <div>
-        {activeStep === steps.length ? (
-          <div>
-            <Typography>All set!</Typography>
-            <Button onClick={handleSubmit}>Submit</Button>
-          </div>
-        ) : (
-            <div>
-              {getStepContent()}
-              <div style={{ marginTop: '10px' }}>
-                <Button
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  color='inherit'>
-                  Back
+        {getStepContent()}
+        <div style={{ marginTop: '10px' }}>
+          <Button
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            color='inherit'>
+            Back
                 </Button>
-                <Button style={{ marginLeft: '10px' }} variant="contained" color="secondary" onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+          <Button style={{ marginLeft: '10px' }} variant="contained" color="secondary"
+            onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}>
+            {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+          </Button>
+          <br />
+          <Button ref={scrollRef} onClick={handleCancel} variant='text' color="secondary" style={{ marginTop: '10px' }}>
+            Cancel
                 </Button>
-                <br />
-                <Button onClick={handleCancel} variant='text' color="secondary" style={{ marginTop: '10px' }}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          )}
+        </div>
       </div>
     </div>
   );

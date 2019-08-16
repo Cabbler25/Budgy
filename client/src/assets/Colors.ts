@@ -3,6 +3,7 @@ const colors = {
     darkGreen: '#388E3C',
     green: '#4CAF50',
     lightGreen: '#63b175',
+    lighterGreen: '#c2e0c6',
     offWhite: '#FFFFFF',
     teal: '#009688',
     orange: '#FF9800',
@@ -20,20 +21,7 @@ export const colorTypes = {
     important: colors.red,
     // donut: ['#3b00ed', '#9c27b0', '#ff9800', colors.darkGreen, '#d81b60', '#eb3693'],
     donut: [colors.orange, colors.lightGreen, colors.darkGreen, colors.teal, 'grey'],
+    paper: "rgba(255, 255, 255, 0.85)"
 }
-
-// function getRandomColors() {
-//     const amount = 10;
-//     const letters = '0123456789ABCDEF';
-//     let colors = new Array(amount);
-//     for (let i = 0; i < amount; i++) {
-//         let color = '#';
-//         for (let i = 0; i < 6; i++) {
-//             color += letters[Math.floor(Math.random() * 16)];
-//         }
-//         colors[i] = color;
-//     }
-//     return colors;
-// }
 
 export default colors;

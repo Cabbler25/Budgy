@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 import './App.css';
-import colors from './assets/Colors';
+import colors, { colorTypes } from './assets/Colors';
 import Budget from './components/Budget.component';
 import Expenses from './components/Expenses.component';
 import Home from './components/Home.component';
@@ -30,6 +30,11 @@ const theme = createMuiTheme({
         backgroundColor: colors.teal
       }
     },
+    MuiTablePagination: {
+      root: {
+        marginLeft: '-35px'
+      }
+    }
   },
   // Override the props of any component
   props: {
@@ -55,7 +60,7 @@ const App: React.FC = () => {
       <PersistGate loading={null} persistor={persistor}>
         <MuiThemeProvider theme={theme}>
           <Router>
-            <div style={{ height: '7px', width: '100%', minWidth: '100%', maxWidth: '100%', backgroundColor: colors.darkGreen }} />
+            <div style={{ height: '7px', width: '100vw', backgroundColor: colors.darkGreen }} />
             <NavBar />
             <br />
             <Route path="/" exact component={Home} />

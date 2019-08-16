@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -6,9 +6,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Axios from 'axios'
 
 import { Link, Button } from '@material-ui/core';
-import { pencilTool, pencilPath } from '../assets/Icons';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -32,8 +32,7 @@ const StyledTableRow = withStyles((theme: Theme) =>
   }),
 )(TableRow);
 
-export function ExpensesTable(props: any) {
-  const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       marginTop: theme.spacing(2),
@@ -41,13 +40,42 @@ export function ExpensesTable(props: any) {
       margin: "auto"
     },
     table: {
-      width: props.view ? "100%" : "90?",
+      minWidth: 700,
       textAlign: "center"
     },
   }),
 );
-const classes = useStyles(props);
 
+export function IncomesTable(props: any) {
+  const classes = useStyles(props);
+  const [incomes, setIncomes] = useState([]);
+
+
+  useEffect(() => {
+    createTable();
+  }, [])
+
+  // This function sends the request to get all user reimbursements
+  function createTable() {
+    setIncomes(props.incomes);
+     //console.log(incomes);
+  }
+  // Go back to the incomes component
+  function handleBackButton() {
+    // props.location.state.props.history.push("/incomes");
+    props.changeType(0);
+  }
+
+  //need to fix
+  /*
+  async function handleClickDelete(id: number) {
+    const url = `http://localhost:8080/income/${id}`;
+    await Axios.delete(url)
+        .catch((err: any) => {
+            //erros
+        });
+  }
+  */
   return (
     <div>
       <Paper className={classes.root}>
@@ -57,47 +85,29 @@ const classes = useStyles(props);
               <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
                 amount (usd)
                 </StyledTableCell>
-                {props.view ? 
-                <Fragment></Fragment>
-                :
-                <Fragment>
-                  <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                    type
-                    </StyledTableCell>
-                  <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                    date
-                    </StyledTableCell>
-                </Fragment>
-                }
+              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+                type
+                </StyledTableCell>
               <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
                 description
                 </StyledTableCell>
-                <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
-                  edit
+              <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+                edit
                 </StyledTableCell>
+                <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
+                delete
+                </StyledTableCell>
+              
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.expenses.map((row: any) => (
+            {incomes.map((row: any) => (
               <StyledTableRow key={row.id}>
-                <StyledTableCell component="th" scope="row">
-                  {row.amount}
-                </StyledTableCell>
-                {
-                  props.view ?
-                  <Fragment></Fragment>
-                  :
-                  <Fragment>
-                    <StyledTableCell>{row.expenseType.type}</StyledTableCell>
-                    <StyledTableCell>{row.date.slice(0, 10)}</StyledTableCell>
-                  </Fragment>
-                }
+                <StyledTableCell component="th" scope="row"> {row.amount}</StyledTableCell>
+                <StyledTableCell>{row.incomeType.type}</StyledTableCell>
                 <StyledTableCell >{row.description}</StyledTableCell>
-                <StyledTableCell>
-                  <svg xmlns={pencilTool}  width="24" height="24" viewBox="0 0 24 24">
-                  <path d={pencilPath}/>
-                  </svg>
-                </StyledTableCell>
+                <StyledTableCell> <Button>{row.id}</Button></StyledTableCell>
+                <StyledTableCell> <Button onClick={() =>props.deleteIncome(row)}>X</Button></StyledTableCell>
               </StyledTableRow>
             ))
             }
