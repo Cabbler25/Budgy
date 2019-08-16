@@ -8,4 +8,5 @@ import com.revature.models.Budget;
 
 public interface BudgetRepository<P> extends JpaRepository<Budget, Integer> {
 	List<Budget> findByUserId(int userId);
+
 }

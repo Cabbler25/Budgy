@@ -67,6 +67,12 @@ public class BudgetController {
 		return budgetService.updateBudget(budget) ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;
 	}
 
+	@RequestMapping(value = "/user/budget/{id}", method = RequestMethod.DELETE)
+	public HttpStatus deleteAllByUser(@PathVariable int id) {
+		budgetService.deleteByUserId(id);
+		return HttpStatus.NO_CONTENT;
+	}
+
 //	@RequestMapping(value = "/budget", method = RequestMethod.GET)
 //	public List<Budget> getAll() {
 //		return BudgetService.getAllBudgets();
