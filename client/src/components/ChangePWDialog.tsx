@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export function ChangePw(props: IUpdatePWProps) {
+
   const classes = useStyles(props);
   const [state, setState] = React.useState({
     open: false,
@@ -121,13 +122,13 @@ export function ChangePw(props: IUpdatePWProps) {
       await Axios.post(url,{
           username: props.user.username,
           password: state.prev
-      }).then(payload => {
+      },{headers:{Authorization: props.user.token}}).then(payload => {
           const url= 'http://localhost:8080/update'
           if(payload.status === 200){
               Axios.patch(url,{
                   id: props.user.id,
                   password: state.newOne
-              });
+              },{headers:{Authorization: props.user.token}});
               handleClose();
               handleOpenPw();
           }
