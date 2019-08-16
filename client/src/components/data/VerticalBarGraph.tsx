@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { HorizontalBar, Bar } from 'react-chartjs-2';
-import "reaviz/dist/index.css";
+import { Bar } from 'react-chartjs-2';
 import { colorTypes } from '../../assets/Colors';
 
 /**

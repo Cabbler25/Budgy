@@ -30,6 +30,11 @@ const theme = createMuiTheme({
         backgroundColor: colors.teal
       }
     },
+    MuiTablePagination: {
+      root: {
+        marginLeft: '-35px'
+      }
+    }
   },
   // Override the props of any component
   props: {

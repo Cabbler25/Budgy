@@ -67,6 +67,12 @@ public class IncomeController {
 		return incomeService.updateIncome(income) ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;
 	}
 
+	@RequestMapping(value = "/user/income/{id}", method = RequestMethod.DELETE)
+	public HttpStatus deleteAllIncomes(@PathVariable int id) {
+		incomeService.deleteByUserId(id);
+		return HttpStatus.NO_CONTENT;
+	}
+
 //	@RequestMapping(value = "/income", method = RequestMethod.GET)
 //	public List<Income> getAll() {
 //		return IncomeService.getAllIncomes();
