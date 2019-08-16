@@ -21,7 +21,7 @@ export function Sidebar(props: any) {
           <div style={{ textAlign: 'center' }}>
             {props.isLoggedIn ?
               <Button color="primary" style={{ color: colors.offWhite }} component={Link} to="/user">
-                My Profile
+                My Account
             </Button>
               :
               <Button variant="outlined" onClick={() => props.history.push('/login')}>
