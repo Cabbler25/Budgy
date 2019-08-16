@@ -129,10 +129,15 @@ function NavBar(props: INavProps) {
               </Button>
             </Fragment>}
           <div className={classes.nav_right}>
-            {props.user.isLoggedIn ?
+            {props.user.isLoggedIn ? 
+            <div>
+            <Button className={classes.nav_item} variant='text' color='secondary' component={Link} to="/user">
+              Account
+            </Button>
               <Button className={classes.nav_item} variant='text' color='secondary' component={Link} to="/logout">
                 Logout
-              </Button>
+            </Button> 
+            </div>
               :
               <List>
                 <ListItem>

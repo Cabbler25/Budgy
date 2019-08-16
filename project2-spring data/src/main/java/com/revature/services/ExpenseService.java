@@ -39,9 +39,9 @@ public class ExpenseService {
 	public Optional<ExpenseType> findExpenseTypeById(int id) {
 		return expenseTypeRepository.findById(id);
 	}
-	
-	public List<Expense> findExpenseByUserIdAndExpenseType(int userId,Optional<ExpenseType> expenseType) {
-		return expenseRepository.findByUserIdAndExpenseType(userId,expenseType);
+
+	public List<Expense> findExpenseByUserIdAndExpenseType(int userId, Optional<ExpenseType> expenseType) {
+		return expenseRepository.findByUserIdAndExpenseType(userId, expenseType);
 	}
 
 	public List<ExpenseType> findAllExpenseTypes() {
@@ -59,4 +59,13 @@ public class ExpenseService {
 	public boolean updateExpense(Expense expense) {
 		return expenseRepository.save(expense) != null;
 	}
+
+	public void deleteByUserId(int userId) {
+		List<Expense> toBeGone = expenseRepository.findByUserId(userId);
+		for (Expense b : toBeGone) {
+			expenseRepository.deleteById(b.getId());
+		}
+		return;
+	}
+
 }
