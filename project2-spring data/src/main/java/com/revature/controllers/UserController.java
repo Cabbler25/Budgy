@@ -18,7 +18,7 @@ import com.revature.services.UserServices;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*", methods = { RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT,
-		RequestMethod.DELETE })
+		RequestMethod.PATCH })
 public class UserController {
 
 	UserServices userService;
@@ -44,6 +44,13 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@PostMapping("/user/verifyPassword")
+	public ResponseEntity<Object> checkPw(@RequestBody User user) {
+		if (userService.checkPw(user.getUsername(), user.getPassword()))
+			return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	}
+
 	@GetMapping("/user/{id}")
 	public ResponseEntity<Object> getUser(@PathVariable("id") int id) {
 
@@ -61,9 +68,10 @@ public class UserController {
 	}
 
 	@PatchMapping("/update")
-	public HttpStatus updateUser(@RequestBody User user) {
+	public ResponseEntity<Object> updateUser(@RequestBody User user) {
 
-		return userService.updateUser(user) ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+		return userService.updateUser(user) ? new ResponseEntity<>(HttpStatus.OK)
+				: new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
 	}
 

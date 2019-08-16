@@ -55,4 +55,12 @@ public class BudgetService {
 	public boolean updateBudget(Budget budget) {
 		return budgetRepository.save(budget) != null;
 	}
+
+	public void deleteByUserId(int userId) {
+		List<Budget> toBeGone = budgetRepository.findByUserId(userId);
+		for (Budget b : toBeGone) {
+			budgetRepository.deleteById(b.getId());
+		}
+		return;
+	}
 }

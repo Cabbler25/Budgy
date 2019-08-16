@@ -55,4 +55,13 @@ public class IncomeService {
 	public boolean updateIncome(Income income) {
 		return incomeRepository.save(income) != null;
 	}
+
+	public void deleteByUserId(int userId) {
+		List<Income> toBeGone = incomeRepository.findByUserId(userId);
+		for (Income b : toBeGone) {
+			incomeRepository.deleteById(b.getId());
+		}
+		return;
+	}
+
 }
