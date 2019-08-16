@@ -1,4 +1,4 @@
-import { Container, Paper, TextField, InputAdornment } from '@material-ui/core';
+import { Container,Typography, Paper, TextField, InputAdornment } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -10,7 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Axios from 'axios';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { Row } from 'reactstrap';
 import { addTool, addPath } from '../assets/Icons';
 
@@ -49,10 +49,20 @@ export default function NewExpense(props: any) {
     setState({ type:0,description:'',amount:0, open: true,formFilled:true });
   }
 
+  useEffect(() => {
+    if (props.tableView) {
+      setState({...state,type:props.type});
+    }
+  });
+
   function handleSubmit() {
     // Check if form is filled properly
     if (state.type && state.description && state.amount) {
-      props.createExpense(props.types.find((type:any) => type.id == state.type),state.description,state.amount);
+      // If user is in table view, the expense type is passed from the parent
+      props.tableView ?
+      props.createExpense(props.types.find((type:any) => type.type == state.type),state.description,state.amount)
+      :
+      props.createExpense(props.types.find((type:any) => type.id == state.type),state.description,state.amount)
       // Close popover
       handleClose();
     } else {
@@ -84,7 +94,11 @@ export default function NewExpense(props: any) {
                   <Container style={{textAlign: "center"}}>
                     <Row>
                       <h4>
-                        {props.view ? "Add expense" : "Add New Expense" } 
+                        {
+                          (!props.tableView) ?
+                          props.view ? "Add expense" : `Add New Expense` :
+                          `Add ${props.type} expense` 
+                        } 
                       </h4>
                     </Row>
                     <Row className="new-expense-form">
@@ -139,6 +153,8 @@ export default function NewExpense(props: any) {
                         rows={props.view ? 4 : 5}
                         onChange={handleChange("description")}/>
                     </Row>
+                    {
+                      (!props.tableView) &&
                     <Row className="new-expense-form">
                       <Select
                       value={state.type}
@@ -162,11 +178,11 @@ export default function NewExpense(props: any) {
                             "Required"}
                         </em>
                         </MenuItem>
-                        {props.types.map((t:any) => (
-                        <MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>  
-                        ))}
+                        {props.types.map((t:any) =>(<MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>)
+                        )}
                       </Select>
                     </Row>
+                    }
                   </Container>
               </Paper>
             </FormControl>

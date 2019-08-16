@@ -26,6 +26,7 @@ export interface IExpenseProps {
 }
 
 function Expenses(props: IExpenseProps) {
+  // Needed constants with their respective state modifier function
   const [expenses, setExpenses] = useState();
   const [expenseTypes, setExpenseTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
@@ -93,6 +94,7 @@ function Expenses(props: IExpenseProps) {
       description: newDescripion,
       amount: newAmount
     };
+    console.log("this is the new expense before posting it:",data);
     Axios.post(url, data)
       .then(() => {
         const newExpense = {
@@ -138,11 +140,14 @@ function Expenses(props: IExpenseProps) {
     .then(() => {
       getAllExpenses();
       if (showTable) {
-        console.log(expense);
-        // Modify the expenses that are going to be shown in the table
+        // Update the expenses state in general (parent component)
         const updatedExpenseIndex = expenses.findIndex(checkId);
         expenses[updatedExpenseIndex] = expense;
         setExpenses(expenses);
+        // Also update the expenses in the table perspective
+        const matchedExpenses = expenses.filter((expense: any) =>
+        expense.expenseType.type == expenseType);
+        setExpensesByUserIdAndTypeId(matchedExpenses);
       }
     })
   }
@@ -190,10 +195,12 @@ function Expenses(props: IExpenseProps) {
                           <path d={donutPath}/>
                           </svg>
                         </Button> 
+                        {/* If on table perspective, don't show the type selector */}
                         <NewExpense
                           types={expenseTypes}
                           createExpense={createNewExpense}
                           view ={props.ui.isMobileView} 
+                          tableView = {showTable}
                           type={expenseType}/>
                       </Col>
                     </Row>

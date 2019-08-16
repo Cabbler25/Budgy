@@ -13,8 +13,9 @@ import { Input,Typography, Card, Dialog, DialogContent,Container, DialogActions,
 
 /*
 TODO: 
-- If user clicks on update or delete buttons, show a dialog that says
-are you sure? OK - Cancel
+- If user clicks on update button, show a dialog that says
+confirm changes OK - Cancel
+- Solve undo button issue
 */
 
 const StyledTableCell = withStyles((theme: Theme) =>
@@ -48,6 +49,8 @@ export function ExpensesTable(props: any) {
   const [editableRowKey,setEditableRowKey] = useState(0);
   // Define state and its update method to track changes of the editable expense row
   const [state, setState] = useState();
+  // This constant is used to logically display the about to delete dialog
+  const [aboutToDelete,setAboutToDelete] = useState(false);
   // Define the appereance of the confirmation dialog
   const [confirmDialog,setConfirmDialog] = useState(false); 
   // Button used to enable edit fields in the table
@@ -56,6 +59,18 @@ export function ExpensesTable(props: any) {
     setState(expense);
     // This will change the view of the row from read to write mode
     setEditableRow(true);
+  }
+  // Function used to close the confirm deletion dialog in case user decides not
+  // to delete the expense
+  function deleteStatus(status:boolean) {
+    if (status) {
+      setAboutToDelete(false);
+      setConfirmDialog(false);
+      props.deleteExpense(state);
+    } else {
+      setAboutToDelete(status);
+      setConfirmDialog(status);
+    }
   }
   // Function that listens for changes on any of the expenses
   const handleEditedExpenseChange = (event:any) => 
@@ -135,8 +150,7 @@ const columnStyle = { marginRight: '2px', };
                     style={{fontSize:'13.3px',
                     color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
                     type="number"
-                    defaultValue={
-                      (editableRow && (editableRowKey === row.id)) ?state.amount:row.amount}
+                    defaultValue={row.amount}
                     name="amount"
                     onChange={(e:any)=>handleEditedExpenseChange(e)}/>
                 </TableCell>
@@ -153,8 +167,7 @@ const columnStyle = { marginRight: '2px', };
                   style={{fontSize:'13.3px',
                   color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
                   multiline={true}
-                  defaultValue={
-                    (editableRow && (editableRowKey === row.id)) ?state.description:row.description}
+                  defaultValue={row.description}
                   name="description"
                   onChange={(e:any)=>handleEditedExpenseChange(e)}/>
                 </TableCell>
@@ -200,68 +213,13 @@ const columnStyle = { marginRight: '2px', };
                         <Button 
                         onClick={() => {setConfirmDialog(true);
                                         setState(row);
+                                        setAboutToDelete(true);
                                         }}>
                           <svg xmlns={removeTool}  
                           width="24" height="24" viewBox="0 0 24 24">
                           <path d={removePath}/>
                           </svg>
                         </Button>
-                        {
-                          
-                          <Paper style={{textAlign: "center"}}>
-                            <Container>
-                              <Dialog open={confirmDialog}>
-                              <DialogContent>
-                              You are about to delete the following expense: 
-                              <br/> <br/>
-                              <Paper>
-                                <Card className={cardClasses.card}>
-                                  <CardContent>
-                                    <Typography className={cardClasses.title} 
-                                    color="textSecondary" gutterBottom>
-                                    amount:  
-                                    </Typography>
-                                    <Typography variant="h6" component="h4">
-                                      ${row.amount}
-                                    </Typography>
-                                    <Typography className={cardClasses.title} 
-                                    color="textSecondary" gutterBottom>
-                                      date submitted:  
-                                    </Typography>
-                                    <Typography variant="h6" component="h4">
-                                      {row.date.slice(0,10)}
-                                    </Typography>
-                                    <Typography className={cardClasses.title} 
-                                    color="textSecondary" gutterBottom>
-                                      description:  
-                                    </Typography>
-                                    <Typography variant="h6" component="h4">
-                                      {row.description}
-                                    </Typography>
-                                  </CardContent>
-                                </Card>
-                              </Paper>      
-                              <br/>
-                              </DialogContent>
-                              <DialogActions>
-                                <Button
-                                  onClick={
-                                    // Function call to send the request for creating new expense
-                                    ()=>props.deleteExpense(row)
-                                  }
-                                  color="primary">
-                                  Confirm
-                                </Button>
-                                <Button
-                                  onClick={()=>setConfirmDialog(false)}
-                                  color="secondary">
-                                  Cancel
-                                </Button>
-                              </DialogActions>
-                            </Dialog>
-                          </Container>
-                        </Paper>
-                        }
                       </TableCell>
                     </Fragment>
                   }
@@ -270,6 +228,58 @@ const columnStyle = { marginRight: '2px', };
             }
           </TableBody>
         </Table>
+        {/* Display the delete confir delete dialog when the user clicks on the 
+            delete icon. It shows the information of the expense before deleting
+            it. User can select between cancel or delete. */}
+            {      
+              aboutToDelete &&
+              <Paper style={{textAlign: "center"}}>
+                  <Dialog open={confirmDialog}>
+                  <DialogContent>
+                  You are about to delete the following expense: 
+                  <br/> <br/>
+                    <Card className={cardClasses.card}>
+                      <CardContent>
+                        <Typography className={cardClasses.title} 
+                        color="textSecondary" gutterBottom>
+                        amount:  
+                        </Typography>
+                        <Typography variant="h6" component="h4">
+                          ${state.amount}
+                        </Typography>
+                        <Typography className={cardClasses.title} 
+                        color="textSecondary" gutterBottom>
+                          date submitted:  
+                        </Typography>
+                        <Typography variant="h6" component="h4">
+                          {state.date.slice(0,10)}
+                        </Typography>
+                        <Typography className={cardClasses.title} 
+                        color="textSecondary" gutterBottom>
+                          description:  
+                        </Typography>
+                        <Typography variant="h6" component="h4">
+                          {state.description}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  <br/>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button
+                      onClick={()=>deleteStatus(true)}
+                      color="primary">
+                      Delete
+                    </Button>
+                    <Button
+                      onClick={()=>deleteStatus(false)}
+                      color="secondary">
+                      Cancel
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+            </Paper>
+            }
       </Paper>
     </div>
   );
