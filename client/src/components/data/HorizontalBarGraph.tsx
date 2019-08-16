@@ -29,7 +29,8 @@ export function HorizontalBarGraph(props: any) {
       setData({
         labels: labels,
         datasets: [{
-          data: [155, 165, 175],
+          label: 'Budgets',
+          data: dataArr,
           backgroundColor: getBackgroundColors(labels, props.important),
           hoverBackgroundColor: getHoverColors(labels, props.important),
         }],
@@ -46,7 +47,7 @@ export function HorizontalBarGraph(props: any) {
   return (data ?
     <HorizontalBar
       width={props.isMobileView ? 300 : 500}
-      height={props.isMobileView ? 300 : 100}
+      height={props.isMobileView ? 300 : 200}
       data={data}
       getElementAtEvent={handleElementClick}
     /> : <Fragment />
