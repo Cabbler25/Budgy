@@ -123,7 +123,7 @@ const columnStyle = { marginRight: '2px'}
                 <StyledTableCell style={{ marginRight: '2px', marginLeft: 'auto' }}>
                 delete
                 </StyledTableCell> */}
-                <StyledTableCell style={columnStyle} size='small'> Amount</StyledTableCell>
+                <StyledTableCell style={columnStyle} size='small'>Amount</StyledTableCell>
                 {props.view ? <Fragment></Fragment> : <Fragment><StyledTableCell style={columnStyle}>Description</StyledTableCell> </Fragment>}
                 <StyledTableCell style={columnStyle}></StyledTableCell>
             </TableRow>
@@ -155,7 +155,6 @@ const columnStyle = { marginRight: '2px'}
                     name="amount"
                     onChange={(e:any)=>handleEditedIncomeChange(e)}/>
               </TableCell>
-              
               <TableCell component="th" scope="row">
                   <Input
                   fullWidth={false}
