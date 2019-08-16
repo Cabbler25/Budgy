@@ -12,6 +12,7 @@ import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okT
 
 import { Button } from '@material-ui/core';
 import { TextField } from 'material-ui';
+import TablePagination from '@material-ui/core/TablePagination';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -37,11 +38,17 @@ const StyledTableRow = withStyles((theme: Theme) =>
 
 
 
+
+
 export function IncomesTable(props: any) {
   const [editRow, setEditRow] =useState(false);
   const [editRowKey, setEditRowKey] = useState(0);
   const [state, setState] = useState();
   const [confirmDialog, setConfirmDialog] = useState(false);
+
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  
   
   function handleEditButton(income: any) {
     setState(income);
@@ -53,6 +60,16 @@ export function IncomesTable(props: any) {
     setState({ ...state, [e.target.name]: e.target.value
     });
   }
+
+function handleChangePage(event: unknown, newPage: number) {
+    setPage(newPage);
+  }
+
+  function handleChangeRowsPerPage(event: React.ChangeEvent<HTMLInputElement>) {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  }
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, props.incomes.length - page * rowsPerPage);
 
   const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -104,6 +121,7 @@ const columnStyle = { marginRight: '2px'}
   return (
     <div>
       <Paper className={classes.root}>
+        <div>
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
@@ -129,20 +147,8 @@ const columnStyle = { marginRight: '2px'}
             </TableRow>
           </TableHead>
           <TableBody>
-            {/*
-            {incomes.map((row: any) => (
-              <StyledTableRow key={row.id}>
-                <StyledTableCell component="th" scope="row"> {row.amount}</StyledTableCell>
-                <StyledTableCell>{row.incomeType.type}</StyledTableCell>
-                <StyledTableCell>{row.description}</StyledTableCell>
-                <StyledTableCell> <Button onClick={() =>props.updateIncome(row)}>update</Button></StyledTableCell>
-                <StyledTableCell> <Button onClick={() =>props.deleteIncome(row)}>X</Button></StyledTableCell>
-
-              </StyledTableRow>
-            ))
-            }
-          */}
-          {props.incomes.map((row: any) => (
+           
+          {props.incomes.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: any) => (
             <TableRow key={row.id}>
               <TableCell component="th" scope="row" size='small'>
                 <Input fullWidth={false}
@@ -247,8 +253,27 @@ const columnStyle = { marginRight: '2px'}
                   }
             </TableRow>
           ))}
+          {emptyRows > 0 && (
+              <TableRow style={{ height: 49 * emptyRows }}>
+                <TableCell colSpan={4} />
+              </TableRow>
+            )}
           </TableBody>
         </Table>
+        </div>
+        <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                colSpan={3}
+                count={props.incomes.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                SelectProps={{
+                  inputProps: { 'aria-label': 'rows per page' },
+                  native: true,
+                }}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
       </Paper>
     </div>
   );

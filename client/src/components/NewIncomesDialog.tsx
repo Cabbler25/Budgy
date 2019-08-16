@@ -94,11 +94,9 @@ export default function NewIncome(props: any) {
           <DialogContent>
             <form className={classes.container}>
               <FormControl className={classes.formControl}>
-                
                 <Paper>
                   <Container style={{textAlign: "center"}}>
                     <Row><h4>Add Income</h4></Row>
-                    
                     <Row className="new-income-form">
                       <TextField
                         name="amount"
@@ -185,16 +183,8 @@ export default function NewIncome(props: any) {
             </form>
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={handleSubmit}
-              color="primary">
-              Ok
-              </Button>
-            <Button
-              onClick={handleClose}
-              color="primary">
-              Cancel
-            </Button>
+            <Button onClick={handleSubmit} color="primary">Ok</Button>
+            <Button onClick={handleClose} color="primary">Cancel</Button>
           </DialogActions>
         </Dialog>
       </Fragment>
