@@ -10,8 +10,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Axios from 'axios';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Row } from 'reactstrap';
+import { addTool, addPath } from '../assets/Icons';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,8 +65,16 @@ export default function NewExpense(props: any) {
   }
 
   return (
-    <div>
-      <Button onClick={handleClickOpen}>+</Button>
+    <Fragment>
+      <Button 
+      onClick={handleClickOpen}
+      style={{display:"inline-block"}}
+      color='primary'>
+        <svg xmlns={addTool}  
+        width="24" height="24" viewBox="0 0 24 24">
+        <path d={addPath}/>
+        </svg>
+      </Button>
       <Dialog disableBackdropClick disableEscapeKeyDown open={state.open} onClose={handleClose}>
         <DialogContent>
           <form className={classes.container}>
@@ -179,6 +188,6 @@ export default function NewExpense(props: any) {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Fragment>
   );
 }
