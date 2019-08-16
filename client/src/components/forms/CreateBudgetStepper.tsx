@@ -1,8 +1,8 @@
-import { Button, ClickAwayListener, InputAdornment, Step, StepLabel, Stepper, TextField, Typography } from '@material-ui/core';
-import React, { createRef, Fragment, useState, useEffect } from 'react';
+import { Button, ClickAwayListener, InputAdornment, Step, StepLabel, Stepper, TextField } from '@material-ui/core';
+import React, { createRef, Fragment, useEffect, useState } from 'react';
 
 function getSteps() {
-  return ['Describe your budget', 'Select a type', 'Set an amount'];
+  return ['Select a type', 'Describe your budget', 'Set an amount'];
 }
 
 export function CreateBudgetStepper(props: any) {
@@ -36,7 +36,7 @@ export function CreateBudgetStepper(props: any) {
 
   function handleNext() {
     switch (activeStep) {
-      case 0:
+      case 1:
         if (inputState.description == '') setHasError(true);
         else setActiveStep(prevActiveStep => prevActiveStep + 1);
         break;
@@ -76,7 +76,7 @@ export function CreateBudgetStepper(props: any) {
 
   function getStepContent() {
     switch (activeStep) {
-      case 0:
+      case 1:
         return (
           <TextField
             error={hasError}
@@ -88,7 +88,7 @@ export function CreateBudgetStepper(props: any) {
             onChange={handleInputChange}
           />
         );
-      case 1:
+      case 0:
         return (
           <TextField
             select

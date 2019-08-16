@@ -8,7 +8,7 @@ import colors from '../assets/Colors';
 
 export function Sidebar(props: any) {
   return (
-    <div role="presentation" onClick={props.handleClose} onKeyDown={props.handleClose} >
+    <div role="presentation" onClick={props.handleClose} onKeyDown={props.handleClose}>
       <Drawer open={props.open} onClose={() => props.handleClose()}>
         <div style={{ backgroundColor: colors.lighterGreen }}>
           <div style={{ minWidth: '250px', maxWidth: '250px' }} />

@@ -9,6 +9,7 @@
         "@material-ui/icons": "^4.2.1",
         "@material-ui/styles": "^4.3.0",
         "@types/canvasjs": "^1.9.5",
+        "@types/chart.js": "^2.8.1",
         "@types/jest": "24.0.16",
         "@types/material-ui": "^0.21.6",
         "@types/node": "12.6.9",
