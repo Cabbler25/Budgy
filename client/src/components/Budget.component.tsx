@@ -76,13 +76,7 @@ export function Budget(props: IBudgetProps) {
   }, [props.user.isLoggedIn])
 
   useEffect(() => {
-    if (budgets) {
-      let amount = 0;
-      for (let i = 0; i < budgets.length; i++) {
-        amount += budgets[i].amount;
-      }
-      setBudgetTotal(amount)
-    }
+    if (budgets) setBudgetTotal(budgets.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))
   }, [budgets])
 
   function handlePanelChange(e: any, newValue: number) {
@@ -204,7 +198,6 @@ export function Budget(props: IBudgetProps) {
   }
 
   function handleElementClick(label: number) {
-
     const type = budgetTypes.find((type: any) => type.type == label);
 
     if (type) {
