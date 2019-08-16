@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.models.ClientInfo;
 import com.revature.models.User;
+import com.revature.services.JWTService;
 import com.revature.services.UserServices;
 
 @RestController
@@ -45,14 +47,18 @@ public class UserController {
 	}
 
 	@PostMapping("/user/verifyPassword")
-	public ResponseEntity<Object> checkPw(@RequestBody User user) {
+	public ResponseEntity<Object> checkPw(@RequestHeader("Authorization") String token, @RequestBody User user) {
+		if (!JWTService.checkAuthByUsername(token, user.getUsername()))
+			return new ResponseEntity<>("You are not authorized for this operation!", HttpStatus.UNAUTHORIZED);
 		if (userService.checkPw(user.getUsername(), user.getPassword()))
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 	}
 
 	@GetMapping("/user/{id}")
-	public ResponseEntity<Object> getUser(@PathVariable("id") int id) {
+	public ResponseEntity<Object> getUser(@RequestHeader("Authorization") String token, @PathVariable("id") int id) {
+		if (!JWTService.checkAuthByID(token, id))
+			return new ResponseEntity<>("You are not authorized for this operation!", HttpStatus.UNAUTHORIZED);
 
 		return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
 	}
@@ -68,8 +74,9 @@ public class UserController {
 	}
 
 	@PatchMapping("/update")
-	public ResponseEntity<Object> updateUser(@RequestBody User user) {
-
+	public ResponseEntity<Object> updateUser(@RequestHeader("Authorization") String token, @RequestBody User user) {
+		if (!JWTService.checkAuthByID(token, user.getId()))
+			return new ResponseEntity<>("You are not authorized for this operation!", HttpStatus.UNAUTHORIZED);
 		return userService.updateUser(user) ? new ResponseEntity<>(HttpStatus.OK)
 				: new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
