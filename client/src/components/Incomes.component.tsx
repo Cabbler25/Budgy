@@ -27,7 +27,7 @@ function Incomes(props: IIncomeProps) {
   const [incomeTypes, setIncomeTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [incomesByUserAndType, setIncomeByUserIdAndTypeId] = useState([]);
-  const [id, setId] = useState([]);
+  
 
 
 useEffect(() => {
