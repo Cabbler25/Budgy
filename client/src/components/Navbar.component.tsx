@@ -106,7 +106,7 @@ function NavBar(props: INavProps) {
   return (
     <Fragment>
       <Sidebar history={props.history} open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} />
-      <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined, opacity: 0.97 }} position='sticky'>
+      <AppBar style={{ borderBottom: !isTopView ? `1px solid ${colors.darkGreen}` : undefined, boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined, opacity: 0.97 }} position='sticky'>
         <Toolbar className={classes.navbar}>
           {props.ui.isMobileView &&
             <Button style={{ marginRight: '5px', maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>
@@ -119,56 +119,78 @@ function NavBar(props: INavProps) {
           {!props.ui.isMobileView &&
             <Fragment>
               <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/budget"
-                style={{ marginLeft: '50px', textDecoration: onPage('/budget') ? `underline` : undefined }}>
+                style={{
+                  marginLeft: '50px',
+                  textDecoration: onPage('/budget') ? `underline` : undefined
+                }}>
                 Budget
-                </Button>
+              </Button>
               <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/expenses"
-                style={{ textDecoration: onPage('/expenses') ? `underline` : undefined }}>
+                style={{
+                  textDecoration: onPage('/expenses') ? `underline` : undefined
+                }}>
                 Expenses
               </Button>
               <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/incomes"
-                style={{ textDecoration: onPage('/incomes') ? `underline` : undefined }}>
+                style={{
+                  textDecoration: onPage('/incomes') ? `underline` : undefined
+                }}>
                 Incomes
               </Button>
             </Fragment>}
           <div className={classes.nav_right}>
-            {props.user.isLoggedIn ? 
-            <div>
-            <Button className={classes.nav_item} variant='text' color='secondary' component={Link} to="/user">
-              Account
-            </Button>
-              <Button className={classes.nav_item} variant='text' color='secondary' component={Link} to="/logout">
-                Logout
-            </Button> 
-            </div>
-              :
+            {props.user.isLoggedIn ? (
               <List>
                 <ListItem>
-                  {props.ui.isMobileView ?
-                    <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
-                      style={{ width: '90%', borderColor: colors.offWhite, fontSize: '12px' }}
-                      component={Link} to='/login'>
-                      Login
-                    </Button>
-                    :
-                    <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
-                      style={{ borderColor: colors.offWhite }} onClick={handleLoginOpen}>
-                      Login
-                    </Button>}
-                  <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
-                  <Button className={classes.nav_item} size='small' variant='contained' color='secondary'
+                  <Button size='small' className={classes.nav_item} variant='text' color='secondary' component={Link} to="/user"
                     style={{
-                      marginRight: props.ui.isMobileView ? '-8px' : undefined,
                       width: props.ui.isMobileView ? '90%' : undefined,
-                      backgroundColor: colors.orange,
-                      fontSize: props.ui.isMobileView ? '12px' : undefined
-                    }}
-                    component={Link} to="/register">
-                    Register
+                      marginRight: props.ui.isMobileView ? '-8px' : undefined,
+                      fontSize: props.ui.isMobileView ? '14px' : undefined
+                    }}>
+                    Account
+                  </Button>
+                  <Button size='small' className={classes.nav_item}
+                    variant='text' color='secondary'
+                    component={Link} to="/logout"
+                    style={{
+                      width: props.ui.isMobileView ? '90%' : undefined,
+                      marginRight: props.ui.isMobileView ? '-12px' : undefined,
+                      fontSize: props.ui.isMobileView ? '14px' : undefined
+                    }}>
+                    Logout
                   </Button>
                 </ListItem>
               </List>
-            }
+            ) : (
+                <List>
+                  <ListItem>
+                    {props.ui.isMobileView ? (
+                      <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
+                        style={{ width: '90%', borderColor: colors.offWhite, fontSize: '12px' }}
+                        component={Link} to='/login'>
+                        Login
+                      </Button>
+                    ) : (
+                        <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
+                          style={{ borderColor: colors.offWhite }} onClick={handleLoginOpen}>
+                          Login
+                        </Button>
+                      )}
+                    <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
+                    <Button className={classes.nav_item} size='small' variant='contained' color='secondary'
+                      style={{
+                        marginRight: props.ui.isMobileView ? '-8px' : undefined,
+                        width: props.ui.isMobileView ? '90%' : undefined,
+                        backgroundColor: colors.orange,
+                        fontSize: props.ui.isMobileView ? '12px' : undefined
+                      }}
+                      component={Link} to="/register">
+                      Register
+                    </Button>
+                  </ListItem>
+                </List>
+              )}
           </div>
         </Toolbar>
       </AppBar >

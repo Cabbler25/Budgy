@@ -58,7 +58,7 @@ export function Register(props: IRegisterProps) {
     setEmailField(e.target.value);
     setEmailError(false);
   }
-  async function handleRegistration(){
+  async function handleRegistration() {
     if (!usernameField) {
       setUsernameError(true);
       setUsernameErrorTxt('PLease Enter A Username');
@@ -71,7 +71,7 @@ export function Register(props: IRegisterProps) {
       setPwCheckError(true);
       setPwCheckErrorTxt('Please Re-enter Password');
     }
-    else if(pwField !== pwCheckField){
+    else if (pwField !== pwCheckField) {
       setPwError(true);
       setPwErrorTxt('Passwords Do Not Match');
       setPwCheckError(true);
@@ -89,32 +89,30 @@ export function Register(props: IRegisterProps) {
       setEmailError(true);
       setEmailErrorTxt('Please Enter a valid Email Address');
     }
-    else{
-    const url = 'http://localhost:8080/register/verifyUser';
-    await Axios.post(url, {
-      username: usernameField,
-      email: emailField
-    }).then(payload => {
-      if(payload.status === 200)
-      {registerUser();}
+    else {
+      const url = 'http://localhost:8080/register/verifyUser';
+      await Axios.post(url, {
+        username: usernameField,
+        email: emailField
+      }).then(payload => {
+        if (payload.status === 200) { registerUser(); }
+      }
+      ).catch(err => {
+        if (err.response.status === 400) {
+          setUsernameError(true);
+          setUsernameErrorTxt('Username Already Exists');
+        }
+        else if (err.response.status === 403) {
+          setEmailError(true);
+          setEmailErrorTxt('There is Already an Account with the Email Provided');
+        }
+        else console.log(err);
+
+      })
     }
-    ).catch(err => {
-      if(err.response.status === 400)
-      {
-        setUsernameError(true);
-        setUsernameErrorTxt('Username Already Exists');
-      }
-      else if(err.response.status === 403)
-      {
-        setEmailError(true);
-        setEmailErrorTxt('There is Already an Account with the Email Provided');
-      }
-      else console.log(err);
-      
-    })}
   }
 
-  async function registerUser(){
+  async function registerUser() {
     const url = 'http://localhost:8080/register';
     await Axios.post(url, {
       username: usernameField,
@@ -123,30 +121,28 @@ export function Register(props: IRegisterProps) {
       lastname: lnameField,
       email: emailField
     }).then(payload => {
-      const login = 'http://localhost:8080/login';  
+      const login = 'http://localhost:8080/login';
       Axios.post(login, {
         username: usernameField,
         password: pwField,
       }).then(payload => {
         props.updateUserInfo(payload.data)
         props.updateUserLoggedIn(true);
-        props.history.push('/home');
-    })
-  });
-}
-
-
+        props.history.push('/');
+      })
+    });
+  }
 
   return (
     <div style={{ textAlign: 'center' }}>
       <Grid container>
         <Grid item xs={12}>
-      <Paper style={{ display: 'inline-block', padding: '50px', width: '50vh'}}>
-        <h1>Create a New Account</h1>
-        <br/>
-        <h3>Account Information</h3>
-        <Row className="user-register">
-        <TextField
+          <Paper style={{ display: 'inline-block', padding: '50px', width: '50vh' }}>
+            <h1>Create a New Account</h1>
+            <br />
+            <h3>Account Information</h3>
+            <Row className="user-register">
+              <TextField
                 error={usernameError}
                 id="username"
                 label='Enter Username'
@@ -155,8 +151,8 @@ export function Register(props: IRegisterProps) {
                 placeholder='my-username'
                 helperText={usernameError ? usernameErrorTxt : ''}
               />
-        </Row>
-        <Row className="user-register">
+            </Row>
+            <Row className="user-register">
               <TextField
                 error={pwError}
                 id="password"
@@ -167,8 +163,8 @@ export function Register(props: IRegisterProps) {
                 label='Enter Password'
                 helperText={pwError ? pwErrorTxt : ''}
               />
-        </Row>
-        <Row className="user-register">
+            </Row>
+            <Row className="user-register">
               <TextField
                 error={pwCheckError}
                 id="passwordCheck"
@@ -178,49 +174,49 @@ export function Register(props: IRegisterProps) {
                 placeholder='Password'
                 label='Re-type Password'
                 helperText={pwCheckError ? pwCheckErrorTxt : ''}
-              />  
-        </Row> 
-        <br/>
-        <Divider/>
-        <Divider/>
-        <br/>
-        <h3>Personal Information</h3>
-        <Row className="user-register">
-          <TextField id="fName"
-          error={fnameError}
-          onChange={handleFnameInput}
-          variant="outlined"
-          placeholder='John'
-          label='Enter First Name'
-          helperText={fnameError ? fnameErrorTxt : ''}
-        />
-        </Row>
-        <Row className="user-register">
-          <TextField id="lName"
-          variant="outlined"
-          placeholder='Doe'
-          label='Enter Last Name'
-          error={lnameError}
-          onChange={handleLnameInput}
-          helperText={lnameError ? lnameErrorTxt : ''}
-        />
-          </Row>   
-          <Row className="user-register">
-            <TextField id="email"
-            variant="outlined"
-            placeholder="your_email@email.com"
-            label='Enter Email Address'
-            error={emailError}
-            type="email"
-            onChange={handleEmailInput}
-            helperText={emailError ? emailErrorTxt : ''}
-            />
-          </Row> 
-          <Button style={{ marginTop: '10px' }} onClick={handleRegistration}>
+              />
+            </Row>
+            <br />
+            <Divider />
+            <Divider />
+            <br />
+            <h3>Personal Information</h3>
+            <Row className="user-register">
+              <TextField id="fName"
+                error={fnameError}
+                onChange={handleFnameInput}
+                variant="outlined"
+                placeholder='John'
+                label='Enter First Name'
+                helperText={fnameError ? fnameErrorTxt : ''}
+              />
+            </Row>
+            <Row className="user-register">
+              <TextField id="lName"
+                variant="outlined"
+                placeholder='Doe'
+                label='Enter Last Name'
+                error={lnameError}
+                onChange={handleLnameInput}
+                helperText={lnameError ? lnameErrorTxt : ''}
+              />
+            </Row>
+            <Row className="user-register">
+              <TextField id="email"
+                variant="outlined"
+                placeholder="your_email@email.com"
+                label='Enter Email Address'
+                error={emailError}
+                type="email"
+                onChange={handleEmailInput}
+                helperText={emailError ? emailErrorTxt : ''}
+              />
+            </Row>
+            <Button style={{ marginTop: '10px' }} onClick={handleRegistration}>
               Register
-          </Button>   
-      </Paper>
-      </Grid>
+          </Button>
+          </Paper>
+        </Grid>
       </Grid>
 
     </div>

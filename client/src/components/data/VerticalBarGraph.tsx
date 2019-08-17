@@ -47,7 +47,20 @@ export function VerticalBarGraph(props: any) {
       width={props.isMobileView ? 300 : 150}
       height={props.isMobileView ? 300 : 300}
       data={data}
-      getElementAtEvent={handleElementClick} /> : <Fragment />
+      getElementAtEvent={handleElementClick}
+      legend={{ display: false }}
+      options={{
+        scales: {
+          yAxes: [{
+            display: true,
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        },
+      }}
+    />
+    : <Fragment />
   );
 }
 

@@ -1,13 +1,14 @@
-import { Button, Paper, CircularProgress, makeStyles, createStyles, Theme } from '@material-ui/core';
+import { Button, CircularProgress, createStyles, makeStyles, Paper, Theme } from '@material-ui/core';
+import { BarLoader } from 'react-spinners';
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Col, Container, Row } from 'reactstrap';
+import { donutPath, donutTool } from '../assets/Icons';
 import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
 import { ExpensesTable } from './ExpensesTablesComponent';
 import NewExpense from './NewExpenseDialog';
-import { donutPath, donutTool } from '../assets/Icons';
 
 /*
 TODO:
@@ -31,7 +32,7 @@ function Expenses(props: IExpenseProps) {
   const [expenses, setExpenses] = useState();
   const [expenseTypes, setExpenseTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
-  const [expenseType,setExpenseType] = useState();
+  const [expenseType, setExpenseType] = useState();
   const [expensesByUserAndType, setExpensesByUserIdAndTypeId] = useState([]);
 
   useEffect(() => {
@@ -95,7 +96,7 @@ function Expenses(props: IExpenseProps) {
       description: newDescripion,
       amount: newAmount
     };
-    console.log("this is the new expense before posting it:",data);
+    console.log("this is the new expense before posting it:", data);
     Axios.post(url, data)
       .then(() => {
         const newExpense = {
@@ -110,29 +111,29 @@ function Expenses(props: IExpenseProps) {
       });
   }
   // Request function to delete an existing expense
-  async function deleteExpense(expense:any) {
+  async function deleteExpense(expense: any) {
     // Find the id of the removed expense
-    function checkId(exp:any) {
+    function checkId(exp: any) {
       return exp.id === expense.id;
     }
     const url = `http://localhost:8080/expense/${expense.id}`;
-    Axios.delete(url,expense)
+    Axios.delete(url, expense)
       .then(() => {
         getAllExpenses();
         if (showTable) {
           // Find the index of the to-be-removed expense
           const deletedExpenseIndex = expenses.findIndex(checkId);
           // Remove it from the expenses array so it can be removed visually from the table
-          setExpenses(expenses.splice(deletedExpenseIndex,1));
+          setExpenses(expenses.splice(deletedExpenseIndex, 1));
           handleElementClick(expense.expenseType.type);
         }
       }
-    )
+      )
   }
   // Request function to update an expense
-  async function updateExpense(expense:any) {
+  async function updateExpense(expense: any) {
     // Find the id of the updated expense
-    function checkId(exp:any) {
+    function checkId(exp: any) {
       return exp.id === expense.id;
     }
     // Update the expenses state in general (parent component)
@@ -171,53 +172,63 @@ function Expenses(props: IExpenseProps) {
           <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
         </Paper>
           </Grid>*/}
-        {
-        showTable ? 
-        <h2>Your {expenseType} expenses, {props.user.first}</h2> :
-        <h2>Check your expenses, {props.user.first}</h2>
-        }  
-        <Paper 
-        style={{ margin: '5px auto',padding: '10px',
-                 backgroundColor:"rgba(220,245,230,0.9)",
-                 width:props.ui.isMobileView ? "90%" : showTable ? '80%':'50%',
-                 height:props.ui.isMobileView ? "90%" : '60%' }}
-                 >
-              { !expenses ? <CircularProgress className={classes.progress}/> :
-            <div>
-              {showTable ? (
-                <Fragment> 
-                  <Container>
-                    <Row>
-                      <Col>
-                        <Button
-                          color="secondary"
-                          onClick={() => setShowTable(false)}
-                          style={{display:"inline-block",margin:'5px'}}>
-                          <svg xmlns={donutTool}  width="24" height="24" viewBox="0 0 24 24">
-                          <path d={donutPath}/>
-                          </svg>
-                        </Button> 
-                        {/* If on table perspective, don't show the type selector */}
-                        <NewExpense
-                          types={expenseTypes}
-                          createExpense={createNewExpense}
-                          view ={props.ui.isMobileView} 
-                          tableView = {showTable}
-                          type={expenseType}/>
-                      </Col>
-                    </Row>
-                  </Container>
-                  <ExpensesTable expenses={expensesByUserAndType}
-                                 view = {props.ui.isMobileView}
-                                 deleteExpense = {deleteExpense} 
-                                 updateExpense = {updateExpense}/>
-                </Fragment>
-              ) : (
-                  <Fragment>
-                    {expenses && 
+      {
+        showTable ?
+          <h2>Your {expenseType} expenses, {props.user.first}</h2> :
+          <h2>Check your expenses, {props.user.first}</h2>
+      }
+      <Paper
+        style={{
+          margin: '5px auto', padding: '10px',
+          backgroundColor: "rgba(220,245,230,0.9)",
+          width: props.ui.isMobileView ? "90%" : showTable ? '80%' : '50%',
+          height: props.ui.isMobileView ? "90%" : '60%'
+        }}
+      >
+        {!expenses ? (
+          <div
+            style={{
+              margin: props.ui.isMobileView ? '75px' : '150px',
+              display: 'inline-block'
+            }}>
+            <BarLoader width={150} color={'#009688'} loading={expenses} />
+          </div>
+        ) :
+          <div>
+            {showTable ? (
+              <Fragment>
+                <Container>
+                  <Row>
+                    <Col>
+                      <Button
+                        color="secondary"
+                        onClick={() => setShowTable(false)}
+                        style={{ display: "inline-block", margin: '5px' }}>
+                        <svg xmlns={donutTool} width="24" height="24" viewBox="0 0 24 24">
+                          <path d={donutPath} />
+                        </svg>
+                      </Button>
+                      {/* If on table perspective, don't show the type selector */}
+                      <NewExpense
+                        types={expenseTypes}
+                        createExpense={createNewExpense}
+                        view={props.ui.isMobileView}
+                        tableView={showTable}
+                        type={expenseType} />
+                    </Col>
+                  </Row>
+                </Container>
+                <ExpensesTable expenses={expensesByUserAndType}
+                  view={props.ui.isMobileView}
+                  deleteExpense={deleteExpense}
+                  updateExpense={updateExpense} />
+              </Fragment>
+            ) : (
+                <Fragment>
+                  {expenses &&
                     <div>
-                      <DonutGraph 
-                        data={createGraphData()} 
+                      <DonutGraph
+                        data={createGraphData()}
                         labels={createGraphLabels()}
                         important='Emergency'
                         isMobileView={props.ui.isMobileView}
@@ -226,14 +237,14 @@ function Expenses(props: IExpenseProps) {
                         types={expenseTypes}
                         createExpense={createNewExpense}
                         view={props.ui.isMobileView} />
-                  </div>}
-              </Fragment>
-            )}
-          <br />
-        </div>
-          }
+                    </div>}
+                </Fragment>
+              )}
+            <br />
+          </div>
+        }
       </Paper>
-        
+
     </div >
   );
 }

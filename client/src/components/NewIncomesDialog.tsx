@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -32,7 +32,8 @@ export default function NewIncome(props: any) {
     open: false,
     type: 0, //incomeType: {id: 0, type: ''},
     description: '',
-    amount: 0
+    amount: 0,
+    formFilled: true
   });
 
   const handleChange = (name: keyof typeof state) => (
@@ -42,7 +43,7 @@ export default function NewIncome(props: any) {
   };
 
   function handleClickOpen() {
-    setState({ ...state, open: true });
+    setState({ type:0, description:'', amount:0, open: true, formFilled:true });
   }
   //   Request function for new income here
   /*
@@ -71,9 +72,13 @@ export default function NewIncome(props: any) {
   */
 
   function handleSubmit() {
+  if (state.type && state.description && state.amount) {
     props.createIncome(props.types.find((type:any) => type.id == state.type),state.description,state.amount);
 
     handleClose();
+    } else {
+      setState({...state, formFilled: false});
+    }
   }
 
   function handleClose() {
@@ -83,72 +88,106 @@ export default function NewIncome(props: any) {
 
   return (
     <div>
-      <Button onClick={handleClickOpen}>Add Income</Button>
-      <Dialog disableBackdropClick disableEscapeKeyDown open={state.open} onClose={handleClose}>
-        <DialogContent>
-          <form className={classes.container}>
-            <FormControl className={classes.formControl}>
-              
-              <Paper>
-                <Container style={{textAlign: "center"}}>
-                  <Row><h4>Add New Income</h4></Row>
-                  
-                  <Row className="new-income-form">
-                    <TextField
-                      name="amount"
-                      className="new-income-form"
-                      placeholder="0.00"
-                      label="Income Amount"
-                      type="number"
-                      onChange={handleChange("amount")} 
-                      InputProps={{
-                          startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                        }}
-                        />
-                  </Row>
-                  <Row className="new-income-form">
-                    <TextField
-                      name="description"
-                      className="new-income-form"
-                      placeholder="description"
-                      label="Description"
-                      type="text"
-                      multiline={true}
-                      rows={5}
-                      onChange={handleChange("description")} />
-                  </Row>
-                  <Row className="new-income-form">
-                    <Select
-                    value={state.type}
-                    onChange={handleChange('type')}
-                    input={<Input id="income-type" />}
-                    >
-                      <MenuItem value={0}>
-                        <em>Select Income Type</em>
-                      </MenuItem>
-                      {props.types.map((t:any) => (
-                      <MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>  
-                      ))}
-                      </Select>
-                  </Row>
-                </Container>
-              </Paper>
-            </FormControl>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleSubmit}
-            color="primary">
-            Ok
-            </Button>
-          <Button
-            onClick={handleClose}
-            color="primary">
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Fragment>
+        <Button onClick={handleClickOpen}>Add Income</Button>
+        <Dialog disableBackdropClick disableEscapeKeyDown open={state.open} onClose={handleClose}>
+          <DialogContent>
+            <form className={classes.container}>
+              <FormControl className={classes.formControl}>
+                <Paper>
+                  <Container style={{textAlign: "center"}}>
+                    <Row><h4>Add Income</h4></Row>
+                    <Row className="new-income-form">
+                      <TextField
+                        name="amount"
+                        className="new-income-form"
+                        placeholder="0.00"
+                        label={
+                          state.formFilled ?
+                          props.view ? "Amount" : "Income Amount"
+                          :
+                          state.amount ?
+                          "Amount"
+                          :
+                          "Required"
+                        }
+                        error={state.formFilled?
+                          false
+                          :
+                          state.amount?
+                          false :
+                          true}
+                        type="number"
+                        onChange={handleChange("amount")} 
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                          }}
+                          />
+                    </Row>
+                    <Row className="new-income-form">
+                      <TextField
+                        name="description"
+                        className="new-income-form"
+                        placeholder="description"
+                        error={state.formFilled?
+                          false
+                          :
+                          state.description ?
+                          false :
+                          true}
+                        label={
+                          state.formFilled ?
+                          "Description"
+                          :
+                          state.description ?
+                          "Description"
+                          :
+                          "Required"
+                        }
+                        type="text"
+                        multiline={true}
+                        rows={5}
+                        onChange={handleChange("description")} />
+                    </Row>
+                    <Row className="new-income-form">
+                      <Select
+                      value={state.type}
+                      onChange={handleChange('type')}
+                      input={<Input id="income-type" />}
+                      error={state.formFilled?
+                        false
+                        :
+                        state.type ?
+                        false :
+                        true}
+                      >
+                        <MenuItem value={0}>
+                        <em style={
+                          {color:state.formFilled?"black":state.type?"black":"red"}
+                          }>
+                          { state.formFilled ?
+                            props.view ? 
+                            "Type" : 
+                            "Select income type":
+                            "Required"}
+                        </em>
+                        </MenuItem>
+                        {props.types.map((t:any) => (
+                        <MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>  
+                        ))}
+                        </Select>
+                    </Row>
+                  </Container>
+                </Paper>
+              </FormControl>
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleSubmit} color="primary">Ok</Button>
+            <Button onClick={handleClose} color="primary">Cancel</Button>
+          </DialogActions>
+        </Dialog>
+      </Fragment>
     </div>
   );
 }
