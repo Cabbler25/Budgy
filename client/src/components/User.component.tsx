@@ -10,6 +10,8 @@ import ChangePw from './ChangePWDialog';
 import MySnackbarContentWrapper from './SnackBarComponent';
 
 
+
+
 interface IUserAcct {
   user: IUserState;
   updateUserInfo: (payload: any) => void;
@@ -28,6 +30,9 @@ export function User(props: IUserAcct) {
   const [openUp, setOpenUp] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
+  function work(x: string){
+    return(<p style={{fontWeight: 'bolder'}}>x</p>)
+  }
   function handleOpen() {
     setOpen(true);
   }
@@ -404,10 +409,10 @@ export function User(props: IUserAcct) {
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               Are you sure you want to delete the following data: 
-              {toDelete.budget ? <h5 style={{margin: "5px", padding: "0"}}>Budget</h5> : ''}
-              {toDelete.expenses ? <h5 style={{margin: "5px", padding: "0"}}>Expenses</h5> : ''}
-              {toDelete.income ? <h5 style={{margin: "5px", padding: "0"}}>Income</h5>: ''}
             </DialogContentText>
+              {toDelete.budget ? <h5>Budget</h5> : ''}
+              {toDelete.expenses ? <h5>Expenses</h5> : ''}
+              {toDelete.income ? <h5>Income</h5>: ''}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="primary">

@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Button, Divider } from '@material-ui/core';
+import { Paper, Button, Divider, colors, Badge, Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { IUserState, IState, IUiState } from '../redux';
 import Axios from 'axios';
 import { BarLoader } from 'react-spinners';
 import MixedLineGraph from './data/MixedLineGraph';
+import { Container, Row } from 'reactstrap';
+
 
 interface IHomeProps {
   user: IUserState;
   ui: IUiState;
 }
+
 
 function Home(props: IHomeProps) {
   const [incomes, setIncomes] = useState();
