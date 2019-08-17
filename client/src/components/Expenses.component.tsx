@@ -12,7 +12,8 @@ import { donutPath, donutTool } from '../assets/Icons';
 /*
 TODO:
 - Add feedback in case user has no expenses yet
-- 
+- Try getting the budgets per type, and check if the expenses per type exceed the budget
+  per type, so a proper warning can be set
 */
 
 export interface IExpenseProps {
@@ -134,16 +135,17 @@ function Expenses(props: IExpenseProps) {
     function checkId(exp:any) {
       return exp.id === expense.id;
     }
+    // Update the expenses state in general (parent component)
+    const updatedExpenseIndex = expenses.findIndex(checkId);
+    expenses[updatedExpenseIndex] = expense;
+    setExpenses(expenses);
     // Send the request
     const url = `http://localhost:8080/expense`;
     Axios.put(url,expense)
     .then(() => {
       getAllExpenses();
       if (showTable) {
-        // Update the expenses state in general (parent component)
-        const updatedExpenseIndex = expenses.findIndex(checkId);
-        expenses[updatedExpenseIndex] = expense;
-        setExpenses(expenses);
+        console.log(expenses);
         // Also update the expenses in the table perspective
         const matchedExpenses = expenses.filter((expense: any) =>
         expense.expenseType.type == expenseType);

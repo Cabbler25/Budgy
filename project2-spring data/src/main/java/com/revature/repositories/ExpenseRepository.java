@@ -15,5 +15,7 @@ public interface ExpenseRepository<P> extends JpaRepository<Expense, Integer> {
 	List<Expense> findByUserIdAndExpenseType(int userId, Optional<ExpenseType> expenseType);
 
 	List<Expense> findByUserIdOrderByIdDesc(int userId);
-
+	
+//	Add a new endpoint, that gets all expenses by month
+	
 }
