@@ -9,13 +9,13 @@ import Paper from '@material-ui/core/Paper';
 // import { Confirm } from 'semantic-ui-react';
 import Button from '@material-ui/core/Button';
 import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
-import { Input, Dialog, DialogContent,Container, DialogActions } from '@material-ui/core';
+import { Input,Typography, Card, Dialog, DialogContent,Container, DialogActions, CardContent } from '@material-ui/core';
 
 /*
 TODO: 
-- If user clicks on update or delete buttons, show a dialog that says
-are you sure? OK - Cancel
-- Prevent column for resizing when is in edit mode and the Input field pops up in the cells
+- If user clicks on update button, show a dialog that says
+confirm changes OK - Cancel
+- Solve undo button issue
 */
 
 const StyledTableCell = withStyles((theme: Theme) =>
@@ -49,6 +49,8 @@ export function ExpensesTable(props: any) {
   const [editableRowKey,setEditableRowKey] = useState(0);
   // Define state and its update method to track changes of the editable expense row
   const [state, setState] = useState();
+  // This constant is used to logically display the about to delete dialog
+  const [aboutToDelete,setAboutToDelete] = useState(false);
   // Define the appereance of the confirmation dialog
   const [confirmDialog,setConfirmDialog] = useState(false); 
   // Button used to enable edit fields in the table
@@ -57,6 +59,18 @@ export function ExpensesTable(props: any) {
     setState(expense);
     // This will change the view of the row from read to write mode
     setEditableRow(true);
+  }
+  // Function used to close the confirm deletion dialog in case user decides not
+  // to delete the expense
+  function deleteStatus(status:boolean) {
+    if (status) {
+      setAboutToDelete(false);
+      setConfirmDialog(false);
+      props.deleteExpense(state);
+    } else {
+      setAboutToDelete(status);
+      setConfirmDialog(status);
+    }
   }
   // Function that listens for changes on any of the expenses
   const handleEditedExpenseChange = (event:any) => 
@@ -81,7 +95,26 @@ export function ExpensesTable(props: any) {
     },
   }),
 );
+// Define card style that's going to appear when an expense is about to be deleted
+const cardStyles = makeStyles({
+  card: {
+    minWidth: '80%',
+  },
+  bullet: {
+    display: 'inline-block',
+    margin: '0 2px',
+    transform: 'scale(0.8)',
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+});
+
 const classes = useStyles(props);
+const cardClasses = cardStyles();
 // Define style of each column
 
 const columnStyle = { marginRight: '2px', };
@@ -117,8 +150,7 @@ const columnStyle = { marginRight: '2px', };
                     style={{fontSize:'13.3px',
                     color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
                     type="number"
-                    defaultValue={
-                      (editableRow && (editableRowKey === row.id)) ?state.amount:row.amount}
+                    defaultValue={row.amount}
                     name="amount"
                     onChange={(e:any)=>handleEditedExpenseChange(e)}/>
                 </TableCell>
@@ -135,8 +167,7 @@ const columnStyle = { marginRight: '2px', };
                   style={{fontSize:'13.3px',
                   color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
                   multiline={true}
-                  defaultValue={
-                    (editableRow && (editableRowKey === row.id)) ?state.description:row.description}
+                  defaultValue={row.description}
                   name="description"
                   onChange={(e:any)=>handleEditedExpenseChange(e)}/>
                 </TableCell>
@@ -182,39 +213,13 @@ const columnStyle = { marginRight: '2px', };
                         <Button 
                         onClick={() => {setConfirmDialog(true);
                                         setState(row);
+                                        setAboutToDelete(true);
                                         }}>
                           <svg xmlns={removeTool}  
                           width="24" height="24" viewBox="0 0 24 24">
                           <path d={removePath}/>
                           </svg>
                         </Button>
-                        {
-                          <Paper style={{textAlign: "center"}}>
-                            <Container>
-                              <Dialog open={confirmDialog}>
-                              <DialogContent>
-                              Are you sure?      
-                              <br/>
-                              </DialogContent>
-                              <DialogActions>
-                                <Button
-                                  onClick={
-                                    // Function call to send the request for creating new expense
-                                    ()=>props.deleteExpense(row)
-                                  }
-                                  color="primary">
-                                  Ok
-                                </Button>
-                                <Button
-                                  onClick={()=>setConfirmDialog(false)}
-                                  color="secondary">
-                                  Cancel
-                                </Button>
-                              </DialogActions>
-                            </Dialog>
-                          </Container>
-                        </Paper>
-                        }
                       </TableCell>
                     </Fragment>
                   }
@@ -223,6 +228,58 @@ const columnStyle = { marginRight: '2px', };
             }
           </TableBody>
         </Table>
+        {/* Display the delete confir delete dialog when the user clicks on the 
+            delete icon. It shows the information of the expense before deleting
+            it. User can select between cancel or delete. */}
+            {      
+              aboutToDelete &&
+              <Paper style={{textAlign: "center"}}>
+                  <Dialog open={confirmDialog}>
+                  <DialogContent>
+                  You are about to delete the following expense: 
+                  <br/> <br/>
+                    <Card className={cardClasses.card}>
+                      <CardContent>
+                        <Typography className={cardClasses.title} 
+                        color="textSecondary" gutterBottom>
+                        amount:  
+                        </Typography>
+                        <Typography variant="h6" component="h4">
+                          ${state.amount}
+                        </Typography>
+                        <Typography className={cardClasses.title} 
+                        color="textSecondary" gutterBottom>
+                          date submitted:  
+                        </Typography>
+                        <Typography variant="h6" component="h4">
+                          {state.date.slice(0,10)}
+                        </Typography>
+                        <Typography className={cardClasses.title} 
+                        color="textSecondary" gutterBottom>
+                          description:  
+                        </Typography>
+                        <Typography variant="h6" component="h4">
+                          {state.description}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  <br/>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button
+                      onClick={()=>deleteStatus(true)}
+                      color="primary">
+                      Delete
+                    </Button>
+                    <Button
+                      onClick={()=>deleteStatus(false)}
+                      color="secondary">
+                      Cancel
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+            </Paper>
+            }
       </Paper>
     </div>
   );

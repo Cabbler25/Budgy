@@ -1,4 +1,4 @@
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, InputAdornment, Paper, Snackbar, TextField } from '@material-ui/core';
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, InputAdornment, Paper, Snackbar, TextField, Container } from '@material-ui/core';
 import { Edit, Undo } from '@material-ui/icons';
 import Axios from 'axios';
 import React, { useState } from 'react';
@@ -135,7 +135,7 @@ export function User(props: IUserAcct) {
   }
   async function updateUser(body: any) {
     const url = 'http://localhost:8080/update';
-    await Axios.patch(url, body).then(payload => {
+    await Axios.patch(url,body,{headers:{Authorization: props.user.token}}).then(payload => {  
       props.updateUserInfo({
         isLoggedIn: true,
         id: props.user.id,
@@ -191,7 +191,7 @@ export function User(props: IUserAcct) {
 
     if (toDelete.budget) {
       const url = `http://localhost:8080/user/budget/${props.user.id}`;
-      await Axios.delete(url).then(payload => {
+      await Axios.delete(url,{headers:{Authorization: props.user.token}}).then(payload => {
 
         setOpenDelete(true);
 
@@ -199,42 +199,38 @@ export function User(props: IUserAcct) {
     }
     if (toDelete.expenses) {
       const url = `http://localhost:8080/expense/user/expense/${props.user.id}`;
-      await Axios.delete(url).then(payload => {
-        setOpenDelete(true);
+      await Axios.delete(url,{headers:{Authorization: props.user.token}}).then(payload => {
+          setOpenDelete(true);
       });
 
     }
     if (toDelete.income) {
       const url = `http://localhost:8080/user/income/${props.user.id}`;
-      await Axios.delete(url).then(payload => {
-        setOpenDelete(true);
+      await Axios.delete(url,{headers:{Authorization: props.user.token}}).then(payload => {
+          setOpenDelete(true);
       });
     }
   }
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      <h1>Account Details</h1>
-      <Grid>
-        <Grid item xs={12}>
-          <Paper style={{
-            display: 'inline-block',
-            width: '500px',
-            height: '500px',
-            margin: '20px'
-          }} >
-            <h3>Profile</h3>
-            {updateFname ?
-              <div>
-                <TextField
-                  id="editFirst"
-                  placeholder={props.user.first}
-                  onChange={handleFnameInput}
-                  label='Edit First Name'
-                  variant="outlined"
-                  style={{ width: '200px', margin: '10px' }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end" onClick={noEditFname}><Undo /></InputAdornment>,
+    
+    <Grid container style={{ textAlign: 'center', width: '100%' }}>
+      <Grid item xs={12}>
+      <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: '20px' }} >
+        <h3>Profile Settings</h3>
+        {updateFname ? 
+        <div> 
+        <TextField
+                id="editFirst"
+                placeholder={props.user.first}
+                onChange={handleFnameInput}
+                label='Edit First Name'
+                variant="outlined"
+                style={{width: '200px', margin: '10px'}}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end" onClick={noEditFname}><Undo /></InputAdornment>,
+                  
+  
                   }}
                 />
               </div>
@@ -314,7 +310,7 @@ export function User(props: IUserAcct) {
                 /> </div>}
             {updateEmail ?
               <div>
-                <TextField
+                  <TextField
                   id="editEmail"
                   onChange={handleEmailInput}
                   placeholder={props.user.email}
@@ -323,131 +319,125 @@ export function User(props: IUserAcct) {
                   style={{ width: '200px', margin: '10px' }}
                   InputProps={{
                     endAdornment: <InputAdornment position="end" onClick={noEditEmail}><Undo /></InputAdornment>,
-
-
                   }}
                 /></div> :
-              <div>
-                <TextField
-                  id="staticEmail"
-                  value={props.user.email}
-                  variant="filled"
-                  disabled={true}
-                  label='Email'
-                  style={{ width: '200px', margin: '10px' }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end" onClick={editEmail}><Edit /></InputAdornment>,
-                  }}
-                /></div>}
-            <ChangePw />
-            {wasEdited ?
-              <div>
-                <Button onClick={handleUpdate} style={{ margin: "5px" }}>Apply Changes</Button>
-                <Button onClick={handleCancel} style={{ margin: "5px" }}>Cancel Changes</Button>
-              </div> : ''}
-            <Snackbar
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              open={openUp}
-              autoHideDuration={6000}
-              onClose={closeUp}
-            >
-              <MySnackbarContentWrapper
-                variant="success"
-                message="User Updated Successfully"
-              />
-            </Snackbar>
+                <div>
+        <TextField
+                id="staticEmail"
+                value={props.user.email}
+                variant="filled"
+                disabled={true}
+                label='Email'
+                style={{width: '200px', margin: '10px'}}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end" onClick={editEmail}><Edit /></InputAdornment>,
+                }}
+              /></div>}
+          <ChangePw />
+          {wasEdited ?
+          <div>
+          <Button onClick={handleUpdate} style={{margin:"5px"}}>Apply Changes</Button> 
+          <Button onClick={handleCancel} style={{margin:"5px"}}>Cancel Changes</Button>
+          </div> : ''}
+          <Snackbar
+            anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+            }}
+            open={openUp}
+            autoHideDuration={6000}
+            onClose={closeUp}
+      >
+        <MySnackbarContentWrapper
+          variant="success"
+          message="User Updated Successfully"
+        />
+      </Snackbar>
+          
+      </Paper>
+      </Grid>
+      <Grid item xs={12}>
 
+      <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: "20px"}}>
+        <h3>Data Settings</h3>
+        <FormControl>
+        <FormLabel style={{margin:"20px"}}>Select Data to be Deleted</FormLabel>
+        <FormGroup>
+          {toDelete.selectAll ? 
+          <FormControlLabel
+            control={
+              <Checkbox checked={toDelete.selectAll} onChange={handleChange('selectAll')} value="deselectAll" />
+            }
+            label='Deselect All' /> :
+          <FormControlLabel
+            control={
+              <Checkbox checked={toDelete.selectAll} onChange={handleChange('selectAll')} value="selectAll"/>
+            }
+          label='Select All' /> }
 
-          </Paper>
-        </Grid>
-
-
-
-        <Grid>
-          <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: "20px" }}>
-            <h3>Clear Data</h3>
-            <FormControl component='fieldset'>
-              <FormLabel style={{ margin: "20px" }}>Select Data to be Deleted</FormLabel>
-              <FormGroup>
-                {toDelete.selectAll ?
-                  <FormControlLabel
-                    control={
-                      <Checkbox checked={toDelete.selectAll} onChange={handleChange('selectAll')} value="deselectAll" />
-                    }
-                    label='Deselect All' /> :
-                  <FormControlLabel
-                    control={
-                      <Checkbox checked={toDelete.selectAll} onChange={handleChange('selectAll')} value="selectAll" />
-                    }
-                    label='Select All' />}
-
-                <FormControlLabel
-                  control={
-                    <Checkbox checked={toDelete.expenses} onChange={handleChange('expenses')} value="expenses" />
-                  }
-                  label='Expenses' />
-                <FormControlLabel
-                  control={
-                    <Checkbox checked={toDelete.budget} onChange={handleChange('budget')} value="budget" />
-                  }
-                  label='Budget' />
-                <FormControlLabel
-                  control={
-                    <Checkbox checked={toDelete.income} onChange={handleChange('income')} value="income" />
-                  }
-                  label='Income' />
-              </FormGroup>
-              {(toDelete.selectAll || toDelete.income || toDelete.expenses || toDelete.budget) ?
-                <Button style={{ margin: "20px" }} onClick={handleOpen}>Delete</Button> : ''}
-              <div>
-                <Dialog
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description"
-                >
-                  <DialogTitle id="alert-dialog-title">{"Delete User Data?"}</DialogTitle>
-                  <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                      Are you sure you want to delete the following data:
-              {toDelete.budget ? <h5 style={{ margin: "5px", padding: "0" }}>Budget</h5> : ''}
-                      {toDelete.expenses ? <h5 style={{ margin: "5px", padding: "0" }}>Expenses</h5> : ''}
-                      {toDelete.income ? <h5 style={{ margin: "5px", padding: "0" }}>Income</h5> : ''}
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                      Cancel
+          <FormControlLabel
+            control={
+              <Checkbox checked={toDelete.expenses} onChange={handleChange('expenses')} value="expenses" />
+            }
+            label='Expenses' />
+          <FormControlLabel
+            control={
+              <Checkbox checked={toDelete.budget} onChange={handleChange('budget')} value="budget" />
+            }
+            label='Budget' />
+          <FormControlLabel
+            control={
+              <Checkbox checked={toDelete.income} onChange={handleChange('income')} value="income" />
+            }
+            label='Income' />
+        </FormGroup>
+        {(toDelete.selectAll || toDelete.income || toDelete.expenses || toDelete.budget) ?
+        <Button style={{margin: "20px"}} onClick={handleOpen}>Delete</Button> : ''}
+        <div>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Delete User Data?"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete the following data: 
+              {toDelete.budget ? <h5 style={{margin: "5px", padding: "0"}}>Budget</h5> : ''}
+              {toDelete.expenses ? <h5 style={{margin: "5px", padding: "0"}}>Expenses</h5> : ''}
+              {toDelete.income ? <h5 style={{margin: "5px", padding: "0"}}>Income</h5>: ''}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Cancel
             </Button>
                     <Button onClick={handleFollowThru} color="primary" autoFocus>
                       Delete
             </Button>
-                  </DialogActions>
-                </Dialog>
-              </div>
-            </FormControl>
-            <Snackbar
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              open={openDelete}
-              autoHideDuration={6000}
-              onClose={closeDelete}
-            >
-              <MySnackbarContentWrapper
-                variant="success"
-                message="User Data Deleted Successfully"
-              />
-            </Snackbar>
-          </Paper>
-        </Grid>
-      </Grid>
+          </DialogActions>
+        </Dialog>
+      </div>
+        </FormControl>
+        <Snackbar
+            anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+            }}
+            open={openDelete}
+            autoHideDuration={6000}
+            onClose={closeDelete}
+      >
+        <MySnackbarContentWrapper
+          variant="success"
+          message="User Data Deleted Successfully"
+        />
+      </Snackbar>
+      </Paper>
 
-    </div>
+      </Grid>
+    </Grid>
 
   );
 }

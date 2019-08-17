@@ -231,6 +231,7 @@ export default function BudgetTable(props: any) {
   }
 
   function handleSubmitUpdate(data: any) {
+    setSelected([]);
     props.handleUpdateBudget(data);
   }
 

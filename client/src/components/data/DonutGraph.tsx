@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import { colorTypes } from '../../assets/Colors';
+import colors, { colorTypes } from '../../assets/Colors';
 
 /**
  * Main Function
@@ -31,7 +31,7 @@ export function DonutGraph(props: any) {
           data: dataArr,
           backgroundColor: getBackgroundColors(labels, props.important),
           hoverBackgroundColor: getHoverColors(labels, props.important),
-        }]
+        }],
       })
     }
   }, [props.data, props.labels, props.important,])
@@ -45,7 +45,9 @@ export function DonutGraph(props: any) {
     <Doughnut
       width={props.isMobileView ? 250 : 300}
       height={props.isMobileView ? 250 : 150}
-      data={data} getElementAtEvent={handleElementClick} />
+      data={data} getElementAtEvent={handleElementClick}
+      legend={{ display: true }}
+    />
     : <Fragment />
   );
 }
