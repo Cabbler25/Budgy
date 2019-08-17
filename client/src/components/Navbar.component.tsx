@@ -113,7 +113,7 @@ function NavBar(props: INavProps) {
               <Icon style={{ fontSize: 30, color: colors.offWhite }}>menu</Icon>
             </Button>}
           <Button className={classes.title} variant='text' component={Link} to="/">
-            <img width='30px' height='30px' src={Logo} />
+            <img alt='' width='30px' height='30px' src={Logo} />
             <Typography style={{ fontSize: '20px', textTransform: 'initial' }} variant='button'>Budgy</Typography>
           </Button>
           {!props.ui.isMobileView &&

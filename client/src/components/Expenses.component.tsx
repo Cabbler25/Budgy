@@ -1,4 +1,4 @@
-import { Button, createStyles, makeStyles, Paper, Theme } from '@material-ui/core';
+import { Button, Paper } from '@material-ui/core';
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -6,7 +6,6 @@ import { Redirect } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { Col, Container, Row } from 'reactstrap';
 import colors from '../assets/Colors';
-import { donutPath, donutTool } from '../assets/Icons';
 import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
 import { ExpensesTable } from './ExpensesTablesComponent';
@@ -110,7 +109,7 @@ function Expenses(props: IExpenseProps) {
 
   //   Request function for new expense here
   async function createNewExpense(newType: any, newDescripion: string, newAmount: number,
-                                  newDate: string) {
+    newDate: string) {
     // Prepare request setup
     const url = 'http://localhost:8080/expense';
     const data = {
@@ -166,26 +165,19 @@ function Expenses(props: IExpenseProps) {
     setExpenses(expenses);
     // Send the request
     const url = `http://localhost:8080/expense`;
-    Axios.put(url,expense)
-    .then(() => {
-      getAllExpenses();
-      if (showTable) {
-        console.log(expenses);
-        // Also update the expenses in the table perspective
-        const matchedExpenses = expenses.filter((expense: any) =>
-        expense.expenseType.type == expenseType);
-        setExpensesByUserIdAndTypeId(matchedExpenses);
-      }
-    })
+    Axios.put(url, expense)
+      .then(() => {
+        getAllExpenses();
+        if (showTable) {
+          console.log(expenses);
+          // Also update the expenses in the table perspective
+          const matchedExpenses = expenses.filter((expense: any) =>
+            expense.expenseType.type == expenseType);
+          setExpensesByUserIdAndTypeId(matchedExpenses);
+        }
+      })
   }
-  const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-      progress: {
-        margin: theme.spacing(2),
-      },
-    }),
-  );
-  const classes = useStyles();
+
   return (
     <div style={{ textAlign: 'center' }}>
       {!props.user.isLoggedIn && <Redirect to="/login" />}
