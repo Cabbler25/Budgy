@@ -27,6 +27,25 @@ const data = {
   }]
 };
 
+function shadeColor(col: string, amt: number) {
+  let usePound = false;
+  if (col[0] == "#") {
+    col = col.slice(1);
+    usePound = true;
+  }
+  let num = parseInt(col, 16);
+  let r = (num >> 16) + amt;
+  if (r > 255) r = 255;
+  else if (r < 0) r = 0;
+  let b = ((num >> 8) & 0x00FF) + amt;
+  if (b > 255) b = 255;
+  else if (b < 0) b = 0;
+  let g = (num & 0x0000FF) + amt;
+  if (g > 255) g = 255;
+  else if (g < 0) g = 0;
+  return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
+}
+
 export default function MixedLineGraph(props: any) {
   const [data, setData] = useState();
   useEffect(() => {
@@ -48,7 +67,7 @@ export default function MixedLineGraph(props: any) {
     }
     dataArr[1] = arr;
 
-    let removeIndex = new Array();
+    const removeIndex = new Array();
     for (let i = 0; i < dataArr[0].length; i++) {
       if (dataArr[0][i] === 0 && dataArr[1][i] === 0) {
         removeIndex.push(i);
@@ -59,6 +78,15 @@ export default function MixedLineGraph(props: any) {
     dataArr[0] = dataArr[0].filter((data: any, i: number) => !removeIndex.includes(i))
     dataArr[1] = dataArr[1].filter((data: any, i: number) => !removeIndex.includes(i))
     labels = labels.filter((data: any, i: number) => !removeIndex.includes(i))
+
+    const expenseColors = Array.from(labels, () => colors.orange)
+    const hoverExpenseColors = Array.from(labels, () => shadeColor(colors.orange, 50))
+    for (let i = 0; i < dataArr[0].length; i++) {
+      if (Number(dataArr[1][i]) < Number(dataArr[0][i])) {
+        expenseColors[i] = colors.red;
+        hoverExpenseColors[i] = shadeColor(colors.red, 50);
+      }
+    }
 
     setData({
       labels: labels,
@@ -78,10 +106,9 @@ export default function MixedLineGraph(props: any) {
         label: 'Expenses',
         data: dataArr[0],
         fill: false,
-        backgroundColor: colors.orange,
-        borderColor: colors.orange,
-        hoverBackgroundColor: colors.orange,
-        hoverBorderColor: colors.orange,
+        backgroundColor: expenseColors,
+        hoverBackgroundColor: hoverExpenseColors,
+        hoverBorderColor: hoverExpenseColors,
       }],
     })
   }, [props.expenseData, props.budgetData, props.labels])

@@ -118,9 +118,15 @@ function NavBar(props: INavProps) {
           </Button>
           {!props.ui.isMobileView &&
             <Fragment>
-              <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/budget"
+              <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/"
                 style={{
                   marginLeft: '50px',
+                  textDecoration: onPage('/') ? `underline` : undefined
+                }}>
+                Overview
+              </Button>
+              <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/budget"
+                style={{
                   textDecoration: onPage('/budget') ? `underline` : undefined
                 }}>
                 Budget

@@ -9,6 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import React, { Fragment, useState } from 'react';
 import { okPath, okTool, pencilPath, pencilTool, removePath, removeTool, undoPath, undoTool } from '../assets/Icons';
+import colors from '../assets/Colors';
 
 /*
 TODO: 
@@ -220,12 +221,13 @@ export function ExpensesTable(props: any) {
                         {/* Assign the onClick function to notify the parent which
                         expense will be deleted */}
                         <Button
+                          style={{ backgroundColor: colors.red }}
                           onClick={() => {
                             setConfirmDialog(true);
                             setState(row);
                             setAboutToDelete(true);
                           }}>
-                          <svg xmlns={removeTool}
+                          <svg fill={colors.offWhite} xmlns={removeTool}
                             width="24" height="24" viewBox="0 0 24 24">
                             <path d={removePath} />
                           </svg>
