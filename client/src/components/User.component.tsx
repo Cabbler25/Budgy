@@ -1,4 +1,4 @@
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, InputAdornment, Paper, Snackbar, TextField, Container } from '@material-ui/core';
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, InputAdornment, Paper, Snackbar, TextField } from '@material-ui/core';
 import { Edit, Undo } from '@material-ui/icons';
 import Axios from 'axios';
 import React, { useState } from 'react';
@@ -140,7 +140,7 @@ export function User(props: IUserAcct) {
   }
   async function updateUser(body: any) {
     const url = 'http://localhost:8080/update';
-    await Axios.patch(url,body,{headers:{Authorization: props.user.token}}).then(payload => {  
+    await Axios.patch(url, body, { headers: { Authorization: props.user.token } }).then(payload => {
       props.updateUserInfo({
         isLoggedIn: true,
         id: props.user.id,
@@ -196,7 +196,7 @@ export function User(props: IUserAcct) {
 
     if (toDelete.budget) {
       const url = `http://localhost:8080/user/budget/${props.user.id}`;
-      await Axios.delete(url,{headers:{Authorization: props.user.token}}).then(payload => {
+      await Axios.delete(url, { headers: { Authorization: props.user.token } }).then(payload => {
 
         setOpenDelete(true);
 
@@ -204,162 +204,162 @@ export function User(props: IUserAcct) {
     }
     if (toDelete.expenses) {
       const url = `http://localhost:8080/expense/user/expense/${props.user.id}`;
-      await Axios.delete(url,{headers:{Authorization: props.user.token}}).then(payload => {
-          setOpenDelete(true);
+      await Axios.delete(url, { headers: { Authorization: props.user.token } }).then(payload => {
+        setOpenDelete(true);
       });
 
     }
     if (toDelete.income) {
       const url = `http://localhost:8080/user/income/${props.user.id}`;
-      await Axios.delete(url,{headers:{Authorization: props.user.token}}).then(payload => {
-          setOpenDelete(true);
+      await Axios.delete(url, { headers: { Authorization: props.user.token } }).then(payload => {
+        setOpenDelete(true);
       });
     }
   }
 
   return (
-    
+
     <Grid container style={{ textAlign: 'center', width: '100%' }}>
       <Grid item xs={12}>
-      <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: '20px' }} >
-        <h3>Profile Settings</h3>
-        {updateFname ? 
-        <div> 
-        <TextField
+        <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: '20px' }} >
+          <h3>Profile Settings</h3>
+          {updateFname ?
+            <div>
+              <TextField
                 id="editFirst"
                 placeholder={props.user.first}
                 onChange={handleFnameInput}
                 label='Edit First Name'
                 variant="outlined"
-                style={{width: '200px', margin: '10px'}}
+                style={{ width: '200px', margin: '10px' }}
                 InputProps={{
                   endAdornment: <InputAdornment position="end" onClick={noEditFname}><Undo /></InputAdornment>,
-                  
-  
-                  }}
-                />
-              </div>
-              :
-              <div>
-                <TextField
-                  id="staticFirst"
-                  value={props.user.first}
-                  disabled={true}
-                  label='First Name'
-                  variant="filled"
-                  style={{ width: '200px', margin: '10px' }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end" onClick={editFname}><Edit /></InputAdornment>,
 
 
-                  }}
-
-                /></div>}
-            {updateLname ?
-              <div>
-                <TextField
-                  id="editLast"
-                  placeholder={props.user.last}
-                  onChange={handleLnameInput}
-                  label='Edit Last Name'
-                  variant="outlined"
-                  style={{ width: '200px', margin: '10px' }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end" onClick={noEditLname}><Undo /></InputAdornment>,
-
-
-                  }}
-                />
-              </div> :
-              <div>
-                <TextField
-                  id="staticLast"
-                  value={props.user.last}
-                  disabled={true}
-                  label='Last Name'
-                  variant="filled"
-                  style={{ width: '200px', margin: '10px' }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end" onClick={editLname}><Edit /></InputAdornment>,
+                }}
+              />
+            </div>
+            :
+            <div>
+              <TextField
+                id="staticFirst"
+                value={props.user.first}
+                disabled={true}
+                label='First Name'
+                variant="filled"
+                style={{ width: '200px', margin: '10px' }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end" onClick={editFname}><Edit /></InputAdornment>,
 
 
-                  }}
-                />
-              </div>}
-            {updateUsername ?
-              <div>
-                <TextField
-                  id="editUn"
-                  onChange={handleUsernameInput}
-                  placeholder={props.user.username}
-                  variant="outlined"
-                  label='label'
-                  style={{ width: '200px', margin: '10px' }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end" onClick={noEditUn}><Undo /></InputAdornment>,
+                }}
+
+              /></div>}
+          {updateLname ?
+            <div>
+              <TextField
+                id="editLast"
+                placeholder={props.user.last}
+                onChange={handleLnameInput}
+                label='Edit Last Name'
+                variant="outlined"
+                style={{ width: '200px', margin: '10px' }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end" onClick={noEditLname}><Undo /></InputAdornment>,
 
 
-                  }}
-                /> </div> :
-              <div>
-                <TextField
-                  id="staticUn"
-                  value={props.user.username}
-                  variant="filled"
-                  disabled={true}
-                  label='Username'
-                  style={{ width: '200px', margin: '10px' }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end" onClick={editUn}><Edit /></InputAdornment>,
-                  }}
-                /> </div>}
-            {updateEmail ?
-              <div>
-                  <TextField
-                  id="editEmail"
-                  onChange={handleEmailInput}
-                  placeholder={props.user.email}
-                  variant="outlined"
-                  label='Email'
-                  style={{ width: '200px', margin: '10px' }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end" onClick={noEditEmail}><Undo /></InputAdornment>,
-                  }}
-                /></div> :
-                <div>
-        <TextField
+                }}
+              />
+            </div> :
+            <div>
+              <TextField
+                id="staticLast"
+                value={props.user.last}
+                disabled={true}
+                label='Last Name'
+                variant="filled"
+                style={{ width: '200px', margin: '10px' }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end" onClick={editLname}><Edit /></InputAdornment>,
+
+
+                }}
+              />
+            </div>}
+          {updateUsername ?
+            <div>
+              <TextField
+                id="editUn"
+                onChange={handleUsernameInput}
+                placeholder={props.user.username}
+                variant="outlined"
+                label='label'
+                style={{ width: '200px', margin: '10px' }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end" onClick={noEditUn}><Undo /></InputAdornment>,
+
+
+                }}
+              /> </div> :
+            <div>
+              <TextField
+                id="staticUn"
+                value={props.user.username}
+                variant="filled"
+                disabled={true}
+                label='Username'
+                style={{ width: '200px', margin: '10px' }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end" onClick={editUn}><Edit /></InputAdornment>,
+                }}
+              /> </div>}
+          {updateEmail ?
+            <div>
+              <TextField
+                id="editEmail"
+                onChange={handleEmailInput}
+                placeholder={props.user.email}
+                variant="outlined"
+                label='Email'
+                style={{ width: '200px', margin: '10px' }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end" onClick={noEditEmail}><Undo /></InputAdornment>,
+                }}
+              /></div> :
+            <div>
+              <TextField
                 id="staticEmail"
                 value={props.user.email}
                 variant="filled"
                 disabled={true}
                 label='Email'
-                style={{width: '200px', margin: '10px'}}
+                style={{ width: '200px', margin: '10px' }}
                 InputProps={{
                   endAdornment: <InputAdornment position="end" onClick={editEmail}><Edit /></InputAdornment>,
                 }}
               /></div>}
           <ChangePw />
           {wasEdited ?
-          <div>
-          <Button onClick={handleUpdate} style={{margin:"5px"}}>Apply Changes</Button> 
-          <Button onClick={handleCancel} style={{margin:"5px"}}>Cancel Changes</Button>
-          </div> : ''}
+            <div>
+              <Button onClick={handleUpdate} style={{ margin: "5px" }}>Apply Changes</Button>
+              <Button onClick={handleCancel} style={{ margin: "5px" }}>Cancel Changes</Button>
+            </div> : ''}
           <Snackbar
             anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+              vertical: 'bottom',
+              horizontal: 'left',
             }}
             open={openUp}
             autoHideDuration={6000}
             onClose={closeUp}
-      >
-        <MySnackbarContentWrapper
-          variant="success"
-          message="User Updated Successfully"
-        />
-      </Snackbar>
-          
-      </Paper>
+          >
+            <MySnackbarContentWrapper
+              variant="success"
+              message="User Updated Successfully"
+            />
+          </Snackbar>
+
+        </Paper>
       </Grid>
       <Grid item xs={12}>
 
@@ -418,28 +418,28 @@ export function User(props: IUserAcct) {
             <Button onClick={handleClose} color="primary">
               Cancel
             </Button>
-                    <Button onClick={handleFollowThru} color="primary" autoFocus>
-                      Delete
+                  <Button onClick={handleFollowThru} color="primary" autoFocus>
+                    Delete
             </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-        </FormControl>
-        <Snackbar
+                </DialogActions>
+              </Dialog>
+            </div>
+          </FormControl>
+          <Snackbar
             anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+              vertical: 'bottom',
+              horizontal: 'left',
             }}
             open={openDelete}
             autoHideDuration={6000}
             onClose={closeDelete}
-      >
-        <MySnackbarContentWrapper
-          variant="success"
-          message="User Data Deleted Successfully"
-        />
-      </Snackbar>
-      </Paper>
+          >
+            <MySnackbarContentWrapper
+              variant="success"
+              message="User Data Deleted Successfully"
+            />
+          </Snackbar>
+        </Paper>
 
       </Grid>
     </Grid>
