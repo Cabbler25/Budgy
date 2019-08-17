@@ -1,9 +1,11 @@
-import { Button, CircularProgress, createStyles, makeStyles, Paper, Theme } from '@material-ui/core';
-import { BarLoader } from 'react-spinners';
+import { Button, createStyles, makeStyles, Paper, Theme } from '@material-ui/core';
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { BarLoader } from 'react-spinners';
 import { Col, Container, Row } from 'reactstrap';
+import colors from '../assets/Colors';
 import { donutPath, donutTool } from '../assets/Icons';
 import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
@@ -41,9 +43,11 @@ function Expenses(props: IExpenseProps) {
   const [expensesByUserAndType, setExpensesByUserIdAndTypeId] = useState([]);
 
   useEffect(() => {
-    getAllExpenses();
-    getAllExpenseTypes();
-  }, [])
+    if (props.user.isLoggedIn) {
+      getAllExpenses();
+      getAllExpenseTypes();
+    }
+  }, [props.user.isLoggedIn])
 
   // This function sends the request to get all user reimbursements
   async function getAllExpenses() {
@@ -184,6 +188,8 @@ function Expenses(props: IExpenseProps) {
   const classes = useStyles();
   return (
     <div style={{ textAlign: 'center' }}>
+      {!props.user.isLoggedIn && <Redirect to="/login" />}
+
       {/* Show expenses in the table */}
       {/*<Grid container spacing={2}>
       <Grid item xs={12} md={3}>
@@ -195,7 +201,7 @@ function Expenses(props: IExpenseProps) {
       {
         showTable ?
           <h2>Your {expenseType} expenses, {props.user.first}</h2> :
-          <h2>Check your expenses, {props.user.first}</h2>
+          <h2 style={{ color: colors.offWhite }}>Check your expenses, {props.user.first}</h2>
       }
       <Paper
         style={{

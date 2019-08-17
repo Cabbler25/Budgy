@@ -86,7 +86,7 @@ export function Budget(props: IBudgetProps) {
     const url = `http://localhost:8080/budget/types`;
     Axios.get(url)
       .then((payload: any) => {
-        setBudgetTypes(payload.data);
+        payload.data.length !== 0 && setBudgetTypes(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
@@ -97,8 +97,8 @@ export function Budget(props: IBudgetProps) {
     await Axios.get(url)
       .then((payload: any) => {
         if (payload.data.length != 0) {
-          setBudgets(payload.data);
-          setTableBudgets(payload.data.sort((a: any, b: any) => {
+          payload.data.length !== 0 && setBudgets(payload.data);
+          payload.data.length !== 0 && setTableBudgets(payload.data.sort((a: any, b: any) => {
             return b.budgetType.type < a.budgetType.type ? 1 : -1;
           }));
         }
@@ -210,7 +210,6 @@ export function Budget(props: IBudgetProps) {
 
   return (
     <>
-      {!props.user.isLoggedIn && <Redirect to="/login" />}
       {budgets && <h2 style={{ textAlign: 'center', color: colors.offWhite }}>Here's your monthly budget</h2>}
       <Paper style={{
         opacity: 0.85,
