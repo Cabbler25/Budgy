@@ -10,7 +10,6 @@ import Select from '@material-ui/core/Select';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import React, { Fragment, useEffect } from 'react';
 import { Row } from 'reactstrap';
-import { addTool, addPath } from '../assets/Icons';
 import AddIcon from '@material-ui/icons/AddCircle';
 
 const useStyles = makeStyles((theme: Theme) =>

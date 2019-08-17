@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { Button, createStyles, makeStyles, Paper, Theme, FormControlLabel, Checkbox } from '@material-ui/core';
-=======
-import { Button, Paper } from '@material-ui/core';
->>>>>>> dd71484707501f08130dd35fc0c1c0463295bc82
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -139,12 +135,8 @@ function Expenses(props: IExpenseProps) {
 
   //   Request function for new expense here
   async function createNewExpense(newType: any, newDescripion: string, newAmount: number,
-<<<<<<< HEAD
                                   newDate: string) {
     setIsLoading(true);                                
-=======
-    newDate: string) {
->>>>>>> dd71484707501f08130dd35fc0c1c0463295bc82
     // Prepare request setup
     const url = 'http://localhost:8080/expense';
     const data = {
@@ -222,7 +214,6 @@ function Expenses(props: IExpenseProps) {
     setExpenses(expenses);
     // Send the request
     const url = `http://localhost:8080/expense`;
-<<<<<<< HEAD
     await Axios.put(url,expense)
     .then(async () => {
       await getAllExpenses();
@@ -243,19 +234,6 @@ function Expenses(props: IExpenseProps) {
       }
       setIsLoading(false);
     });
-=======
-    Axios.put(url, expense)
-      .then(() => {
-        getAllExpenses();
-        if (showTable) {
-          console.log(expenses);
-          // Also update the expenses in the table perspective
-          const matchedExpenses = expenses.filter((expense: any) =>
-            expense.expenseType.type == expenseType);
-          setExpensesByUserIdAndTypeId(matchedExpenses);
-        }
-      })
->>>>>>> dd71484707501f08130dd35fc0c1c0463295bc82
   }
 
   return (

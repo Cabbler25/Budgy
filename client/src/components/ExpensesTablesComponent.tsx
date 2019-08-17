@@ -7,16 +7,9 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-<<<<<<< HEAD
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
-import { Input,Typography, Card, Dialog, DialogContent, DialogActions, CardContent } from '@material-ui/core';
-=======
-import React, { Fragment, useState } from 'react';
-import { okPath, okTool, pencilPath, pencilTool, removePath, removeTool, undoPath, undoTool } from '../assets/Icons';
+import { useState, Fragment } from 'react';
 import colors from '../assets/Colors';
->>>>>>> dd71484707501f08130dd35fc0c1c0463295bc82
 
 /*
 TODO: 
@@ -26,7 +19,6 @@ TODO:
 - Try adding monthly checkbox, that will display only expenses for current month
 - Instead of delete expense, should be pay expense (so the payment should be 
   deducted from budget of the specific type)
-- Show date and enable edition
 */
 
 const StyledTableCell = withStyles((theme: Theme) =>
@@ -61,7 +53,6 @@ export function ExpensesTable(props: any) {
   // Define state and its update method to track changes of the editable expense row
   const [state, setState] = useState();
   // This constant is used to logically display the about to delete dialog
-<<<<<<< HEAD
   const [aboutToDelete,setAboutToDelete] = useState(false);
   // This constant is used to logically display the edit expense dialog when on mobile view
   // created for comfortable editing purposes when on mobile view
@@ -69,11 +60,6 @@ export function ExpensesTable(props: any) {
   // Define the appereance of the confirmation dialog
   const [confirmDialog,setConfirmDialog] = useState(false); 
 
-=======
-  const [aboutToDelete, setAboutToDelete] = useState(false);
-  // Define the appereance of the confirmation dialog
-  const [confirmDialog, setConfirmDialog] = useState(false);
->>>>>>> dd71484707501f08130dd35fc0c1c0463295bc82
   // Button used to enable edit fields in the table
   function handleEditButton(expense: any) {
     // Define the expense that's going to be edited
@@ -177,7 +163,6 @@ export function ExpensesTable(props: any) {
             {props.expenses.map((row: any) => (
               <TableRow key={row.id}>
                 <TableCell component="th" scope="row"
-<<<<<<< HEAD
                 size='small'>
                     { 
                       props.view ? 
@@ -226,39 +211,6 @@ export function ExpensesTable(props: any) {
                       name="description"
                       onChange={(e:any)=>handleEditedExpenseChange(e)}/>
                   }
-=======
-                  size='small'>
-                  <Input
-                    fullWidth={false}
-                    disabled={(editableRow && (editableRowKey === row.id)) ? false : true}
-                    style={{
-                      fontSize: '13.3px',
-                      color: (editableRow && (editableRowKey === row.id)) ? "black" : "grey"
-                    }}
-                    type="number"
-                    defaultValue={row.amount}
-                    name="amount"
-                    onChange={(e: any) => handleEditedExpenseChange(e)} />
-                </TableCell>
-                {
-                  props.view ? <Fragment></Fragment> :
-                    <Fragment>
-                      <TableCell>{row.date.slice(0, 10)}</TableCell>
-                    </Fragment>
-                }
-                <TableCell component="th" scope="row">
-                  <Input
-                    fullWidth={false}
-                    disabled={(editableRow && (editableRowKey === row.id)) ? false : true}
-                    style={{
-                      fontSize: '13.3px',
-                      color: (editableRow && (editableRowKey === row.id)) ? "black" : "grey"
-                    }}
-                    multiline={true}
-                    defaultValue={row.description}
-                    name="description"
-                    onChange={(e: any) => handleEditedExpenseChange(e)} />
->>>>>>> dd71484707501f08130dd35fc0c1c0463295bc82
                 </TableCell>
                 {
                   // Switch between edit button and OK button
@@ -369,7 +321,6 @@ export function ExpensesTable(props: any) {
                   color="secondary">
                   Cancel
                     </Button>
-<<<<<<< HEAD
                   </DialogActions>
                 </Dialog>
             </Paper>
@@ -442,12 +393,6 @@ export function ExpensesTable(props: any) {
                 </Dialog>
             </Paper>
             }
-=======
-              </DialogActions>
-            </Dialog>
-          </Paper>
-        }
->>>>>>> dd71484707501f08130dd35fc0c1c0463295bc82
       </Paper>
     </div>
   );
