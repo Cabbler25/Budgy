@@ -1,5 +1,6 @@
 package com.revature.repositories;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public interface ExpenseRepository<P> extends JpaRepository<Expense, Integer> {
 	List<Expense> findByUserIdAndExpenseType(int userId, Optional<ExpenseType> expenseType);
 
 	List<Expense> findByUserIdOrderByIdDesc(int userId);
-	
-//	Add a new endpoint, that gets all expenses by month
+
+	List<Expense> findByUserIdAndDateBetween(int userId, Date prevMonthDate, Date nextMonthDate);
 	
 }

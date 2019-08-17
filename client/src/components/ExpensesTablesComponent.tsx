@@ -6,7 +6,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-// import { Confirm } from 'semantic-ui-react';
 import Button from '@material-ui/core/Button';
 import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
 import { Input,Typography, Card, Dialog, DialogContent,Container, DialogActions, CardContent } from '@material-ui/core';
@@ -16,6 +15,10 @@ TODO:
 - If user clicks on update button, show a dialog that says
 confirm changes OK - Cancel
 - Solve undo button issue
+- Add editable feature to the date like the other fields
+- Try adding monthly checkbox, that will display only expenses for current month
+- Instead of delete expense, should be pay expense (so the payment should be 
+  deducted from budget of the specific type)
 */
 
 const StyledTableCell = withStyles((theme: Theme) =>
@@ -132,7 +135,7 @@ const columnStyle = { marginRight: '2px', };
                 <Fragment></Fragment>
                 :
                 <Fragment>
-                  <StyledTableCell style={columnStyle}>submitted on</StyledTableCell>
+                  <StyledTableCell style={columnStyle}>pay on</StyledTableCell>
                 </Fragment>
                 }
                 <StyledTableCell style={columnStyle}>description</StyledTableCell>
@@ -249,7 +252,7 @@ const columnStyle = { marginRight: '2px', };
                         </Typography>
                         <Typography className={cardClasses.title} 
                         color="textSecondary" gutterBottom>
-                          date submitted:  
+                          date:  
                         </Typography>
                         <Typography variant="h6" component="h4">
                           {state.date.slice(0,10)}
