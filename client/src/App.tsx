@@ -60,7 +60,7 @@ const App: React.FC = () => {
       <PersistGate loading={null} persistor={persistor}>
         <MuiThemeProvider theme={theme}>
           <Router>
-            <div style={{ height: '7px', width: '100vw', backgroundColor: colors.darkGreen }} />
+            <div style={{ height: '7px', width: '100%', backgroundColor: colors.darkGreen }} />
             <NavBar />
             <br />
             <Route path="/" exact component={Home} />
