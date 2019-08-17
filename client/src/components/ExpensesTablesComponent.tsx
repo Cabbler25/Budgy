@@ -13,12 +13,12 @@ import { Input,Typography, Card, Dialog, DialogContent,Container, DialogActions,
 /*
 TODO: 
 - If user clicks on update button, show a dialog that says
-confirm changes OK - Cancel
-- Solve undo button issue
+  confirm changes OK - Cancel
 - Add editable feature to the date like the other fields
 - Try adding monthly checkbox, that will display only expenses for current month
 - Instead of delete expense, should be pay expense (so the payment should be 
   deducted from budget of the specific type)
+- Show date and enable edition
 */
 
 const StyledTableCell = withStyles((theme: Theme) =>
@@ -153,7 +153,7 @@ const columnStyle = { marginRight: '2px', };
                     style={{fontSize:'13.3px',
                     color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
                     type="number"
-                    defaultValue={row.amount}
+                    value={(editableRow && (editableRowKey === row.id)) ?state.amount:row.amount}
                     name="amount"
                     onChange={(e:any)=>handleEditedExpenseChange(e)}/>
                 </TableCell>
@@ -170,7 +170,7 @@ const columnStyle = { marginRight: '2px', };
                   style={{fontSize:'13.3px',
                   color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
                   multiline={true}
-                  defaultValue={row.description}
+                  value={(editableRow && (editableRowKey === row.id)) ?state.description:row.description}
                   name="description"
                   onChange={(e:any)=>handleEditedExpenseChange(e)}/>
                 </TableCell>

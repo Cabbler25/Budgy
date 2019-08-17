@@ -1,4 +1,4 @@
-import { Button, createStyles, makeStyles, Paper, Theme } from '@material-ui/core';
+import { Button, createStyles, makeStyles, Paper, Theme, FormControlLabel, Checkbox } from '@material-ui/core';
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -6,7 +6,6 @@ import { Redirect } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { Col, Container, Row } from 'reactstrap';
 import colors from '../assets/Colors';
-import { donutPath, donutTool } from '../assets/Icons';
 import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
 import { ExpensesTable } from './ExpensesTablesComponent';
@@ -16,12 +15,14 @@ import NewExpense from './NewExpenseDialog';
 TODO:
 - If user is not logged in, show a card with a message that explains about the component, and
   a button that show him the login dialog and after that he will be able to proceed to the
-  expenses component (using props.user.isLoggedIn).
-- Add feedback in case user has no expenses yet
-- Try getting the budgets per type, and check if the expenses per type exceed the budget
-  per type, so a proper warning can be set
+  expenses component (using props.user.isLoggedIn). If is logged in, show the same card, except
+  that the button will be start and will show him the graph and so on...
+- Add feedback in case user has no expenses in the database
 - Get monthly expenses -> instead of dateSubmitted, just pick the date the expense should occur
 - Add request for monthly expense
+- Define the condition setup that will manage if the expenses shown in the graph or the table 
+  are the monthly ones or all in general
+- For the update and delete process also reflect the changes in monthly view
 */
 
 export interface IExpenseProps {
@@ -37,20 +38,26 @@ export interface IExpenseProps {
 function Expenses(props: IExpenseProps) {
   // Needed constants with their respective state modifier function
   const [expenses, setExpenses] = useState();
+  const [monthlyExpenses, setMonthlyExpenses] = useState();
+  const [isLoading,setIsLoading] = useState(true);
   const [expenseTypes, setExpenseTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
+  const [showMonthly, setShowMonthly] = useState(false);
   const [expenseType, setExpenseType] = useState();
   const [expensesByUserAndType, setExpensesByUserIdAndTypeId] = useState([]);
 
   useEffect(() => {
     if (props.user.isLoggedIn) {
       getAllExpenses();
+      getAllMonthlyExpenses();
       getAllExpenseTypes();
     }
   }, [props.user.isLoggedIn])
 
   // This function sends the request to get all user reimbursements
   async function getAllExpenses() {
+    // Show loading bar at the moment this function is called
+    setIsLoading(true);
     const url = `http://localhost:8080/expense/user/${props.user.id}`;
     await Axios.get(url)
       .then((payload: any) => {
@@ -59,12 +66,13 @@ function Expenses(props: IExpenseProps) {
         // Handle error by displaying something else
       });
   }
+
   // This function sends the request to get all user reimbursements
   async function getAllMonthlyExpenses() {
     const url = `http://localhost:8080/expense/user/${props.user.id}/monthly`;
     await Axios.get(url)
       .then((payload: any) => {
-        setExpenses(payload.data);
+        setMonthlyExpenses(payload.data);
         // If function is called, update the table view for only monthly expenses
         if (showTable) {
           handleElementClick(expenseType);
@@ -72,8 +80,9 @@ function Expenses(props: IExpenseProps) {
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
+      setIsLoading(false);
   }
-
+  
   async function getAllExpenseTypes() {
     const url = `http://localhost:8080/expense/types`;
     await Axios.get(url)
@@ -83,10 +92,16 @@ function Expenses(props: IExpenseProps) {
         // Handle error by displaying something else
       });
   }
-
+  // Return all expenses
   function createGraphData() {
     return expenses.map((i: any) => {
       return { key: i.expenseType.type, data: i.amount }
+    });
+  }
+  // Return monthly expenses
+  function createMonthlyGraphData() {
+    return monthlyExpenses.map((i:any) =>{
+      return {key: i.expenseType.type,data: i.amount}
     });
   }
 
@@ -99,12 +114,30 @@ function Expenses(props: IExpenseProps) {
   async function handleElementClick(label: string) {
     const type = expenseTypes.find((type: any) => type.type == label);
     if (type) {
-      const matchedExpenses = expenses.filter((expense: any) =>
-        JSON.stringify(expense.expenseType) == JSON.stringify(type))
-      setExpensesByUserIdAndTypeId(matchedExpenses);
-      setExpenseType(label);
-      // Show the table if a piece of the donut is clicked
-      setShowTable(true);
+      if (showMonthly) {
+        const matchedExpenses = monthlyExpenses.filter((expense: any) =>
+          JSON.stringify(expense.expenseType) == JSON.stringify(type));
+        setExpensesByUserIdAndTypeId(matchedExpenses);
+        setExpenseType(label);
+        // Show the table if a piece of the donut is clicked
+        setShowTable(true);
+      } else {
+        const matchedExpenses = expenses.filter((expense: any) =>
+          JSON.stringify(expense.expenseType) == JSON.stringify(type));
+        setExpensesByUserIdAndTypeId(matchedExpenses);
+        setExpenseType(label);
+        // Show the table if a piece of the donut is clicked
+        setShowTable(true);
+      }
+    }
+  }
+  // Handle view for only show monthly expenses
+  function viewMonthlyExpenses(state:boolean) {
+    // Show only monthly expenses in the donut graph
+    setShowMonthly(state);
+    // Show only monthly expenses in the tables
+    if (showTable) {
+      handleElementClick(expenseType);
     }
   }
 
@@ -121,13 +154,14 @@ function Expenses(props: IExpenseProps) {
       amount: newAmount
     };
     // console.log("this is the new expense before posting it:", data);
-    Axios.post(url, data)
+    await Axios.post(url, data)
       .then(() => {
         const newExpense = {
           id: Math.max.apply(Math, expenses.map(function (exp: any) { return exp.id; })) + 1,
           ...data
         };
         getAllExpenses();
+        getAllMonthlyExpenses();
         if (showTable) {
           setExpenses(expenses.push(newExpense));
           handleElementClick(newExpense.expenseType.type);
@@ -144,6 +178,7 @@ function Expenses(props: IExpenseProps) {
     Axios.delete(url, expense)
       .then(() => {
         getAllExpenses();
+        getAllMonthlyExpenses();
         if (showTable) {
           // Find the index of the to-be-removed expense
           const deletedExpenseIndex = expenses.findIndex(checkId);
@@ -170,7 +205,7 @@ function Expenses(props: IExpenseProps) {
     .then(() => {
       getAllExpenses();
       if (showTable) {
-        console.log(expenses);
+        // console.log(expenses);
         // Also update the expenses in the table perspective
         const matchedExpenses = expenses.filter((expense: any) =>
         expense.expenseType.type == expenseType);
@@ -188,19 +223,12 @@ function Expenses(props: IExpenseProps) {
   const classes = useStyles();
   return (
     <div style={{ textAlign: 'center' }}>
-      {!props.user.isLoggedIn && <Redirect to="/login" />}
-
-      {/* Show expenses in the table */}
-      {/*<Grid container spacing={2}>
-      <Grid item xs={12} md={3}>
-        <Paper>
-          <h3>Total Expenses</h3>
-          <p>$100,000 <br/> Monthly $100 <br/><br/><br/><br/></p>
-        </Paper>
-          </Grid>*/}
+      {!props.user.isLoggedIn && 
+      // Instead of redirecting to login, show card as indicated in TODO at the top
+      <Redirect to="/login" />}
       {
         showTable ?
-          <h2>Your {expenseType} expenses, {props.user.first}</h2> :
+          <h2 style={{ color: colors.offWhite }}>Your {expenseType} expenses, {props.user.first}</h2> :
           <h2 style={{ color: colors.offWhite }}>Check your expenses, {props.user.first}</h2>
       }
       <Paper
@@ -211,13 +239,14 @@ function Expenses(props: IExpenseProps) {
           height: props.ui.isMobileView ? "90%" : '60%'
         }}
       >
-        {!expenses ? (
+        {/* Show loader if expenses and monthly expenses aren't filled yet */}
+        {(!(expenses && monthlyExpenses)) ? (
           <div
             style={{
               margin: props.ui.isMobileView ? '75px' : '150px',
               display: 'inline-block'
             }}>
-            <BarLoader width={150} color={'#009688'} loading={expenses} />
+            <BarLoader width={150} color={'#009688'} loading={isLoading} />
           </div>
         ) :
           <div>
@@ -240,6 +269,21 @@ function Expenses(props: IExpenseProps) {
                         tableView={showTable}
                         type={expenseType} />
                     </Col>
+                    <Col>
+                      <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={showMonthly}
+                              onChange={showMonthly?()=>viewMonthlyExpenses(false) :
+                                                    ()=>viewMonthlyExpenses(true)}
+                              value="checkedB"
+                              color="primary"
+                            />
+                          }
+                          style={{marginLeft:'5px'}}
+                          label="This month"
+                      /> 
+                    </Col>
                   </Row>
                 </Container>
                 <ExpensesTable expenses={expensesByUserAndType}
@@ -252,7 +296,7 @@ function Expenses(props: IExpenseProps) {
                   {expenses &&
                     <div>
                       <DonutGraph
-                        data={createGraphData()}
+                        data={showMonthly?createMonthlyGraphData():createGraphData()}
                         labels={createGraphLabels()}
                         important='Emergency'
                         isMobileView={props.ui.isMobileView}
@@ -261,6 +305,20 @@ function Expenses(props: IExpenseProps) {
                         types={expenseTypes}
                         createExpense={createNewExpense}
                         view={props.ui.isMobileView} />
+                        {/* Toggles between view monthly expenses and overall expenses */}
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={showMonthly}
+                            onChange={showMonthly?()=>viewMonthlyExpenses(false) :
+                                                  ()=>viewMonthlyExpenses(true)}
+                            value="checkedB"
+                            color="primary"
+                          />
+                        }
+                        style={{marginLeft:'5px'}}
+                        label="This month"
+                      />  
                     </div>}
                 </Fragment>
               )}
