@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,29 +12,28 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="expenses")
+@Table(name = "expenses")
 public class Expense {
-	
+
 //	Primary key
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 //	Define many-to-one relationship between expenses and users tables
 //	@ManyToOne
 //	@JoinColumn(name="user_id")
 //	private User user;
-	
-	@Column(name="user_id")
+
+	@Column(name = "user_id")
 	private int userId;
-	
+
 //	Define many-to-one relationship between expenses and expense-types tables
 	@ManyToOne
-	@JoinColumn(name="type_id")
+	@JoinColumn(name = "type_id")
 	private ExpenseType expenseType;
-	
+
 //	Other fields
-	@Column(name="date_submitted")
 	private Date date;
 
 	@Override
@@ -52,13 +50,12 @@ public class Expense {
 		this.userId = userId;
 	}
 
-
-	@Column(name="description")
+	@Column(name = "description")
 	private String description;
-	
-	@Column(name="amount")
+
+	@Column(name = "amount")
 	private double amount;
-	
+
 //	Auto generated...
 	public int getId() {
 		return id;
@@ -109,7 +106,7 @@ public class Expense {
 		this.description = description;
 		this.amount = amount;
 	}
-	
+
 	public Expense() {
 		super();
 	}

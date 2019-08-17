@@ -1,20 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { Paper, Button, Divider } from '@material-ui/core';
+import React, { useState, useEffect, Component } from 'react';
+import { Paper, Button, Divider, Grid, makeStyles, Theme, createStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { IUserState, IState, IUiState } from '../redux';
 import Axios from 'axios';
 import { BarLoader } from 'react-spinners';
 import MixedLineGraph from './data/MixedLineGraph';
+import colors from '../assets/Colors';
 
 interface IHomeProps {
   user: IUserState;
   ui: IUiState;
 }
 
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  div_row: {
+    opacity: 0.85,
+    padding: '40px 100px 20px 100px',
+    marginBottom: '20px'
+    // borderBottom: `2px solid ${colors.darkGreen}`
+  },
+  grid_container: {
+    // textShadow: '-0.5px -0.5px 0px #000, 0px -0.5px 0px #000, 0.5px -0.5px 0px #000, -0.5px  0px 0px #000, 0.5px 0px 0px #000, -0.5px  0.5px 0px #000, 0px 0.5px 0px #000, 0.5px 0.5px 0px #000',
+    margin: 0,
+    width: '100%',
+    overflowX: 'hidden',
+    color: colors.offWhite
+  }
+}));
+
 function Home(props: IHomeProps) {
+  const classes = useStyles();
   const [incomes, setIncomes] = useState();
   const [budgets, setBudgets] = useState();
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState();
+  const [typeLabels, setTypeLabels] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,10 +44,14 @@ function Home(props: IHomeProps) {
   })
 
   useEffect(() => {
-    // setIsLoading(true);
+    if (props.user.isLoggedIn) {
+      setIsLoading(true);
+      getAllTypes();
+      fetchAllData();
+    }
     // Load budgets, incomes, expenses
-    // fetchAllData();
-  }, [])
+
+  }, [props.user.isLoggedIn])
 
   useEffect(() => {
 
@@ -55,11 +78,21 @@ function Home(props: IHomeProps) {
     })
   }, [currentMonthExpenses, budgets, incomes])
 
+  async function getAllTypes() {
+    const url = `http://localhost:8080/budget/types`;
+    Axios.get(url)
+      .then((payload: any) => {
+        payload.data.length > 0 && setTypeLabels(payload.data);
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+  }
+
   async function fetchAllData() {
     let url = `http://localhost:8080/expense/user/${props.user.id}`;
     await Axios.get(url)
       .then((payload: any) => {
-        setCurrentMonthExpenses(payload.data);
+        payload.data.length > 0 && setCurrentMonthExpenses(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
@@ -67,7 +100,7 @@ function Home(props: IHomeProps) {
     await Axios.get(url)
       .then((payload: any) => {
         // console.log(payload.data);
-        setIncomes(payload.data);
+        payload.data.length > 0 && setIncomes(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
@@ -83,27 +116,88 @@ function Home(props: IHomeProps) {
     setIsLoading(false);
   }
 
+  function createBudgetGraphData() {
+    if (!budgets) return;
+    return budgets.map((i: any) => {
+      return { key: i.budgetType.type, data: i.amount }
+    });
+  }
+
+  function createExpenseGraphData() {
+    if (!currentMonthExpenses) return;
+    return currentMonthExpenses.map((i: any) => {
+      return { key: i.expenseType.type, data: i.amount }
+    });
+  }
+
+  function createGraphLabels() {
+    return typeLabels.map((i: any) => {
+      return i.type;
+    });
+  }
+
   return (
-    // Some warnings if income < budget or expense > budget
-    // Line graph of expenses over budget
-    // Line graph of income over budget
-    <div style={{ textAlign: 'center' }}>
-      <Paper style={{ display: 'inline-block', padding: '0px 50px 50px 50px' }}>
-        {isLoading ? (
-          <div style={{
-            margin: props.ui.isMobileView ? '75px' : '150px',
-            display: 'inline-block'
-          }}>
-            <BarLoader width={150} color={'#009688'} loading={isLoading} />
+    // Rows of data
+    // Conditional description: if all under, good job, if over, look into it
+    // Budget vs expenses: show remaining/over budget amount
+    // Bar graph budget totals vs income totals
+    (props.user.isLoggedIn ? (
+      (isLoading ? (
+        <div style={{ margin: 'auto', height: '100vh', textAlign: 'center' }}>
+          <div style={{ marginTop: '40vh', display: 'inline-block' }}>
+            <BarLoader width={250} color={colors.offWhite} loading={isLoading} />
           </div>
-        ) : (
-            <>
-              <h2>Here's how you're stacking up</h2>
-              <MixedLineGraph />
-            </>
-          )}
-      </Paper>
-    </div >
+        </div>
+      ) : (
+          <div>
+            <div className={classes.div_row} style={{ marginTop: '20px' }}>
+              <Grid className={classes.grid_container} container>
+                <Grid item xs={6}>
+                  <Paper style={{ opacity: 0.85, display: 'inline-block' }}>
+                    <MixedLineGraph budgetData={createBudgetGraphData()}
+                      expenseData={createExpenseGraphData()} labels={createGraphLabels()} />
+                  </Paper>
+                </Grid>
+                <Grid item xs={6}>
+                  <h1>Here's how you're stacking up</h1>
+                  And below we'll show you a bunch of details. You don't even know but we'll show you.
+                </Grid>
+              </Grid>
+            </div>
+            <div className={classes.div_row}>
+              <Grid className={classes.grid_container} container>
+                <Grid item xs={6}>
+                  <h1>Here's how you're stacking up</h1>
+                  And below we'll show you a bunch of details. You don't even know but we'll show you.
+                </Grid>
+                <Grid item xs={6}>
+                  <Paper style={{ opacity: 0.85, display: 'inline-block' }}>
+                    <MixedLineGraph budgetData={createBudgetGraphData()}
+                      expenseData={createExpenseGraphData()} labels={createGraphLabels()} />
+                  </Paper>
+                </Grid>
+              </Grid>
+            </div>
+            <div className={classes.div_row}>
+              <Grid className={classes.grid_container} container>
+                <Grid item xs={6}>
+                  <Paper style={{ opacity: 0.85, display: 'inline-block' }}>
+                    <MixedLineGraph budgetData={createBudgetGraphData()}
+                      expenseData={createExpenseGraphData()} labels={createGraphLabels()} />
+                  </Paper>
+                </Grid>
+                <Grid item xs={6}>
+                  <h1>Here's how you're stacking up</h1>
+                  And below we'll show you a bunch of details. You don't even know but we'll show you.
+              </Grid>
+              </Grid>
+            </div>
+          </div>
+        ))
+    ) : (
+        <>Log in bud</>
+      )
+    )
   )
 }
 
