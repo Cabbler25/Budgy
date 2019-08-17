@@ -1,18 +1,16 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles';
+import { Button, Container, Dialog, DialogActions, DialogContent, Input } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-
-import { Input, Dialog, DialogContent, Container, DialogActions } from '@material-ui/core';
-import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
-
-import { Button } from '@material-ui/core';
-import { TextField } from 'material-ui';
 import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+import React, { Fragment, useState } from 'react';
+import { okPath, okTool, pencilPath, pencilTool, removePath, removeTool, undoPath, undoTool } from '../assets/Icons';
+
+
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -26,19 +24,15 @@ const StyledTableCell = withStyles((theme: Theme) =>
   }),
 )(TableCell);
 
-const StyledTableRow = withStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.background.default,
-      },
-    },
-  }),
-)(TableRow);
-
-
-
-
+// const StyledTableRow = withStyles((theme: Theme) =>
+//   createStyles({
+//     root: {
+//       '&:nth-of-type(odd)': {
+//         backgroundColor: theme.palette.background.default,
+//       },
+//     },
+//   }),
+// )(TableRow);
 
 export function IncomesTable(props: any) {
   const [editRow, setEditRow] = useState(false);

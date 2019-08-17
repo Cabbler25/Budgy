@@ -20,7 +20,7 @@ export function Sidebar(props: any) {
         <div style={{ backgroundColor: colors.lighterGreen }}>
           <div style={{ minWidth: '250px', maxWidth: '250px' }} />
           <div style={{ textAlign: 'center' }}>
-            <img style={{ display: 'inline-block', marginTop: '40px' }} width='50px' height='50px' src={Logo} />
+            <img alt='' style={{ display: 'inline-block', marginTop: '40px' }} width='50px' height='50px' src={Logo} />
           </div>
           <h2 style={{ marginTop: '-10px', textAlign: 'center' }}>
             Budgy

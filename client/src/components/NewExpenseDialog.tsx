@@ -1,15 +1,13 @@
-import { Container,Typography, Paper, TextField, InputAdornment } from '@material-ui/core';
+import { Container,Paper, TextField, InputAdornment } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Axios from 'axios';
 import React, { Fragment, useEffect } from 'react';
 import { Row } from 'reactstrap';
 import { addTool, addPath } from '../assets/Icons';
@@ -34,6 +32,7 @@ export default function NewExpense(props: any) {
     type: 0,
     description: '',
     amount: 0,
+    date:new Date().toISOString().slice(0,10),
     formFilled:true
   });
 
@@ -46,7 +45,9 @@ export default function NewExpense(props: any) {
   };
 
   function handleClickOpen() {
-    setState({ type:0,description:'',amount:0, open: true,formFilled:true });
+    setState({ type:0,
+      date:new Date().toISOString().slice(0,10),
+      description:'',amount:0, open: true,formFilled:true });
   }
 
   useEffect(() => {
@@ -60,9 +61,11 @@ export default function NewExpense(props: any) {
     if (state.type && state.description && state.amount) {
       // If user is in table view, the expense type is passed from the parent
       props.tableView ?
-      props.createExpense(props.types.find((type:any) => type.type == state.type),state.description,state.amount)
+      props.createExpense(props.types.find((type:any) => type.type == state.type),
+      state.description,state.amount,state.date)
       :
-      props.createExpense(props.types.find((type:any) => type.id == state.type),state.description,state.amount)
+      props.createExpense(props.types.find((type:any) => type.id == state.type),
+      state.description,state.amount,state.date)
       // Close popover
       handleClose();
     } else {
@@ -127,6 +130,18 @@ export default function NewExpense(props: any) {
                           startAdornment: <InputAdornment position="start">$</InputAdornment>,
                         }}
                         />
+                    </Row>
+                    <Row className="new-expense-form">
+                    <TextField
+                      id="date"
+                      label="Pay on"
+                      type="date"
+                      defaultValue={state.date}
+                      onChange={handleChange('date')}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
                     </Row>
                     <Row className="new-expense-form">
                         <TextField
