@@ -54,16 +54,22 @@ export function ExpensesTable(props: any) {
   const [state, setState] = useState();
   // This constant is used to logically display the about to delete dialog
   const [aboutToDelete,setAboutToDelete] = useState(false);
-  // This constant is used to logically display the about to update dialog
-
+  // This constant is used to logically display the edit expense dialog when on mobile view
+  // created for comfortable editing purposes when on mobile view
+  const [editDialog,setEditDialog] = useState(false);
   // Define the appereance of the confirmation dialog
   const [confirmDialog,setConfirmDialog] = useState(false); 
+
   // Button used to enable edit fields in the table
   function handleEditButton(expense:any) {
     // Define the expense that's going to be edited
     setState(expense);
     // This will change the view of the row from read to write mode
-    setEditableRow(true);
+    if (props.view) {
+      setEditDialog(true);
+    } else {
+      setEditableRow(true);
+    }
   }
   // Function used to close the confirm deletion dialog in case user decides not
   // to delete the expense
@@ -84,6 +90,15 @@ export function ExpensesTable(props: any) {
       [event.target.name]: event.target.value
     });
   };
+  // This function is called only in mobile view
+  function confirmEdit(editStatus:boolean) {
+    if (editStatus) {
+      setEditDialog(false);
+      props.updateExpense(state);
+    } else {
+      setEditDialog(false);
+    }
+  }
 
   // Define table styles
   const useStyles = makeStyles((theme: Theme) =>
@@ -149,15 +164,20 @@ const columnStyle = { marginRight: '2px', };
               <TableRow key={row.id}>
                 <TableCell component="th" scope="row"
                 size='small'>
-                    <Input
-                    fullWidth={false}
-                    disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
-                    style={{fontSize:'13.3px',
-                    color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
-                    type="number"
-                    value={(editableRow && (editableRowKey === row.id)) ?state.amount:row.amount}
-                    name="amount"
-                    onChange={(e:any)=>handleEditedExpenseChange(e)}/>
+                    { 
+                      props.view ? 
+                      row.amount
+                      :
+                      <Input
+                      fullWidth={false}
+                      disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
+                      style={{fontSize:'13.3px',
+                      color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
+                      type="number"
+                      value={(editableRow && (editableRowKey === row.id)) ?state.amount:row.amount}
+                      name="amount"
+                      onChange={(e:any)=>handleEditedExpenseChange(e)}/>
+                    }
                 </TableCell>
                 {
                   props.view ? <Fragment></Fragment>:
@@ -177,15 +197,20 @@ const columnStyle = { marginRight: '2px', };
                   </Fragment>
                 }
                 <TableCell component="th" scope="row">
-                  <Input
-                  fullWidth={false}
-                  disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
-                  style={{fontSize:'13.3px',
-                  color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
-                  multiline={true}
-                  value={(editableRow && (editableRowKey === row.id)) ?state.description:row.description}
-                  name="description"
-                  onChange={(e:any)=>handleEditedExpenseChange(e)}/>
+                  {
+                    props.view ?
+                      row.description
+                    :
+                      <Input
+                      fullWidth={false}
+                      disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
+                      style={{fontSize:'13.3px',
+                      color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
+                      multiline={true}
+                      value={(editableRow && (editableRowKey === row.id)) ?state.description:row.description}
+                      name="description"
+                      onChange={(e:any)=>handleEditedExpenseChange(e)}/>
+                  }
                 </TableCell>
                   {
                     // Switch between edit button and OK button
@@ -289,6 +314,74 @@ const columnStyle = { marginRight: '2px', };
                     </Button>
                     <Button
                       onClick={()=>deleteStatus(false)}
+                      color="secondary">
+                      Cancel
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+            </Paper>
+            }
+            {/* Display the delete confirm delete dialog when the user clicks on the 
+            delete icon. It shows the information of the expense before deleting
+            it. User can select between cancel or delete. */}
+            {      
+              editDialog &&
+              <Paper style={{textAlign: "center"}}>
+                  <Dialog open={editDialog}>
+                  <DialogContent>
+                  Update expense: 
+                  <br/> <br/>
+                    <Card className={cardClasses.card}>
+                      <CardContent>
+                        <Typography className={cardClasses.title} 
+                        color="textSecondary" gutterBottom>
+                        amount:  
+                        </Typography>
+                        <Typography variant="h6" component="h4">
+                          <Input
+                          fullWidth={false}
+                          type="number"
+                          defaultValue={state.amount}
+                          name="amount"
+                          onChange={(e:any)=>handleEditedExpenseChange(e)}/>
+                        </Typography>
+                        <Typography className={cardClasses.title} 
+                        color="textSecondary" gutterBottom>
+                          pay on:  
+                        </Typography>
+                        <Typography variant="h6" component="h4">
+                          <Input
+                            fullWidth={false}
+                            type="date"
+                            defaultValue={state.date}
+                            name="date"
+                            onChange={(e:any)=>handleEditedExpenseChange(e)}/>
+                        </Typography>
+                        <Typography className={cardClasses.title} 
+                        color="textSecondary" gutterBottom>
+                          description:  
+                        </Typography>
+                        <Typography variant="h6" component="h4">
+                          <Input
+                          fullWidth={false}
+                          multiline={true}
+                          defaultValue={state.description}
+                          name="description"
+                          onChange={(e:any)=>handleEditedExpenseChange(e)}
+                          rowsMax="3"/>
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  <br/>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button
+                      onClick={()=>confirmEdit(true)}
+                      color="primary">
+                      Update
+                    </Button>
+                    <Button
+                      onClick={()=>confirmEdit(false)}
                       color="secondary">
                       Cancel
                     </Button>

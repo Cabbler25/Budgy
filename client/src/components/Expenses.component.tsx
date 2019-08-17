@@ -251,7 +251,7 @@ function Expenses(props: IExpenseProps) {
       {
         showTable ?
           <h2 style={{ color: colors.offWhite }}> {showMonthly?'This month':'Your'} {expenseType} expenses, {props.user.first}</h2> :
-          <h2 style={{ color: colors.offWhite }}>Check your {showMonthly?'monthly':''} expenses, {props.user.first}</h2>
+          <h2 style={{ color: colors.offWhite }}>Your {showMonthly?'monthly':''} expenses, {props.user.first}</h2>
       }
       <Paper
         style={{
