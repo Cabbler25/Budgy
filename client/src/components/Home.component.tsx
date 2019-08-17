@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IUserState, IState, IUiState } from '../redux';
 import Axios from 'axios';
 import { BarLoader } from 'react-spinners';
+import MixedLineGraph from './data/MixedLineGraph';
 
 interface IHomeProps {
   user: IUserState;
@@ -24,9 +25,9 @@ function Home(props: IHomeProps) {
   })
 
   useEffect(() => {
-    setIsLoading(true);
+    // setIsLoading(true);
     // Load budgets, incomes, expenses
-    fetchAllData();
+    // fetchAllData();
   }, [])
 
   useEffect(() => {
@@ -87,7 +88,7 @@ function Home(props: IHomeProps) {
     // Line graph of expenses over budget
     // Line graph of income over budget
     <div style={{ textAlign: 'center' }}>
-      <Paper style={{ display: 'inline-block', padding: '50px' }}>
+      <Paper style={{ display: 'inline-block', padding: '0px 50px 50px 50px' }}>
         {isLoading ? (
           <div style={{
             margin: props.ui.isMobileView ? '75px' : '150px',
@@ -97,12 +98,8 @@ function Home(props: IHomeProps) {
           </div>
         ) : (
             <>
-              <h1>Project 2</h1>
-              <Divider variant='fullWidth'
-                style={{ marginBottom: '20px' }} />
-              <Button onClick={() => {
-                console.log(props.user)
-              }}>Get Started</Button>
+              <h2>Here's how you're stacking up</h2>
+              <MixedLineGraph />
             </>
           )}
       </Paper>
