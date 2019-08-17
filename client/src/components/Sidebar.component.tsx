@@ -8,7 +8,7 @@ import colors from '../assets/Colors';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   paper: {
-    background: colors.lightGreen,
+    background: colors.teal,
   },
 }))
 
@@ -27,18 +27,18 @@ export function Sidebar(props: any) {
         </h2>
           <div style={{ textAlign: 'center' }}>
             {props.isLoggedIn ?
-              <Button color="primary" style={{ color: colors.offWhite }} component={Link} to="/user">
+              <Button color="secondary" component={Link} to="/user">
                 My Account
               </Button>
               :
-              <Button color="primary" style={{ color: colors.offWhite }}
+              <Button color="secondary"
                 onClick={() => props.history.push('/login')}>
                 Login
               </Button>}
           </div>
-          <Divider style={{ marginTop: '20px' }} />
+          <Divider style={{ backgroundColor: colors.offWhite, marginTop: '20px' }} />
         </div>
-        <div style={{ backgroundColor: colors.lightGreen, textAlign: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
           <Button style={{ color: colors.offWhite, marginTop: '50px' }} variant='text' component={Link} to="/">
             Home
           </Button><br />
@@ -51,6 +51,7 @@ export function Sidebar(props: any) {
           <Button style={{ color: colors.offWhite, marginTop: '15px', marginBottom: '50px' }} variant='text' component={Link} to="/incomes">
             Incomes
           </Button><br />
+          <Divider style={{ backgroundColor: colors.offWhite }} />
         </div>
         {props.isLoggedIn &&
           <div style={{ marginBottom: '0px', marginTop: 'auto', textAlign: 'center' }}>
