@@ -136,8 +136,9 @@ export default function NewExpense(props: any) {
                       id="date"
                       label="Pay on"
                       type="date"
-                      defaultValue={state.date}
+                      defaultValue={props.view?'':state.date}
                       onChange={handleChange('date')}
+                      style={{width:'100%'}}
                       InputLabelProps={{
                         shrink: true,
                       }}

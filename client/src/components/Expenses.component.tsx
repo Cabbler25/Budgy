@@ -18,11 +18,6 @@ TODO:
   expenses component (using props.user.isLoggedIn). If is logged in, show the same card, except
   that the button will be start and will show him the graph and so on...
 - Add feedback in case user has no expenses in the database
-- Get monthly expenses -> instead of dateSubmitted, just pick the date the expense should occur
-- Add request for monthly expense
-- Define the condition setup that will manage if the expenses shown in the graph or the table 
-  are the monthly ones or all in general
-- For the update and delete process also reflect the changes in monthly view
 */
 
 export interface IExpenseProps {
@@ -73,10 +68,6 @@ function Expenses(props: IExpenseProps) {
     await Axios.get(url)
       .then((payload: any) => {
         setMonthlyExpenses(payload.data);
-        // If function is called, update the table view for only monthly expenses
-        if (showTable) {
-          handleElementClick(expenseType);
-        }
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
@@ -111,9 +102,10 @@ function Expenses(props: IExpenseProps) {
     });
   }
   // Function used to display the expenses in the table.
-  async function handleElementClick(label: string) {
+  function handleElementClick(label: string) {
     const type = expenseTypes.find((type: any) => type.type == label);
     if (type) {
+      // Update expenses view in table perspective
       if (showMonthly) {
         const matchedExpenses = monthlyExpenses.filter((expense: any) =>
           JSON.stringify(expense.expenseType) == JSON.stringify(type));
@@ -121,7 +113,7 @@ function Expenses(props: IExpenseProps) {
         setExpenseType(label);
         // Show the table if a piece of the donut is clicked
         setShowTable(true);
-      } else {
+      } else { // Update expenses view in graph perspective
         const matchedExpenses = expenses.filter((expense: any) =>
           JSON.stringify(expense.expenseType) == JSON.stringify(type));
         setExpensesByUserIdAndTypeId(matchedExpenses);
@@ -144,6 +136,7 @@ function Expenses(props: IExpenseProps) {
   //   Request function for new expense here
   async function createNewExpense(newType: any, newDescripion: string, newAmount: number,
                                   newDate: string) {
+    setIsLoading(true);                                
     // Prepare request setup
     const url = 'http://localhost:8080/expense';
     const data = {
@@ -163,55 +156,84 @@ function Expenses(props: IExpenseProps) {
         getAllExpenses();
         getAllMonthlyExpenses();
         if (showTable) {
+          // Also show the new expense in monthly perspective
+          if (showMonthly) {
+              setMonthlyExpenses(monthlyExpenses.push(newExpense));
+              handleElementClick(newExpense.expenseType.type);
+          }
           setExpenses(expenses.push(newExpense));
           handleElementClick(newExpense.expenseType.type);
         }
+        setIsLoading(false);
       });
   }
   // Request function to delete an existing expense
   async function deleteExpense(expense: any) {
+    setIsLoading(true);
     // Find the id of the removed expense
     function checkId(exp: any) {
       return exp.id === expense.id;
     }
     const url = `http://localhost:8080/expense/${expense.id}`;
-    Axios.delete(url, expense)
+    await Axios.delete(url, expense)
       .then(() => {
-        getAllExpenses();
-        getAllMonthlyExpenses();
-        if (showTable) {
-          // Find the index of the to-be-removed expense
-          const deletedExpenseIndex = expenses.findIndex(checkId);
-          // Remove it from the expenses array so it can be removed visually from the table
-          setExpenses(expenses.splice(deletedExpenseIndex, 1));
-          handleElementClick(expense.expenseType.type);
+          getAllExpenses();
+          getAllMonthlyExpenses();
+          if (showTable) {
+            // Also update if user is in monthly perspective
+            if (showMonthly) {
+              const deletedExpenseIndex = monthlyExpenses.findIndex(checkId);
+              setMonthlyExpenses(monthlyExpenses.splice(deletedExpenseIndex, 1));
+              handleElementClick(expense.expenseType.type);
+            }
+            // Find the index of the to-be-removed expense
+            const deletedExpenseIndex = expenses.findIndex(checkId);
+            // Remove it from the expenses array so it can be removed visually from the table
+            setExpenses(expenses.splice(deletedExpenseIndex, 1));
+            handleElementClick(expense.expenseType.type);
+          }
+          setIsLoading(false);
         }
-      }
-      )
+      );
   }
   // Request function to update an expense
   async function updateExpense(expense: any) {
+    setIsLoading(true);
     // Find the id of the updated expense
     function checkId(exp: any) {
       return exp.id === expense.id;
     }
     // Update the expenses state in general (parent component)
+    if (showMonthly) {
+      const updatedExpenseIndex = monthlyExpenses.findIndex(checkId);
+      monthlyExpenses[updatedExpenseIndex] = expense;
+      setMonthlyExpenses(monthlyExpenses);
+    }
     const updatedExpenseIndex = expenses.findIndex(checkId);
     expenses[updatedExpenseIndex] = expense;
     setExpenses(expenses);
     // Send the request
     const url = `http://localhost:8080/expense`;
-    Axios.put(url,expense)
-    .then(() => {
-      getAllExpenses();
+    await Axios.put(url,expense)
+    .then(async () => {
+      await getAllExpenses();
+      await getAllMonthlyExpenses();
+      // Also update the expenses in the table perspective
       if (showTable) {
         // console.log(expenses);
-        // Also update the expenses in the table perspective
-        const matchedExpenses = expenses.filter((expense: any) =>
-        expense.expenseType.type == expenseType);
-        setExpensesByUserIdAndTypeId(matchedExpenses);
+        // Update monthly expenses too
+        if (showMonthly) {
+          const matchedExpenses = monthlyExpenses.filter((expense: any) =>
+          expense.expenseType.type == expenseType);
+          setExpensesByUserIdAndTypeId(matchedExpenses);  
+        } else {
+          const matchedExpenses = expenses.filter((expense: any) =>
+          expense.expenseType.type == expenseType);
+          setExpensesByUserIdAndTypeId(matchedExpenses);
+        }
       }
-    })
+      setIsLoading(false);
+    });
   }
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -228,8 +250,8 @@ function Expenses(props: IExpenseProps) {
       <Redirect to="/login" />}
       {
         showTable ?
-          <h2 style={{ color: colors.offWhite }}>Your {expenseType} expenses, {props.user.first}</h2> :
-          <h2 style={{ color: colors.offWhite }}>Check your expenses, {props.user.first}</h2>
+          <h2 style={{ color: colors.offWhite }}> {showMonthly?'This month':'Your'} {expenseType} expenses, {props.user.first}</h2> :
+          <h2 style={{ color: colors.offWhite }}>Check your {showMonthly?'monthly':''} expenses, {props.user.first}</h2>
       }
       <Paper
         style={{
@@ -269,27 +291,21 @@ function Expenses(props: IExpenseProps) {
                         tableView={showTable}
                         type={expenseType} />
                     </Col>
-                    <Col>
-                      <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={showMonthly}
-                              onChange={showMonthly?()=>viewMonthlyExpenses(false) :
-                                                    ()=>viewMonthlyExpenses(true)}
-                              value="checkedB"
-                              color="primary"
-                            />
-                          }
-                          style={{marginLeft:'5px'}}
-                          label="This month"
-                      /> 
-                    </Col>
                   </Row>
                 </Container>
+                {isLoading ? 
+                    <div
+                      style={{
+                        margin: props.ui.isMobileView ? '75px' : '150px',
+                        display: 'inline-block'
+                      }}>
+                      <BarLoader width={150} color={'#009688'} loading={isLoading} />
+                    </div>
+                  :
                 <ExpensesTable expenses={expensesByUserAndType}
                   view={props.ui.isMobileView}
                   deleteExpense={deleteExpense}
-                  updateExpense={updateExpense} />
+                  updateExpense={updateExpense} />}
               </Fragment>
             ) : (
                 <Fragment>

@@ -8,7 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
-import { Input,Typography, Card, Dialog, DialogContent,Container, DialogActions, CardContent } from '@material-ui/core';
+import { Input,Typography, Card, Dialog, DialogContent, DialogActions, CardContent } from '@material-ui/core';
 
 /*
 TODO: 
@@ -54,6 +54,8 @@ export function ExpensesTable(props: any) {
   const [state, setState] = useState();
   // This constant is used to logically display the about to delete dialog
   const [aboutToDelete,setAboutToDelete] = useState(false);
+  // This constant is used to logically display the about to update dialog
+
   // Define the appereance of the confirmation dialog
   const [confirmDialog,setConfirmDialog] = useState(false); 
   // Button used to enable edit fields in the table
@@ -160,7 +162,18 @@ const columnStyle = { marginRight: '2px', };
                 {
                   props.view ? <Fragment></Fragment>:
                   <Fragment>
-                    <TableCell>{row.date.slice(0, 10)}</TableCell>
+                    <TableCell component="th" scope="row"
+                    size='small'>
+                      <Input
+                      fullWidth={false}
+                      disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
+                      style={{fontSize:'13.3px',
+                      color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
+                      type="date"
+                      value={(editableRow && (editableRowKey === row.id)) ?state.date:row.date}
+                      name="date"
+                      onChange={(e:any)=>handleEditedExpenseChange(e)}/>
+                  </TableCell>
                   </Fragment>
                 }
                 <TableCell component="th" scope="row">
@@ -231,7 +244,7 @@ const columnStyle = { marginRight: '2px', };
             }
           </TableBody>
         </Table>
-        {/* Display the delete confir delete dialog when the user clicks on the 
+        {/* Display the delete confirm delete dialog when the user clicks on the 
             delete icon. It shows the information of the expense before deleting
             it. User can select between cancel or delete. */}
             {      
