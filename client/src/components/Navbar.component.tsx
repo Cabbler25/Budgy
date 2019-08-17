@@ -106,7 +106,7 @@ function NavBar(props: INavProps) {
   return (
     <Fragment>
       <Sidebar history={props.history} open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} />
-      <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined, opacity: 0.97 }} position='sticky'>
+      <AppBar style={{ borderBottom: !isTopView ? `1px solid ${colors.darkGreen}` : undefined, boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined, opacity: 0.97 }} position='sticky'>
         <Toolbar className={classes.navbar}>
           {props.ui.isMobileView &&
             <Button style={{ marginRight: '5px', maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>
@@ -119,15 +119,22 @@ function NavBar(props: INavProps) {
           {!props.ui.isMobileView &&
             <Fragment>
               <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/budget"
-                style={{ marginLeft: '50px', textDecoration: onPage('/budget') ? `underline` : undefined }}>
+                style={{
+                  marginLeft: '50px',
+                  textDecoration: onPage('/budget') ? `underline` : undefined
+                }}>
                 Budget
-                </Button>
+              </Button>
               <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/expenses"
-                style={{ textDecoration: onPage('/expenses') ? `underline` : undefined }}>
+                style={{
+                  textDecoration: onPage('/expenses') ? `underline` : undefined
+                }}>
                 Expenses
               </Button>
               <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/incomes"
-                style={{ textDecoration: onPage('/incomes') ? `underline` : undefined }}>
+                style={{
+                  textDecoration: onPage('/incomes') ? `underline` : undefined
+                }}>
                 Incomes
               </Button>
             </Fragment>}

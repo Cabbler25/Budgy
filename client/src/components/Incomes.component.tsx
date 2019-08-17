@@ -9,10 +9,11 @@ import { Grid, Paper, Button } from '@material-ui/core';
 import DonutGraph from './data/DonutGraph';
 import { Link, Redirect } from 'react-router-dom';
 import { thisExpression } from '@babel/types';
+import { url } from 'inspector';
 
 
 
-interface IIncomeProps {
+export interface IIncomeProps {
   user: IUserState;
   ui: IUiState;
   type: number;
@@ -26,6 +27,7 @@ function Incomes(props: IIncomeProps) {
   const [incomeTypes, setIncomeTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [incomesByUserAndType, setIncomeByUserIdAndTypeId] = useState([]);
+  const [id, setId] = useState([]);
 
 
 useEffect(() => {
@@ -55,7 +57,7 @@ async function deleteIncome(income: any) {
           if (showTable) {
             const deletedIncomesIndex = incomes.findIndex(checkId);
             setIncomes(incomes.splice(deletedIncomesIndex,1));
-            setShowTable(false)
+            //setShowTable(false)
             handleElementClick(income.incomeType.type);
            // console.log(income.incomeTypes.type)
             //console.log(income.incomeType.type)
@@ -64,6 +66,22 @@ async function deleteIncome(income: any) {
         .catch((err: any) => {
             //erros
         });
+  
+}
+
+async function updateIncome(income: any) {
+  function checkId(inc: any) {
+    return inc.id === income.id;
+  }
+  const url = `http://localhost:8080/income`
+  Axios.put(url, income)
+    .then(() => {
+      if (showTable) {
+        const updatedIncomeIndex = incomes.findIndex(checkId)
+        incomes[updatedIncomeIndex] = income;
+        setIncomes(incomes);
+      }
+    })
   
 }
 
@@ -114,13 +132,27 @@ async function createNewIncome(newType: any, newDescripion: string, newAmount: n
     description: newDescripion,
     amount: newAmount
   };
-  const response = await Axios.post(url, data);
+    Axios.post(url, data)
+    .then(()=> {
+      const newIncome = {
+        id: Math.max.apply(Math, incomes.map(function (inc: any){return inc.id;})) +1,
+        ...data
+      }
+      getAllIncomes()
+      if (showTable) {
+        setIncomes(incomes.push(newIncome))
+        handleElementClick(newIncome.incomeType.type)
+      }
+    })
+  
+  /*
   try {
     console.log(response.status);
     getAllIncomes();
   } catch {
     console.log("ERRORS: ", response.data);
   }
+  */
 }
 
 return (
@@ -147,7 +179,7 @@ return (
                   onClick={() => setShowTable(false)}>
                   Back
                 </Button>
-                <IncomesTable incomes={incomesByUserAndType} deleteIncome={deleteIncome} />
+                <IncomesTable incomes={incomesByUserAndType} deleteIncome={deleteIncome} updateIncome={updateIncome}/>
               </Fragment>
             ) : (
                 <Fragment>
