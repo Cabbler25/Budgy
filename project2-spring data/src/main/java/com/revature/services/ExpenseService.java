@@ -47,6 +47,8 @@ public class ExpenseService {
 	public List<ExpenseType> findAllExpenseTypes() {
 		return expenseTypeRepository.findAll();
 	}
+	
+//	Function used to fetch expenses by month period of time
 
 	public void deleteExpense(int id) {
 		expenseRepository.deleteById(id);
