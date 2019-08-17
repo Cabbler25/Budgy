@@ -17,6 +17,31 @@ import clsx from 'clsx';
 import React, { Fragment, useEffect, useState } from 'react';
 import UpdateBudgetForm from './forms/UpdateBudgetForm';
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: '100%',
+      textAlign: 'initial'
+    },
+    table: {
+    },
+    tableWrapper: {
+      overflowX: 'auto',
+    },
+    visuallyHidden: {
+      border: 0,
+      clip: 'rect(0 0 0 0)',
+      height: 1,
+      margin: -1,
+      overflow: 'hidden',
+      padding: 0,
+      position: 'absolute',
+      top: 20,
+      width: 1,
+    },
+  }),
+);
+
 interface EnhancedTableProps {
   classes: ReturnType<typeof useStyles>;
   numSelected: number;
@@ -138,31 +163,6 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     </Toolbar>
   );
 };
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: '100%',
-      textAlign: 'initial'
-    },
-    table: {
-    },
-    tableWrapper: {
-      overflowX: 'auto',
-    },
-    visuallyHidden: {
-      border: 0,
-      clip: 'rect(0 0 0 0)',
-      height: 1,
-      margin: -1,
-      overflow: 'hidden',
-      padding: 0,
-      position: 'absolute',
-      top: 20,
-      width: 1,
-    },
-  }),
-);
 
 export default function BudgetTable(props: any) {
   const classes = useStyles();
@@ -289,10 +289,9 @@ export default function BudgetTable(props: any) {
             isMobileView={props.isMobileView}
           />
           <TableBody>
-            {props.data
+            {props.data && props.data
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row: any, index: any) => {
-                if (!props.data) return;
                 const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
                 return (

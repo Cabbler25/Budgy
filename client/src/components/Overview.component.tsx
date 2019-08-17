@@ -1,11 +1,11 @@
-import React, { useState, useEffect, Component } from 'react';
-import { Paper, Button, Divider, Grid, makeStyles, Theme, createStyles } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { IUserState, IState, IUiState } from '../redux';
+import { createStyles, Grid, makeStyles, Paper, Theme } from '@material-ui/core';
 import Axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { BarLoader } from 'react-spinners';
-import MixedLineGraph from './data/MixedLineGraph';
 import colors from '../assets/Colors';
+import { IState, IUiState, IUserState } from '../redux';
+import MixedLineGraph from './data/MixedLineGraph';
 
 interface IHomeProps {
   user: IUserState;
@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     // borderBottom: `2px solid ${colors.darkGreen}`
   },
   grid_container: {
-    // textShadow: '-0.5px -0.5px 0px #000, 0px -0.5px 0px #000, 0.5px -0.5px 0px #000, -0.5px  0px 0px #000, 0.5px 0px 0px #000, -0.5px  0.5px 0px #000, 0px 0.5px 0px #000, 0.5px 0.5px 0px #000',
     margin: 0,
     width: '100%',
     overflowX: 'hidden',
