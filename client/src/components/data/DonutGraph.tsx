@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import colors, { colorTypes } from '../../assets/Colors';
+import { colorTypes } from '../../assets/Colors';
 
 /**
  * Main Function

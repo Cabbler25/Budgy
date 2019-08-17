@@ -14,7 +14,6 @@ import { colorTypes } from '../../assets/Colors';
 
 export function VerticalBarGraph(props: any) {
   const [data, setData] = useState();
-  const [min, setMin] = useState(0);
   useEffect(() => {
     // Create the graph data.
     if (props.data.length !== 0) {
@@ -25,14 +24,6 @@ export function VerticalBarGraph(props: any) {
 
       const labels = props.labels.filter((i: any) => dataArr[props.labels.indexOf(i)] > 0)
       dataArr = dataArr.filter((i: number) => i > 0);
-
-      let dataMin = Math.min(...dataArr);
-      let reduce = (dataMin / 10) / 2;
-      for (let i = 0; i < reduce; i++) {
-        dataMin -= 10;
-      }
-      if (dataMin < 0) dataMin = 0;
-      setMin(dataMin);
 
       setData({
         labels: labels,
@@ -64,8 +55,6 @@ export function VerticalBarGraph(props: any) {
             display: true,
             ticks: {
               beginAtZero: true
-              // suggestedMin: min,
-              // min: min
             }
           }]
         },

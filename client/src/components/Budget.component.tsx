@@ -63,26 +63,19 @@ export function Budget(props: IBudgetProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!props.user.isLoggedIn) return;
+    if (props.user.isLoggedIn) {
+      // Load budget types from db
+      getAllTypes();
 
-    // Load budget types from db
-    getAllTypes();
+      setIsLoading(true);
 
-    setIsLoading(true);
-
-    // Load budgets from db
-    getAllBudgets();
-
+      // Load budgets from db
+      getAllBudgets();
+    }
   }, [props.user.isLoggedIn])
 
   useEffect(() => {
-    if (budgets) {
-      let amount = 0;
-      for (let i = 0; i < budgets.length; i++) {
-        amount += budgets[i].amount;
-      }
-      setBudgetTotal(amount)
-    }
+    if (budgets) setBudgetTotal(budgets.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))
   }, [budgets])
 
   function handlePanelChange(e: any, newValue: number) {
@@ -204,7 +197,6 @@ export function Budget(props: IBudgetProps) {
   }
 
   function handleElementClick(label: number) {
-
     const type = budgetTypes.find((type: any) => type.type == label);
 
     if (type) {
@@ -219,8 +211,7 @@ export function Budget(props: IBudgetProps) {
   return (
     <>
       {!props.user.isLoggedIn && <Redirect to="/login" />}
-      {budgets && (
-        <h2 style={{ textAlign: 'center', color: colors.offWhite }}>Here's your monthly budget</h2>)}
+      {budgets && <h2 style={{ textAlign: 'center', color: colors.offWhite }}>Here's your monthly budget</h2>}
       <Paper style={{
         opacity: 0.85,
         width: props.ui.isMobileView ? '90%' : '55%',

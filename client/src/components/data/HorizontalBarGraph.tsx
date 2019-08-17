@@ -28,8 +28,7 @@ export function HorizontalBarGraph(props: any) {
       setData({
         labels: labels,
         datasets: [{
-          minSize: 4,
-          scales: { minBarLength: 4 },
+          borderWidth: 1,
           data: dataArr,
           backgroundColor: getBackgroundColors(labels, props.important),
           hoverBackgroundColor: getHoverColors(labels, props.important),
@@ -57,8 +56,10 @@ export function HorizontalBarGraph(props: any) {
             display: true,
             ticks: {
               beginAtZero: true
-              // min: min
             }
+          }],
+          yAxes: [{
+            minBarLength: 10,
           }]
         },
       }}

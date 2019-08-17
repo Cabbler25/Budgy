@@ -1,3 +1,4 @@
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, lighten, makeStyles, Theme } from '@material-ui/core/styles';
@@ -13,33 +14,30 @@ import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UpdateIcon from '@material-ui/icons/Update';
 import clsx from 'clsx';
-import React, { Fragment } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, Button } from '@material-ui/core';
+import React, { Fragment, useEffect, useState } from 'react';
 import UpdateBudgetForm from './forms/UpdateBudgetForm';
-
-interface HeadRow {
-  disablePadding: boolean;
-  id: string;
-  label: string;
-  numeric: boolean;
-}
-
-const headRows: HeadRow[] = [
-  { id: 'type', numeric: false, disablePadding: true, label: 'Type' },
-  { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
-  { id: 'amount', numeric: true, disablePadding: false, label: 'Amount ($)' },
-];
 
 interface EnhancedTableProps {
   classes: ReturnType<typeof useStyles>;
   numSelected: number;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
   rowCount: number;
+  isMobileView?: boolean;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { onSelectAllClick, numSelected, rowCount } = props;
 
+  const [headRows, setHeadRows] = useState();
+  useEffect(() => {
+    setHeadRows([
+      { id: 'type', numeric: false, disablePadding: true, label: 'Type', hidden: props.isMobileView },
+      { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
+      { id: 'amount', numeric: true, disablePadding: false, label: 'Amount ($)' },
+    ]);
+  }, [props.isMobileView])
+
+  if (!headRows) return <></>;
   return (
     <TableHead>
       <TableRow>
@@ -51,7 +49,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             inputProps={{ 'aria-label': 'select all desserts' }}
           />
         </TableCell>
-        {headRows.map(row => (
+        {headRows.map((row: any) => (
+          !row.hidden &&
           <TableCell
             key={row.id}
             align={row.numeric ? 'right' : 'left'}
@@ -287,6 +286,7 @@ export default function BudgetTable(props: any) {
             numSelected={selected.length}
             onSelectAllClick={handleSelectAllClick}
             rowCount={props.data.length}
+            isMobileView={props.isMobileView}
           />
           <TableBody>
             {props.data
@@ -311,9 +311,10 @@ export default function BudgetTable(props: any) {
                         inputProps={{ 'aria-labelledby': labelId }}
                       />
                     </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.budgetType.type}
-                    </TableCell>
+                    {!props.isMobileView &&
+                      <TableCell component="th" id={labelId} scope="row" padding="none">
+                        {row.budgetType.type}
+                      </TableCell>}
                     <TableCell align={row.numeric ? 'right' : 'left'} >{row.description}</TableCell>
                     <TableCell align="right">{row.amount}</TableCell>
                   </TableRow>
