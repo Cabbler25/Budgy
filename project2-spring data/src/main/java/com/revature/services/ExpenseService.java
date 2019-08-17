@@ -1,5 +1,8 @@
 package com.revature.services;
 
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,8 +50,29 @@ public class ExpenseService {
 	public List<ExpenseType> findAllExpenseTypes() {
 		return expenseTypeRepository.findAll();
 	}
+//	Function used to calculate both previous and next months dates in order to search
+//	expenses for the current month
+	public Date calculateDate(LocalDate date) {
+		int year = date.getYear();
+		int month = date.getMonthValue();
+		int day = date.getDayOfMonth();
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, month-1, day);
+		Date calcDate = cal.getTime();
+		return calcDate;
+	}
 	
-//	Function used to fetch expenses by month period of time
+//	Function used to get monthly expenses; it means, after the start of current month and before
+//	the start of next month
+	public List<Expense> findMonthlyExpensesByUserId(int userId) {
+//		Define the Date object according to the date parameter
+		
+//		Define previous month date
+		Date currMonthStart = calculateDate(LocalDate.now().withDayOfMonth(1));
+//		Define next month date
+		Date nextMonthStart = calculateDate(LocalDate.now().plusMonths(1).withDayOfMonth(1));
+		return expenseRepository.findByUserIdAndDateBetween(userId,currMonthStart,nextMonthStart);
+	}
 
 	public void deleteExpense(int id) {
 		expenseRepository.deleteById(id);

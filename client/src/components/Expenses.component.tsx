@@ -12,9 +12,14 @@ import NewExpense from './NewExpenseDialog';
 
 /*
 TODO:
+- If user is not logged in, show a card with a message that explains about the component, and
+  a button that show him the login dialog and after that he will be able to proceed to the
+  expenses component (using props.user.isLoggedIn).
 - Add feedback in case user has no expenses yet
 - Try getting the budgets per type, and check if the expenses per type exceed the budget
   per type, so a proper warning can be set
+- Get monthly expenses -> instead of dateSubmitted, just pick the date the expense should occur
+- Add request for monthly expense
 */
 
 export interface IExpenseProps {
@@ -46,6 +51,20 @@ function Expenses(props: IExpenseProps) {
     await Axios.get(url)
       .then((payload: any) => {
         setExpenses(payload.data);
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+  }
+  // This function sends the request to get all user reimbursements
+  async function getAllMonthlyExpenses() {
+    const url = `http://localhost:8080/expense/user/${props.user.id}/monthly`;
+    await Axios.get(url)
+      .then((payload: any) => {
+        setExpenses(payload.data);
+        // If function is called, update the table view for only monthly expenses
+        if (showTable) {
+          handleElementClick(expenseType);
+        }
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
@@ -86,17 +105,18 @@ function Expenses(props: IExpenseProps) {
   }
 
   //   Request function for new expense here
-  async function createNewExpense(newType: any, newDescripion: string, newAmount: number) {
+  async function createNewExpense(newType: any, newDescripion: string, newAmount: number,
+                                  newDate: string) {
     // Prepare request setup
     const url = 'http://localhost:8080/expense';
     const data = {
       userId: props.user.id,
       expenseType: newType,
-      date: new Date().toISOString().slice(0, 10),
+      date: newDate,
       description: newDescripion,
       amount: newAmount
     };
-    console.log("this is the new expense before posting it:", data);
+    // console.log("this is the new expense before posting it:", data);
     Axios.post(url, data)
       .then(() => {
         const newExpense = {
@@ -204,9 +224,7 @@ function Expenses(props: IExpenseProps) {
                         color="secondary"
                         onClick={() => setShowTable(false)}
                         style={{ display: "inline-block", margin: '5px' }}>
-                        <svg xmlns={donutTool} width="24" height="24" viewBox="0 0 24 24">
-                          <path d={donutPath} />
-                        </svg>
+                        Back
                       </Button>
                       {/* If on table perspective, don't show the type selector */}
                       <NewExpense

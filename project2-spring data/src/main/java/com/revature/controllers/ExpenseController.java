@@ -44,6 +44,10 @@ public class ExpenseController {
 	public List<Expense> getExpenseByUserId(@PathVariable int userId) {
 		return expenseService.findByUserId(userId);
 	}
+	@RequestMapping(value = "/user/{userId}/monthly", method = RequestMethod.GET)
+	public List<Expense> getMonthlyExpensesByUserId(@PathVariable int userId){
+		return expenseService.findMonthlyExpensesByUserId(userId);
+	}
 
 //	Endpoint for getting expenses by type id
 	@RequestMapping(value = "/type/{id}", method = RequestMethod.GET)

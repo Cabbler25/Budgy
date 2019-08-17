@@ -1,5 +1,6 @@
 package com.revature.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -11,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="expenses")
@@ -35,8 +38,8 @@ public class Expense {
 	private ExpenseType expenseType;
 	
 //	Other fields
-	@Column(name="date_submitted")
-	private Date date;
+	@Temporal(TemporalType.DATE)
+    Date date;
 
 	@Override
 	public String toString() {
