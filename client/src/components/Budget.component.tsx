@@ -1,4 +1,4 @@
-import { AppBar, Box, Button, Divider, Paper, Tab, Tabs, Typography } from '@material-ui/core';
+import { AppBar, Box, Button, Divider, Paper, Tab, Tabs, Typography, Snackbar } from '@material-ui/core';
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -11,6 +11,7 @@ import DonutGraph from './data/DonutGraph';
 import HorizontalBarGraph from './data/HorizontalBarGraph';
 import VerticalBarGraph from './data/VerticalBarGraph';
 import { CreateBudgetStepper } from './forms/CreateBudgetStepper';
+import MySnackbarContentWrapper from './SnackBarComponent';
 
 interface HorizontalTabPanelProps {
   children?: React.ReactNode;
@@ -61,8 +62,19 @@ export function Budget(props: IBudgetProps) {
   const [budgetTotal, setBudgetTotal] = useState(0);
   const [budgetTypes, setBudgetTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [snackBar, setSnackBar] = useState({
+    openDelete: false,
+    openUpdate: false,
+    openCreate: false
+  })
 
   useEffect(() => {
+    setSnackBar({
+      ...snackBar,
+      openDelete: false,
+      openUpdate: false,
+      openCreate: false,
+    })
     if (props.user.isLoggedIn) {
       // Load budget types from db
       getAllTypes();
@@ -77,10 +89,6 @@ export function Budget(props: IBudgetProps) {
   useEffect(() => {
     if (budgets) setBudgetTotal(budgets.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))
   }, [budgets])
-
-  function handlePanelChange(e: any, newValue: number) {
-    setTabIndex(newValue);
-  }
 
   async function getAllTypes() {
     const url = `http://localhost:8080/budget/types`;
@@ -115,6 +123,12 @@ export function Budget(props: IBudgetProps) {
     await Axios.put(url, data)
       .then((payload: any) => {
         setIsLoading(false);
+        setSnackBar({
+          ...snackBar,
+          openDelete: false,
+          openCreate: false,
+          openUpdate: true
+        })
       }).catch((err: any) => {
         // Handle error by displaying something else
         alert('Something went wrong. Please try again.')
@@ -131,6 +145,12 @@ export function Budget(props: IBudgetProps) {
         setBudgets(!budgets ? [payload.data] : budgets.concat(payload.data));
         setTableBudgets(!tableBudgets ? [payload.data] : tableBudgets.concat(payload.data));
         setIsLoading(false);
+        setSnackBar({
+          ...snackBar,
+          openDelete: false,
+          openCreate: true,
+          openUpdate: false
+        })
       }).catch((err: any) => {
         // Handle error by displaying something else
         alert('Something went wrong. Please try again.')
@@ -141,10 +161,29 @@ export function Budget(props: IBudgetProps) {
     const url = `http://localhost:8080/budget/delete/${id}`;
     Axios.delete(url)
       .then((payload: any) => {
+        setSnackBar({
+          ...snackBar,
+          openDelete: true,
+          openCreate: false,
+          openUpdate: false
+        })
       }).catch((err: any) => {
         // Handle error by displaying something else
         alert('Something went wrong. Please try again.')
       });
+  }
+
+  function handlePanelChange(e: any, newValue: number) {
+    setTabIndex(newValue);
+  }
+
+  function handleCloseSnackBar() {
+    setSnackBar({
+      ...snackBar,
+      openDelete: false,
+      openUpdate: false,
+      openCreate: false
+    })
   }
 
   function handleDeleteBudget(ids: number[]) {
@@ -239,15 +278,14 @@ export function Budget(props: IBudgetProps) {
             }}>
               {!budgets ? (
                 <div style={{ textAlign: 'center' }}>
-                  <b>Budgets allow you to set goals, easily visualize your limits, and even earn </b>
-                  <Link to="/rewards">rewards!</Link>
+                  <b>Budgets allow you to set goals and easily visualize your limits. </b>
                   <br />
                   <br />
                   <Divider />
                   <br />
                   {!isLoading ? (
                     <Fragment>
-                      <h2>Creating a budget is quick and easy.<br />To get started,</h2>
+                      <h2>Creating a budget is quick and simple.<br />To get started,</h2>
                       {isCreatingBudget ? (
                         <CreateBudgetStepper
                           isMobileView={props.ui.isMobileView} userId={props.user.id}
@@ -255,7 +293,7 @@ export function Budget(props: IBudgetProps) {
                       ) : (
                           <Button style={{ marginBottom: '10px' }} onClick={() => setIsCreatingBudget(true)} size="large" color="secondary">
                             Create a Budget
-                  </Button>
+                          </Button>
                         )}
                     </Fragment>
                   ) : (
@@ -267,7 +305,7 @@ export function Budget(props: IBudgetProps) {
               ) : (
                   <Fragment>
                     <div style={{ textAlign: 'center' }}>
-                      <AppBar position="static">
+                      <AppBar style={{ backgroundColor: colors.lightTeal }} position="static">
                         <Tabs
                           centered={!props.ui.isMobileView}
                           value={tabIndex}
@@ -330,6 +368,48 @@ export function Budget(props: IBudgetProps) {
                     </div>
                   </Fragment>
                 )}
+              <Snackbar
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                open={snackBar.openDelete}
+                autoHideDuration={5000}
+                onClose={handleCloseSnackBar}
+              >
+                <MySnackbarContentWrapper
+                  variant="success"
+                  message="Budget(s) Deleted Successfully"
+                />
+              </Snackbar>
+              <Snackbar
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                open={snackBar.openUpdate}
+                autoHideDuration={5000}
+                onClose={handleCloseSnackBar}
+              >
+                <MySnackbarContentWrapper
+                  variant="success"
+                  message="Budget Updated Successfully"
+                />
+              </Snackbar>
+              <Snackbar
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                open={snackBar.openCreate}
+                autoHideDuration={5000}
+                onClose={handleCloseSnackBar}
+              >
+                <MySnackbarContentWrapper
+                  variant="success"
+                  message="Budget Created Successfully"
+                />
+              </Snackbar>
             </Paper>
           </>
         )

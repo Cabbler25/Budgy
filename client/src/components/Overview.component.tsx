@@ -280,10 +280,6 @@ function Overview(props: IHomeProps) {
   }
 
   return (
-    // Rows of data
-    // Conditional description: if all under, good job, if over, look into it
-    // Budget vs expenses: show remaining/over budget amount
-    // Bar graph budget totals vs income totals
     (props.user.isLoggedIn ? (
       (isLoading ? (
         <div style={{ margin: 'auto', height: '100vh', textAlign: 'center' }}>
@@ -322,7 +318,25 @@ function Overview(props: IHomeProps) {
                         textAlign: 'center'
                       }}
                       item xs={props.ui.isMobileView ? 12 : 6}>
-                      <h2 style={{ marginTop: props.ui.isMobileView ? undefined : '0px' }}>Here's how you're stacking up.</h2>
+                      <h2 style={{ marginTop: props.ui.isMobileView ? undefined : '0px' }}>
+                        Here's how you're stacking up.
+                        </h2>
+                      {!currentMonthExpenses && (
+                        <>
+                          <h4>Start adding expenses to see a detailed review.</h4>
+                          <Button size={props.ui.isMobileView ? 'small' : undefined}
+                            style={{
+                              marginBottom: '5px',
+                              width: '10px', maxWidth: '10px',
+                              fontSize: '10px', color: colors.offWhite,
+                              borderColor: colors.offWhite
+                            }}
+                            variant='outlined'
+                            component={Link} to='/expenses'>
+                            Expenses
+                          </Button>
+                        </>
+                      )}
                       {underBudgets && (
                         <>
                           <h3>You met your goals in these categories.<br /> Nice job!</h3>
@@ -523,26 +537,27 @@ function Overview(props: IHomeProps) {
                         </>
                       ) : (
                           <>
-                            {totals.income !== 0 && (<>
-                              <h2>It looks like you may be in debt.</h2>
-                              {totals.income < totals.budget
-                                && (<h4>You're yearly budget was over income. This can give a false sense of security.</h4>)}
-                              {totals.monthlyExpense > totals.budget
-                                && (<h4>You didn't meet your budget this year, but there's always the next.</h4>)}
-                              {`Go to your  `}
-                              <Button size={props.ui.isMobileView ? 'small' : undefined}
-                                style={{
-                                  marginBottom: '5px',
-                                  width: '10px', maxWidth: '10px',
-                                  fontSize: '10px', color: colors.offWhite,
-                                  borderColor: colors.offWhite
-                                }}
-                                variant='outlined'
-                                component={Link} to='/budget'>
-                                Budget
+                            {totals.income !== 0 && (
+                              <>
+                                <h2>It looks like you may be in debt.</h2>
+                                {totals.income < totals.budget
+                                  && (<h4>You're yearly budget was over income. This can give a false sense of security.</h4>)}
+                                {totals.monthlyExpense > totals.budget
+                                  && (<h4>You didn't meet your budget this year, but there's always the next.</h4>)}
+                                {`Go to your  `}
+                                <Button size={props.ui.isMobileView ? 'small' : undefined}
+                                  style={{
+                                    marginBottom: '5px',
+                                    width: '10px', maxWidth: '10px',
+                                    fontSize: '10px', color: colors.offWhite,
+                                    borderColor: colors.offWhite
+                                  }}
+                                  variant='outlined'
+                                  component={Link} to='/budget'>
+                                  Budget
                               </Button>
-                              {`  for a detailed view.`}
-                            </>)}
+                                {`  for a detailed view.`}
+                              </>)}
                           </>
                         )}
                       <div style={{ width: '100%' }}>
