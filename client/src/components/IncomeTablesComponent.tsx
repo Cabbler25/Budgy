@@ -134,7 +134,7 @@ export function IncomesTable(props: any) {
                       color: (editRow && (editRowKey === row.id)) ? "black" : "grey"
                     }}
                     type="number"
-                    value={
+                    defaultValue={
                       (editRow && (editRowKey === row.id)) ? state.amount : row.amount}
                     name="amount"
                     onChange={(e: any) => handleEditedIncomeChange(e)} />
@@ -192,7 +192,7 @@ export function IncomesTable(props: any) {
                         </svg>
                       </Button>
                       {/* Assign the onClick function to notify the parent which
-                        expense will be deleted */}
+                        income will be deleted */}
                       <Button
                         style={{ backgroundColor: colors.red, marginLeft: "5px" }}
                         onClick={() => {
