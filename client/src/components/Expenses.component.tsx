@@ -87,7 +87,8 @@ function Expenses(props: IExpenseProps) {
         // Handle error by displaying something else
       });
       setIsLoading(false);
-      if (monthlyExpenses) setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))    
+      if (monthlyExpenses) 
+      setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))    
   }
   
   async function getAllExpenseTypes() {
@@ -258,7 +259,7 @@ function Expenses(props: IExpenseProps) {
             monthlyExpensesCopy[updatedExpenseIndex] = expense;
             const matchedExpenses = monthlyExpensesCopy.filter((expense: any) =>
             expense.expenseType.type == expenseType);
-            setExpensesByUserIdAndTypeId(matchedExpenses);    
+            setExpensesByUserIdAndTypeId(matchedExpenses);
           } else { // remove the expense from monthly expenses in case the assigned new month is not this one
             const updatedExpenseIndex = monthlyExpenses.findIndex(checkId);
             setMonthlyExpenses(monthlyExpenses.splice(updatedExpenseIndex, 1));
@@ -287,7 +288,7 @@ function Expenses(props: IExpenseProps) {
           style={{ marginTop: '50px', marginRight: 'auto', marginLeft: 'auto', textAlign: 'center', 
           color: colors.offWhite, width:"60%" }}>
               <h2 style={{ marginBottom: '40px' }}>
-                With <strong>Budgy</strong> you can schedule your expenses by
+                With Budgy you can schedule your expenses by
                 category, specifying amount and description. <br/>
                 That way you won´t forget them.
                 <br /><br />To get started,
@@ -324,7 +325,7 @@ function Expenses(props: IExpenseProps) {
             <h2 style={{ color: colors.offWhite }}> 
             {showMonthly?"This month":"Total"} {expenseType} expenses</h2>:
             <h2 style={{ color: colors.offWhite }}>
-            {showMonthly?"This month":"Your"} expenses</h2>
+            Your expenses</h2>
         }
         <Paper
         style={{
@@ -383,7 +384,7 @@ function Expenses(props: IExpenseProps) {
                   <Fragment>
                     {expenses &&
                       <div>
-                        <h3>{showMonthly?"This month":"Overall"} expenses:  
+                        <h3>{showMonthly?"This month":"Total"} expenses:  
                         {isLoading?"...":showMonthly?" $"+totalMonthlyExpenses:" $"+totalExpenses}</h3>
                         <i style={{ color: 'grey', fontSize: '14px' }}>
                           Click on any section of the graphic to view details</i>
