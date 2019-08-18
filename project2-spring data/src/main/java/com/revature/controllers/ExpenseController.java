@@ -87,8 +87,8 @@ public class ExpenseController {
 
 //	Endpoint for creating a new expense
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public HttpStatus insertExpense(@RequestBody Expense expense) {
-		return expenseService.addExpense(expense) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
+	public Expense insertExpense(@RequestBody Expense expense) {
+		return expenseService.addExpense(expense) ? expense : null;
 	}
 
 //	Endpoint for modifying an existing expense
