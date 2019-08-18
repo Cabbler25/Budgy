@@ -225,6 +225,25 @@ function Home(props: IHomeProps) {
   return arrBudget;
 }
 
+function calculateAverage(){
+  let avg = 0;
+  for(let i = 0; i < monthlyExpenses.length; i++){
+    avg += monthlyExpenses[i];
+  }
+  avg = avg / monthlyExpenses.length;
+  
+  return avg
+}
+function calculatePercentage(){
+  let prev = monthlyExpenses[0];
+  let present = monthlyExpenses[monthlyExpenses.length -1];
+  let percentage = present - prev;
+  percentage = prev / percentage;
+  percentage *= 100;
+  
+
+}
+
 
 
 
