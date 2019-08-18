@@ -10,6 +10,8 @@ import ChangePw from './ChangePWDialog';
 import MySnackbarContentWrapper from './SnackBarComponent';
 
 
+
+
 interface IUserAcct {
   user: IUserState;
   updateUserInfo: (payload: any) => void;
@@ -28,6 +30,9 @@ export function User(props: IUserAcct) {
   const [openUp, setOpenUp] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
+  function work(x: string){
+    return(<p style={{fontWeight: 'bolder'}}>x</p>)
+  }
   function handleOpen() {
     setOpen(true);
   }
@@ -358,60 +363,60 @@ export function User(props: IUserAcct) {
       </Grid>
       <Grid item xs={12}>
 
-        <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: "20px" }}>
-          <h3>Data Settings</h3>
-          <FormControl>
-            <FormLabel style={{ margin: "20px" }}>Select Data to be Deleted</FormLabel>
-            <FormGroup>
-              {toDelete.selectAll ?
-                <FormControlLabel
-                  control={
-                    <Checkbox checked={toDelete.selectAll} onChange={handleChange('selectAll')} value="deselectAll" />
-                  }
-                  label='Deselect All' /> :
-                <FormControlLabel
-                  control={
-                    <Checkbox checked={toDelete.selectAll} onChange={handleChange('selectAll')} value="selectAll" />
-                  }
-                  label='Select All' />}
+      <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: "20px"}}>
+        <h3>Data Settings</h3>
+        <FormControl>
+        <FormLabel style={{margin:"20px"}}>Select Data to be Deleted</FormLabel>
+        <FormGroup>
+          {toDelete.selectAll ? 
+          <FormControlLabel
+            control={
+              <Checkbox checked={toDelete.selectAll} onChange={handleChange('selectAll')} value="deselectAll" />
+            }
+            label='Deselect All' /> :
+          <FormControlLabel
+            control={
+              <Checkbox checked={toDelete.selectAll} onChange={handleChange('selectAll')} value="selectAll"/>
+            }
+          label='Select All' /> }
 
-              <FormControlLabel
-                control={
-                  <Checkbox checked={toDelete.expenses} onChange={handleChange('expenses')} value="expenses" />
-                }
-                label='Expenses' />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={toDelete.budget} onChange={handleChange('budget')} value="budget" />
-                }
-                label='Budget' />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={toDelete.income} onChange={handleChange('income')} value="income" />
-                }
-                label='Income' />
-            </FormGroup>
-            {(toDelete.selectAll || toDelete.income || toDelete.expenses || toDelete.budget) ?
-              <Button style={{ margin: "20px" }} onClick={handleOpen}>Delete</Button> : ''}
-            <div>
-              <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">{"Delete User Data?"}</DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    Are you sure you want to delete the following data:
-                  </DialogContentText>
-                  {toDelete.budget ? <h5 style={{ margin: "5px", padding: "0" }}>Budget</h5> : ''}
-                  {toDelete.expenses ? <h5 style={{ margin: "5px", padding: "0" }}>Expenses</h5> : ''}
-                  {toDelete.income ? <h5 style={{ margin: "5px", padding: "0" }}>Income</h5> : ''}
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose} color="primary">
-                    Cancel
+          <FormControlLabel
+            control={
+              <Checkbox checked={toDelete.expenses} onChange={handleChange('expenses')} value="expenses" />
+            }
+            label='Expenses' />
+          <FormControlLabel
+            control={
+              <Checkbox checked={toDelete.budget} onChange={handleChange('budget')} value="budget" />
+            }
+            label='Budget' />
+          <FormControlLabel
+            control={
+              <Checkbox checked={toDelete.income} onChange={handleChange('income')} value="income" />
+            }
+            label='Income' />
+        </FormGroup>
+        {(toDelete.selectAll || toDelete.income || toDelete.expenses || toDelete.budget) ?
+        <Button style={{margin: "20px"}} onClick={handleOpen}>Delete</Button> : ''}
+        <div>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Delete User Data?"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete the following data: 
+            </DialogContentText>
+              {toDelete.budget ? <h5>Budget</h5> : ''}
+              {toDelete.expenses ? <h5>Expenses</h5> : ''}
+              {toDelete.income ? <h5>Income</h5>: ''}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Cancel
             </Button>
                   <Button onClick={handleFollowThru} color="primary" autoFocus>
                     Delete
