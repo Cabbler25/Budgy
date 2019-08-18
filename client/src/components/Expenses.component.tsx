@@ -55,7 +55,6 @@ function Expenses(props: IExpenseProps) {
   useEffect(() => {
     // Avoid app crash in case user has no expenses in the database
     try {
-      
       setTotalExpenses(expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
     } catch { setExpenses(undefined); setIsLoading(false); setHasExpenses(false); }
     try {
@@ -166,26 +165,36 @@ function Expenses(props: IExpenseProps) {
     // console.log("this is the new expense before posting it:", data);
     await Axios.post(url, data)
       .then((payload) => {
-        //getAllExpenses();
-        //getAllMonthlyExpenses();
+        if (!expenses) {
+          getAllExpenses();
+          getAllMonthlyExpenses();
+        }
+        // Check if the new expense fits in the monthly category or in the general category
+        const currentMonth =  new Date().getMonth();
+        const newExpenseMonth = new Date(payload.data.date).getMonth();
         // Handle date conversion
         const newDateFormatted = new Date(payload.data.date).toISOString().slice(0,10);
         payload.data.date = newDateFormatted; 
         // Update arrays for properly visualize the new expense added
-        setExpenses((expenses) ? expenses.concat(payload.data):payload.data);
-        if (showMonthly) setMonthlyExpenses(monthlyExpenses.concat(payload.data));
+        // Only add to monthly expenses array if the assigned month is the current one
+        if (newExpenseMonth == currentMonth) {
+          setMonthlyExpenses((monthlyExpenses) ? monthlyExpenses.concat(payload.data) : [payload.data]);
+        }
+        setExpenses((expenses) ? expenses.concat(payload.data) : [payload.data]);
         // Update the table view too
         const withNewExpense = (expenses)?expenses.concat(payload.data):payload.data;
         if (showTable) {
-            if (showMonthly) {
-              const withNewMonthlyExpense = (monthlyExpenses)?monthlyExpenses.concat(payload.data):payload.data;
-              const matchedExpenses = withNewMonthlyExpense.filter((expense: any) =>
-              expense.expenseType.type == payload.data.expenseType.type);
-              setExpensesByUserIdAndTypeId(matchedExpenses);
-            }
-            const matchedExpenses = withNewExpense.filter((expense: any) =>
+          // If the new expense asigned month is not the current one, it wont be added to the table
+          // in monthly perspective
+          if (showMonthly && (newExpenseMonth==currentMonth)) {
+            const withNewMonthlyExpense = (monthlyExpenses)?monthlyExpenses.concat(payload.data):payload.data;
+            const matchedExpenses = withNewMonthlyExpense.filter((expense: any) =>
             expense.expenseType.type == payload.data.expenseType.type);
             setExpensesByUserIdAndTypeId(matchedExpenses);
+          }
+          const matchedExpenses = withNewExpense.filter((expense: any) =>
+          expense.expenseType.type == payload.data.expenseType.type);
+          setExpensesByUserIdAndTypeId(matchedExpenses);
         }
       });
       setIsLoading(false);
@@ -239,12 +248,24 @@ function Expenses(props: IExpenseProps) {
       if (showTable) {
         // Update monthly expenses too
         if (showMonthly) {
-          const updatedExpenseIndex = monthlyExpenses.findIndex(checkId);
-          const monthlyExpensesCopy = monthlyExpenses;
-          monthlyExpensesCopy[updatedExpenseIndex] = expense;
-          const matchedExpenses = monthlyExpensesCopy.filter((expense: any) =>
-          expense.expenseType.type == expenseType);
-          setExpensesByUserIdAndTypeId(matchedExpenses);  
+          // Check if the new expense fits in the monthly category or in the general category
+          const currentMonth =  new Date().getMonth();
+          const updatedExpenseMonth = new Date(expense.date).getMonth();
+          console.log(currentMonth,updatedExpenseMonth);
+          if (updatedExpenseMonth == currentMonth) {
+            const updatedExpenseIndex = monthlyExpenses.findIndex(checkId);
+            const monthlyExpensesCopy = monthlyExpenses;
+            monthlyExpensesCopy[updatedExpenseIndex] = expense;
+            const matchedExpenses = monthlyExpensesCopy.filter((expense: any) =>
+            expense.expenseType.type == expenseType);
+            setExpensesByUserIdAndTypeId(matchedExpenses);    
+          } else { // remove the expense from monthly expenses in case the assigned new month is not this one
+            const updatedExpenseIndex = monthlyExpenses.findIndex(checkId);
+            setMonthlyExpenses(monthlyExpenses.splice(updatedExpenseIndex, 1));
+            const matchedExpenses = monthlyExpenses.filter((expense: any) =>
+            expense.expenseType.type == expenseType);
+            setExpensesByUserIdAndTypeId(matchedExpenses);    
+          }
         } else {
           const updatedExpenseIndex = expenses.findIndex(checkId);
           const expensesCopy = expenses;
@@ -300,8 +321,10 @@ function Expenses(props: IExpenseProps) {
       <>
         {
           showTable ?
-            <h2 style={{ color: colors.offWhite }}> Your {expenseType} expenses</h2>:
-            <h2 style={{ color: colors.offWhite }}>Your expenses, {props.user.first}</h2>
+            <h2 style={{ color: colors.offWhite }}> 
+            {showMonthly?"This month":"Total"} {expenseType} expenses</h2>:
+            <h2 style={{ color: colors.offWhite }}>
+            {showMonthly?"This month":"Your"} expenses</h2>
         }
         <Paper
         style={{
