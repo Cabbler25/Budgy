@@ -32,8 +32,6 @@ export default function MixedBarGraph(props: any) {
     const expensesTotal = !props.expenses ? 0 :
       props.expenses.map((item: any) => item.amount).reduce((a: any, b: any) => a + b);
 
-    console.log(incomeTotal, budgetTotal, expensesTotal);
-
     setData({
       labels: ['Total ($)'],
       datasets: [{

@@ -1,6 +1,5 @@
 package com.revature.models;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -38,7 +37,7 @@ public class Expense {
 
 //	Other fields
 	@Temporal(TemporalType.DATE)
-    Date date;
+	Date date;
 
 	@Override
 	public String toString() {

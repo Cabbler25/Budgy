@@ -1,13 +1,16 @@
-import { createStyles, Grid, makeStyles, Paper, Theme, Table, TableHead, TableCell, TableBody, TableRow, withStyles, Button } from '@material-ui/core';
+import { Button, createStyles, ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Grid, makeStyles, Paper, Table, TableBody, TableCell, TableHead, TableRow, Theme, Typography, withStyles } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import colors from '../assets/Colors';
+import Logo from '../assets/Logo.svg';
 import { IState, IUiState, IUserState } from '../redux';
-import MixedLineGraph from './data/MixedLineGraph';
-import { Link } from 'react-router-dom';
+import LineGraph from './data/LineGraph';
 import MixedBarGraph from './data/MixedBarGraph';
+import MixedLineGraph from './data/MixedLineGraph';
 
 interface IHomeProps {
   user: IUserState;
@@ -21,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     // borderBottom: `2px solid ${colors.darkGreen}`
   },
   div_container_mobile: {
-    width: '95%',
+    width: '100%',
     opacity: 0.85,
     paddingTop: '5px',
     paddingBottom: '20px',
@@ -36,6 +39,20 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     marginLeft: 'auto',
     marginRight: 'auto',
     color: colors.offWhite
+  },
+  heading: {
+    fontSize: '20px',
+    fontWeight: 'bold',
+  },
+  expansion_panel: {
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    color: colors.offWhite
+  },
+  graph_paper: {
+    maxWidth: '100%',
+    width: '100%',
+    opacity: 0.85,
+    display: 'inline-block'
   }
 }));
 
@@ -58,18 +75,28 @@ function Overview(props: IHomeProps) {
   const [incomes, setIncomes] = useState();
   const [budgets, setBudgets] = useState();
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState();
+  const [expMonths, setExpMonths] = useState(0);
   const [types, setTypes] = useState([]);
 
   const [underBudgets, setUnderBudgets] = useState();
   const [overBudgets, setOverBudgets] = useState();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [expanded, setExpanded] = React.useState<string | false>('panel1');
 
+  const [isLoading, setIsLoading] = useState(false);
   const [totals, setTotals] = useState({
     monthlyExpense: 0,
     income: 0,
-    budget: 0
+    budget: 0,
+    yearlyExpense: 0
   })
+
+  const [monthlyExpenses, setMonthlyExpenses] = useState();
+  const [months, setMonths] = useState();
+
+  const handleChange = (panel: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
+    setExpanded(newExpanded ? panel : false);
+  };
 
   useEffect(() => {
     if (props.user.isLoggedIn) {
@@ -98,14 +125,20 @@ function Overview(props: IHomeProps) {
       incomeTotal = incomes.map((i: any) => i.amount).reduce((a: any, b: any) => a + b);
     }
 
+    let yearlyExp = 0;
+    if (monthlyExpenses) {
+      yearlyExp = monthlyExpenses.reduce((a: any, b: any) => a + b);
+    }
+
     calcOverages();
     setTotals({
       ...totals,
       monthlyExpense: expensesTotal,
+      yearlyExpense: yearlyExp,
       income: incomeTotal,
       budget: budgetTotal
     })
-  }, [currentMonthExpenses, budgets, incomes])
+  }, [currentMonthExpenses, budgets, incomes, monthlyExpenses])
 
   async function getAllTypes() {
     const url = `http://localhost:8080/budget/types`;
@@ -137,7 +170,26 @@ function Overview(props: IHomeProps) {
     await Axios.get(url)
       .then((payload: any) => {
         if (payload.data.length != 0) {
-          setBudgets(payload.data);
+          payload.data.length > 0 && setBudgets(payload.data);
+        }
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+    url = `http://localhost:8080/expense/user/${props.user.id}/yearly`;
+    await Axios.get(url)
+      .then((payload: any) => {
+        let arrMonth: string[] = [];
+        let arrTot: number[] = [];
+        if (payload.data.length != 0) {
+          for (let i = 0; i < payload.data.length; i++) {
+            arrMonth.push(payload.data[i].month);
+            arrTot.push(payload.data[i].total);
+          }
+          //arrTot.reverse();
+          //arrMonth.reverse();
+          setMonthlyExpenses(arrTot);
+          setMonths(arrMonth);
+          setExpMonths(payload.data.length);
         }
       }).catch((err: any) => {
         // Handle error by displaying something else
@@ -190,6 +242,7 @@ function Overview(props: IHomeProps) {
     }
   }
 
+
   function createBudgetGraphData() {
     if (!budgets) return undefined;
     return budgets.map((i: any) => {
@@ -211,6 +264,21 @@ function Overview(props: IHomeProps) {
     });
   }
 
+  function createLineStaticIncome() {
+    let arrIncomes: number[] = [];
+    for (let i = 0; i < expMonths; i++) {
+      arrIncomes.push(totals.income);
+    }
+    return arrIncomes;
+  }
+  function createLineStaticBudget() {
+    let arrBudget: number[] = [];
+    for (let i = 0; i < expMonths; i++) {
+      arrBudget.push(totals.budget);
+    }
+    return arrBudget;
+  }
+
   return (
     // Rows of data
     // Conditional description: if all under, good job, if over, look into it
@@ -226,185 +294,314 @@ function Overview(props: IHomeProps) {
       ) : (
           <div style={{ textAlign: 'center' }}>
             <div className={props.ui.isMobileView ? classes.div_container_mobile : classes.div_container} >
-              <Grid className={classes.grid_container} container>
-                <Grid
-                  style={{
-                    minWidth: props.ui.isMobileView ? '100vw' : undefined,
-                    width: props.ui.isMobileView ? '100vw' : undefined
-                  }}
-                  item xs={props.ui.isMobileView ? 12 : 6}>
-                  <b>Your Monthly Spending</b>
-                  <Paper
-                    style={{
-                      marginTop: '10px',
-                      maxWidth: '95%',
-                      width: '95%',
-                      opacity: 0.85,
-                      display: 'inline-block'
-                    }}>
-                    <div style={{ display: 'inline-block', textAlign: 'center' }}>
-                      <i style={{ color: 'grey', fontSize: '14px' }}>Red bars indicate an over-budget category.</i> <br />
-                    </div>
-                    <MixedLineGraph isMobileView={props.ui.isMobileView} budgetData={createBudgetGraphData()}
-                      expenseData={createExpenseGraphData()} labels={createGraphLabels()} />
-                  </Paper>
-                </Grid>
-                <Grid
-                  style={{
-                    minWidth: props.ui.isMobileView ? '100vw' : undefined,
-                    width: props.ui.isMobileView ? '100vw' : undefined,
-                    textAlign: 'center'
-                  }}
-                  item xs={props.ui.isMobileView ? 12 : 6}>
-                  <h2 style={{ marginTop: props.ui.isMobileView ? undefined : '0px' }}>Here's how you're stacking up.</h2>
-                  {underBudgets && (
-                    <>
-                      <h3>You met your goals in these categories.<br /> Nice job!</h3>
+              <ExpansionPanel square expanded={expanded === 'panel1'} onChange={handleChange('panel1')}
+                className={classes.expansion_panel}>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon style={{ color: colors.offWhite }} />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header">
+                  <Typography className={classes.heading}>Your Monthly Spending</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid className={classes.grid_container} container>
+                    <Grid
+                      style={{
+                        margin: 0
+                      }}
+                      item xs={props.ui.isMobileView ? 12 : 6}>
+                      <Paper className={classes.graph_paper}>
+                        <div style={{ display: 'inline-block', textAlign: 'center' }}>
+                          <i style={{ color: 'grey', fontSize: '14px' }}>Red bars indicate an over-budget category.</i> <br />
+                        </div>
+                        <MixedLineGraph isMobileView={props.ui.isMobileView} budgetData={createBudgetGraphData()}
+                          expenseData={createExpenseGraphData()} labels={createGraphLabels()} />
+                      </Paper>
+                    </Grid>
+                    <Grid
+                      style={{
+                        textAlign: 'center'
+                      }}
+                      item xs={props.ui.isMobileView ? 12 : 6}>
+                      <h2 style={{ marginTop: props.ui.isMobileView ? undefined : '0px' }}>Here's how you're stacking up.</h2>
+                      {underBudgets && (
+                        <>
+                          <h3>You met your goals in these categories.<br /> Nice job!</h3>
+                          <div style={{ width: '100%' }}>
+                            <Table className={classes.table}
+                              size={props.ui.isMobileView ? 'small' : 'medium'}>
+                              <TableHead>
+                                <TableRow>
+                                  <StyledTableCell>Category</StyledTableCell>
+                                  <StyledTableCell align="right">Remaining Budget ($)</StyledTableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {underBudgets.map((item: any, i: number) => (
+                                  <TableRow key={i}>
+                                    <StyledTableCell>
+                                      {item.category}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right">
+                                      {item.difference}
+                                    </StyledTableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </>
+                      )}
+                      {overBudgets && (
+                        <>
+                          <h3>Some of your spending needs <span style={{ color: colors.orange }}>attention</span>.</h3>
+                          {`Go to your  `}
+                          <Button size={props.ui.isMobileView ? 'small' : undefined}
+                            style={{
+                              marginBottom: '5px',
+                              width: '10px', maxWidth: '10px',
+                              fontSize: '10px', color: colors.offWhite,
+                              borderColor: colors.offWhite
+                            }}
+                            variant='outlined'
+                            component={Link} to='/expenses'>
+                            Expenses
+                          </Button>
+                          {`  for a detailed view.`}
+                          <div style={{ width: '100%' }}>
+                            <Table className={classes.table}
+                              size={props.ui.isMobileView ? 'small' : 'medium'}>
+                              <TableHead>
+                                <TableRow>
+                                  <StyledTableCell>Category</StyledTableCell>
+                                  <StyledTableCell align="right">Over Budget ($)</StyledTableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {overBudgets.map((item: any, i: number) => (
+                                  <TableRow key={i}>
+                                    <StyledTableCell>
+                                      {item.category}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right">
+                                      {item.difference}
+                                    </StyledTableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </>
+                      )}
+                    </Grid>
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+              <ExpansionPanel square expanded={expanded === 'panel2'} onChange={handleChange('panel2')}
+                className={classes.expansion_panel}>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon style={{ color: colors.offWhite }} />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header">
+                  <Typography className={classes.heading}>Your Monthly Totals</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid container className={classes.grid_container}>
+                    <Grid
+                      style={{
+                        marginTop: props.ui.isMobileView ? '10px' : undefined
+                      }}
+                      item xs={props.ui.isMobileView ? 12 : 6}>
+                      <Paper className={classes.graph_paper}>
+                        <MixedBarGraph isMobileView={props.ui.isMobileView} budgets={budgets}
+                          expenses={currentMonthExpenses} incomes={incomes} labels={createGraphLabels()} />
+                      </Paper>
+                    </Grid>
+                    <Grid
+                      style={{
+                        margin: 0
+                      }}
+                      item xs={props.ui.isMobileView ? 12 : 6}>
+                      {totals.income >= totals.budget && totals.monthlyExpense <= totals.budget && totals.income !== 0 ? (
+                        <>
+                          <h2>The math adds up.</h2>
+                          <h3>You did a good job of choosing a practical budget that fits your income and keeps expenses low.</h3>
+                        </>
+                      ) : (
+                          <>
+                            {totals.income !== 0 && (<>
+                              <h2>You may need to rebalance your budget.</h2>
+                              {totals.income < totals.budget
+                                && (<h4>It looks like your budget is higher than your income.</h4>)}
+                              {totals.monthlyExpense > totals.budget
+                                && (<h4>You've spent more than your budget accounts for.</h4>)}
+                              {`Go to your  `}
+                              <Button size={props.ui.isMobileView ? 'small' : undefined}
+                                style={{
+                                  marginBottom: '5px',
+                                  width: '10px', maxWidth: '10px',
+                                  fontSize: '10px', color: colors.offWhite,
+                                  borderColor: colors.offWhite
+                                }}
+                                variant='outlined'
+                                component={Link} to='/budget'>
+                                Budget
+                            </Button>
+                              {`  for a detailed view.`}
+                            </>)}
+                          </>
+                        )}
                       <div style={{ width: '100%' }}>
                         <Table className={classes.table}
                           size={props.ui.isMobileView ? 'small' : 'medium'}>
                           <TableHead>
                             <TableRow>
-                              <StyledTableCell>Category</StyledTableCell>
-                              <StyledTableCell align="right">Remaining Budget ($)</StyledTableCell>
+                              <StyledTableCell>Type</StyledTableCell>
+                              <StyledTableCell align="right">Total ($)</StyledTableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {underBudgets.map((item: any, i: number) => (
-                              <TableRow key={i}>
-                                <StyledTableCell>
-                                  {item.category}
+                            <TableRow key={0}>
+                              <StyledTableCell>
+                                Income
                                 </StyledTableCell>
-                                <StyledTableCell align="right">
-                                  {item.difference}
+                              <StyledTableCell align="right">
+                                {totals.income}
+                              </StyledTableCell>
+                            </TableRow>
+                            <TableRow key={1}>
+                              <StyledTableCell>
+                                Expense
                                 </StyledTableCell>
-                              </TableRow>
-                            ))}
+                              <StyledTableCell align="right">
+                                {totals.monthlyExpense}
+                              </StyledTableCell>
+                            </TableRow>
+                            <TableRow key={2}>
+                              <StyledTableCell>
+                                Budget
+                                </StyledTableCell>
+                              <StyledTableCell align="right">
+                                {totals.budget}
+                              </StyledTableCell>
+                            </TableRow>
                           </TableBody>
                         </Table>
                       </div>
-                    </>
-                  )}
-                  {overBudgets && (
-                    <>
-                      <h3>Some of your spending needs <span style={{ color: colors.orange }}>attention</span>.</h3>
-                      {`Go to your  `}
-                      <Button size={props.ui.isMobileView ? 'small' : undefined}
-                        style={{ marginBottom: '5px', width: '10px', maxWidth: '10px', fontSize: '10px', color: colors.offWhite, borderColor: colors.offWhite }}
-                        variant='outlined'
-                        component={Link} to='/expenses'>
-                        Expenses
-                      </Button>
-                      {`  for a detailed view.`}
+                    </Grid>
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+              <ExpansionPanel square expanded={expanded === 'panel3'} onChange={handleChange('panel3')}
+                className={classes.expansion_panel}>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon style={{ color: colors.offWhite }} />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header">
+                  <Typography className={classes.heading}>Year in Review</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid className={classes.grid_container} container>
+                    <Grid style={{
+                      margin: 0
+                    }}
+                      item xs={props.ui.isMobileView ? 12 : 6}>
+                      <Paper className={classes.graph_paper}>
+                        <LineGraph data={0} months={months}
+                          expenseTotals={monthlyExpenses}
+                          income={createLineStaticIncome()} budget={createLineStaticBudget()} />
+                      </Paper>
+                    </Grid>
+                    <Grid
+                      style={{
+                        margin: 0
+                      }}
+                      item xs={props.ui.isMobileView ? 12 : 6}>
+                      {totals.income * 12 >= totals.budget * 12 && totals.yearlyExpense <= totals.budget * 12 && totals.income !== 0 ? (
+                        <>
+                          <h2>You had a good year.</h2>
+                          <h3>All your expenses have been balanced against your budget with income to spare. Good job!</h3>
+                        </>
+                      ) : (
+                          <>
+                            {totals.income !== 0 && (<>
+                              <h2>It looks like you may be in debt.</h2>
+                              {totals.income < totals.budget
+                                && (<h4>You're yearly budget was over income. This can give a false sense of security.</h4>)}
+                              {totals.monthlyExpense > totals.budget
+                                && (<h4>You didn't meet your budget this year, but there's always the next.</h4>)}
+                              {`Go to your  `}
+                              <Button size={props.ui.isMobileView ? 'small' : undefined}
+                                style={{
+                                  marginBottom: '5px',
+                                  width: '10px', maxWidth: '10px',
+                                  fontSize: '10px', color: colors.offWhite,
+                                  borderColor: colors.offWhite
+                                }}
+                                variant='outlined'
+                                component={Link} to='/budget'>
+                                Budget
+                              </Button>
+                              {`  for a detailed view.`}
+                            </>)}
+                          </>
+                        )}
                       <div style={{ width: '100%' }}>
                         <Table className={classes.table}
                           size={props.ui.isMobileView ? 'small' : 'medium'}>
                           <TableHead>
                             <TableRow>
-                              <StyledTableCell>Category</StyledTableCell>
-                              <StyledTableCell align="right">Over Budget ($)</StyledTableCell>
+                              <StyledTableCell>Type</StyledTableCell>
+                              <StyledTableCell align="right">Total ($)</StyledTableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {overBudgets.map((item: any, i: number) => (
-                              <TableRow key={i}>
-                                <StyledTableCell>
-                                  {item.category}
+                            <TableRow key={0}>
+                              <StyledTableCell>
+                                Income
                                 </StyledTableCell>
-                                <StyledTableCell align="right">
-                                  {item.difference}
+                              <StyledTableCell align="right">
+                                {totals.income * 12}
+                              </StyledTableCell>
+                            </TableRow>
+                            <TableRow key={1}>
+                              <StyledTableCell>
+                                Expense
                                 </StyledTableCell>
-                              </TableRow>
-                            ))}
+                              <StyledTableCell align="right">
+                                {totals.yearlyExpense}
+                              </StyledTableCell>
+                            </TableRow>
+                            <TableRow key={2}>
+                              <StyledTableCell>
+                                Budget
+                                </StyledTableCell>
+                              <StyledTableCell align="right">
+                                {totals.budget * 12}
+                              </StyledTableCell>
+                            </TableRow>
                           </TableBody>
                         </Table>
                       </div>
-                    </>
-                  )}
-                </Grid>
-              </Grid>
-              <Grid container className={classes.grid_container}
-                style={{ marginTop: props.ui.isMobileView ? '30px' : '50px' }}
-                direction={props.ui.isMobileView ? 'column-reverse' : 'row'}>
-                <Grid
-                  style={{
-                    minWidth: props.ui.isMobileView ? '100vw' : undefined,
-                    width: props.ui.isMobileView ? '100vw' : undefined,
-                    marginTop: props.ui.isMobileView ? '10px' : undefined
-                  }}
-                  item xs={props.ui.isMobileView ? 12 : 6}>
-                  {totals.income >= totals.budget && totals.monthlyExpense <= totals.budget ? (
-                    <>
-                      <h2>The math adds up.</h2>
-                      <h3>You did a good job of choosing a practical budget that fits your income and keeps expenses low.</h3>
-                    </>
-                  ) : (
-                      <></>
-                    )}
-                  <div style={{ width: '100%' }}>
-                    <Table className={classes.table}
-                      size={props.ui.isMobileView ? 'small' : 'medium'}>
-                      <TableHead>
-                        <TableRow>
-                          <StyledTableCell>Type</StyledTableCell>
-                          <StyledTableCell align="right">Total ($)</StyledTableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        <TableRow key={0}>
-                          <StyledTableCell>
-                            Income
-                                </StyledTableCell>
-                          <StyledTableCell align="right">
-                            {totals.income}
-                          </StyledTableCell>
-                        </TableRow>
-                        <TableRow key={1}>
-                          <StyledTableCell>
-                            Expense
-                                </StyledTableCell>
-                          <StyledTableCell align="right">
-                            {totals.monthlyExpense}
-                          </StyledTableCell>
-                        </TableRow>
-                        <TableRow key={2}>
-                          <StyledTableCell>
-                            Budget
-                                </StyledTableCell>
-                          <StyledTableCell align="right">
-                            {totals.budget}
-                          </StyledTableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </div>
-                </Grid>
-                <Grid
-                  style={{
-                    minWidth: props.ui.isMobileView ? '100vw' : undefined,
-                    width: props.ui.isMobileView ? '100vw' : undefined,
-                    marginTop: props.ui.isMobileView ? '10px' : undefined
-                  }}
-                  item xs={props.ui.isMobileView ? 12 : 6}>
-                  <b>Your Monthly Totals</b>
-                  <Paper
-                    style={{
-                      marginTop: '10px',
-                      maxWidth: '95%',
-                      width: '95%',
-                      opacity: 0.85,
-                      display: 'inline-block'
-                    }}>
-                    <MixedBarGraph isMobileView={props.ui.isMobileView} budgets={budgets}
-                      expenses={currentMonthExpenses} incomes={incomes} labels={createGraphLabels()} />
-                  </Paper>
-                </Grid>
-              </Grid>
+                    </Grid>
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
             </div >
           </div >
         ))
     ) : (
-        <>Log in bud</>
+        <div style={{ color: colors.offWhite, textAlign: 'center' }}>
+          <img alt='' width='90px' height='90px' src={Logo} />
+          <h1> Welcome to Budgy. <br />To get started,</h1>
+          <Button style={{ marginTop: '30px', border: `1px solid ${colors.offWhite}`, color: colors.offWhite }}
+            variant='text' component={Link} to='/login'>
+            Login
+          </Button>
+          <br />
+          <Button component={Link} to='/register' style={{ marginTop: '20px', backgroundColor: colors.orange }}>
+            Register
+          </Button>
+        </div>
       )
     )
   )

@@ -18,5 +18,5 @@ public interface ExpenseRepository<P> extends JpaRepository<Expense, Integer> {
 	List<Expense> findByUserIdOrderByIdDesc(int userId);
 
 	List<Expense> findByUserIdAndDateBetween(int userId, Date prevMonthDate, Date nextMonthDate);
-	
+
 }
