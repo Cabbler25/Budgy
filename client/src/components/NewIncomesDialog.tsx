@@ -71,7 +71,7 @@ export default function NewIncome(props: any) {
             <form className={classes.container}>
               <FormControl className={classes.formControl}>
                 <Container style={{ textAlign: "center" }}>
-                  <Row><h4>Add Income</h4></Row>
+                  <Row><h4>Add Monthly Income</h4></Row>
                   <Row className="new-income-form">
                     <TextField
                       name="amount"

@@ -162,9 +162,6 @@ function Incomes(props: IIncomeProps) {
         {//<Container style={{ textAlign: 'center'}}> 
         }
         <h2>Manage your income, {props.user.first}</h2>
-        <br />
-
-        <br />
 
         {//<Grid item xs={12} md={9}>
         }

@@ -39,7 +39,6 @@ export function IncomesTable(props: any) {
   const [editRowKey, setEditRowKey] = useState(0);
   const [state, setState] = useState();
   const [confirmDialog, setConfirmDialog] = useState(false);
-  const [deleteLog, setDeleteLog] = useState(false);
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
