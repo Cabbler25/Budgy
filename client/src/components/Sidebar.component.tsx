@@ -8,7 +8,7 @@ import colors from '../assets/Colors';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   paper: {
-    background: colors.teal,
+    background: colors.offWhite,
   },
 }))
 
@@ -39,23 +39,22 @@ export function Sidebar(props: any) {
           <Divider style={{ backgroundColor: colors.offWhite, marginTop: '20px' }} />
         </div>
         <div style={{ textAlign: 'center' }}>
-          <Button style={{ color: colors.offWhite, marginTop: '50px' }} variant='text' component={Link} to="/">
-            Home
+          <Button style={{ marginTop: '50px' }} variant='text' component={Link} to="/">
+            Overview
           </Button><br />
-          <Button style={{ color: colors.offWhite, marginTop: '15px' }} variant='text' component={Link} to="/budget">
+          <Button style={{ marginTop: '15px' }} variant='text' component={Link} to="/budget">
             Budget
           </Button><br />
-          <Button style={{ color: colors.offWhite, marginTop: '15px' }} variant='text' component={Link} to="/expenses">
+          <Button style={{ marginTop: '15px' }} variant='text' component={Link} to="/expenses">
             Expenses
           </Button><br />
-          <Button style={{ color: colors.offWhite, marginTop: '15px', marginBottom: '50px' }} variant='text' component={Link} to="/incomes">
+          <Button style={{ marginTop: '15px', marginBottom: '50px' }} variant='text' component={Link} to="/incomes">
             Incomes
           </Button><br />
-          <Divider style={{ backgroundColor: colors.offWhite }} />
         </div>
         {props.isLoggedIn &&
           <div style={{ marginBottom: '0px', marginTop: 'auto', textAlign: 'center' }}>
-            <Button style={{ color: colors.offWhite, borderColor: colors.offWhite, marginBottom: '20px' }} variant="outlined" component={Link} to="/logout">
+            <Button style={{ marginBottom: '20px' }} component={Link} to="/logout">
               Logout
             </Button>
           </div>}
