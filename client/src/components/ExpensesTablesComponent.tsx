@@ -7,14 +7,9 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-<<<<<<< HEAD
 import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
 import React,{ useState, Fragment } from 'react';
-=======
-import React, { Fragment, useState } from 'react';
->>>>>>> 7f9925c24a11f4169667e843846cec40e940b480
 import colors from '../assets/Colors';
-import { okPath, okTool, pencilPath, pencilTool, removePath, removeTool, undoPath, undoTool } from '../assets/Icons';
 
 /*
 TODO: 
@@ -161,7 +156,6 @@ export function ExpensesTable(props: any) {
                       row.amount
                       :
                       <Input
-<<<<<<< HEAD
                       fullWidth={false}
                       disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
                       style={{fontSize:props.view?'13.3px':"17px",
@@ -188,38 +182,6 @@ export function ExpensesTable(props: any) {
                       onChange={(e:any)=>handleEditedExpenseChange(e)}/>
                   </TableCell>
                   </Fragment>
-=======
-                        fullWidth={false}
-                        disabled={(editableRow && (editableRowKey === row.id)) ? false : true}
-                        style={{
-                          fontSize: '13.3px',
-                          color: (editableRow && (editableRowKey === row.id)) ? "black" : "grey"
-                        }}
-                        type="number"
-                        value={(editableRow && (editableRowKey === row.id)) ? state.amount : row.amount}
-                        name="amount"
-                        onChange={(e: any) => handleEditedExpenseChange(e)} />
-                  }
-                </TableCell>
-                {
-                  props.view ? <Fragment></Fragment> :
-                    <Fragment>
-                      <TableCell component="th" scope="row"
-                        size='small'>
-                        <Input
-                          fullWidth={false}
-                          disabled={(editableRow && (editableRowKey === row.id)) ? false : true}
-                          style={{
-                            fontSize: '13.3px',
-                            color: (editableRow && (editableRowKey === row.id)) ? "black" : "grey"
-                          }}
-                          type="date"
-                          value={(editableRow && (editableRowKey === row.id)) ? state.date : row.date}
-                          name="date"
-                          onChange={(e: any) => handleEditedExpenseChange(e)} />
-                      </TableCell>
-                    </Fragment>
->>>>>>> 7f9925c24a11f4169667e843846cec40e940b480
                 }
                 <TableCell component="th" scope="row">
                   {
@@ -227,7 +189,6 @@ export function ExpensesTable(props: any) {
                       row.description
                       :
                       <Input
-<<<<<<< HEAD
                       fullWidth={false}
                       disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
                       style={{fontSize:props.view?'13.3px':"17px",
@@ -236,18 +197,6 @@ export function ExpensesTable(props: any) {
                       value={(editableRow && (editableRowKey === row.id)) ?state.description:row.description}
                       name="description"
                       onChange={(e:any)=>handleEditedExpenseChange(e)}/>
-=======
-                        fullWidth={false}
-                        disabled={(editableRow && (editableRowKey === row.id)) ? false : true}
-                        style={{
-                          fontSize: '13.3px',
-                          color: (editableRow && (editableRowKey === row.id)) ? "black" : "grey"
-                        }}
-                        multiline={true}
-                        value={(editableRow && (editableRowKey === row.id)) ? state.description : row.description}
-                        name="description"
-                        onChange={(e: any) => handleEditedExpenseChange(e)} />
->>>>>>> 7f9925c24a11f4169667e843846cec40e940b480
                   }
                 </TableCell>
                 {
@@ -355,7 +304,6 @@ export function ExpensesTable(props: any) {
                   color="secondary">
                   Cancel
                     </Button>
-<<<<<<< HEAD
                   </DialogActions>
                 </Dialog>
             </Paper>
@@ -397,27 +345,6 @@ export function ExpensesTable(props: any) {
                             defaultValue={state.date}
                             name="date"
                             onChange={(e:any)=>handleEditedExpenseChange(e)}/>
-=======
-              </DialogActions>
-            </Dialog>
-          </Paper>
-        }
-        {/* Display the delete confirm delete dialog when the user clicks on the 
-            delete icon. It shows the information of the expense before deleting
-            it. User can select between cancel or delete. */}
-        {
-          editDialog &&
-          <Paper style={{ textAlign: "center" }}>
-            <Dialog open={editDialog}>
-              <DialogContent>
-                Update expense:
-                  <br /> <br />
-                <Card className={cardClasses.card}>
-                  <CardContent>
-                    <Typography className={cardClasses.title}
-                      color="textSecondary" gutterBottom>
-                      amount:
->>>>>>> 7f9925c24a11f4169667e843846cec40e940b480
                         </Typography>
                     <Typography variant="h6" component="h4">
                       <Input
@@ -431,7 +358,6 @@ export function ExpensesTable(props: any) {
                       color="textSecondary" gutterBottom>
                       pay on:
                         </Typography>
-<<<<<<< HEAD
                         <Typography variant="h6" component="h4">
                           <Input
                           disabled={props.view?false:true}
@@ -442,19 +368,6 @@ export function ExpensesTable(props: any) {
                           name="description"
                           onChange={(e:any)=>handleEditedExpenseChange(e)}
                           rowsMax="3"/>
-=======
-                    <Typography variant="h6" component="h4">
-                      <Input
-                        fullWidth={false}
-                        type="date"
-                        defaultValue={state.date}
-                        name="date"
-                        onChange={(e: any) => handleEditedExpenseChange(e)} />
-                    </Typography>
-                    <Typography className={cardClasses.title}
-                      color="textSecondary" gutterBottom>
-                      description:
->>>>>>> 7f9925c24a11f4169667e843846cec40e940b480
                         </Typography>
                     <Typography variant="h6" component="h4">
                       <Input
