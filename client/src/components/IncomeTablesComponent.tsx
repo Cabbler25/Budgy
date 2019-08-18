@@ -184,7 +184,9 @@ export function IncomesTable(props: any) {
                   :
                   <Fragment>
                     <TableCell>
-                      <Button onClick={() => { handleEditButton(row); setEditRowKey(row.id); }}>
+                      <Button
+                        style={{ margin: "5px" }}
+                        onClick={() => { handleEditButton(row); setEditRowKey(row.id); }}>
                         <svg fill={colors.offWhite} xmlns={pencilTool}
                           width="24" height="24" viewBox="0 0 24 24">
                           <path d={pencilPath} />

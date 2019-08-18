@@ -177,7 +177,7 @@ function Incomes(props: IIncomeProps) {
                     types={incomeTypes}
                     createIncome={createNewIncome} />
                   <Button
-                    style={{ display: "inline-block", marginLeft: "5px" }}
+                    style={{ display: "inline-block", marginLeft: "10px" }}
                     color="secondary"
                     onClick={() => setShowTable(false)}>
                     Back
