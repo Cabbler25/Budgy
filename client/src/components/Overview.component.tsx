@@ -41,13 +41,10 @@ function Home(props: IHomeProps) {
   const [incomes, setIncomes] = useState();
   const [budgets, setBudgets] = useState();
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState();
-
   const [expMonths, setExpMonths] = useState(0);
   const [types, setTypes] = useState([]);
-
   const [expenseOverages, setExpenseOverages] = useState();
   const [isLoading, setIsLoading] = useState(false);
-
   const [totals, setTotals] = useState({
     monthlyExpense: 0,
     income: 0,
