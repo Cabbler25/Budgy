@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import { Paper, TextField, Grid, Divider, Button } from '@material-ui/core';
-import { Row } from 'reactstrap';
-import '../App.css'
-import { IState, IUserState } from '../redux';
-import { updateUserLoggedIn, updateUserInfo } from '../redux/actions';
-import { connect } from 'react-redux';
+import { Button, Divider, Grid, Paper, TextField } from '@material-ui/core';
 import Axios from 'axios';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { Row } from 'reactstrap';
+import '../App.css';
+import { IState, IUiState, IUserState } from '../redux';
+import { updateUserInfo, updateUserLoggedIn } from '../redux/actions';
+import { Redirect } from 'react-router';
 
 interface IRegisterProps {
   history: any;
   user: IUserState;
+  ui: IUiState;
   updateUserLoggedIn: (val: boolean) => void;
   updateUserInfo: (payload: any) => void;
 }
@@ -133,11 +135,18 @@ export function Register(props: IRegisterProps) {
     });
   }
 
+  if (props.user.isLoggedIn) return <Redirect push to="/user" />
   return (
     <div style={{ textAlign: 'center' }}>
       <Grid container>
         <Grid item xs={12}>
-          <Paper style={{ display: 'inline-block', padding: '50px', width: '50vh' }}>
+          <Paper style={{
+            display: 'inline-block',
+            padding: props.ui.isMobileView ? '0px' : '50px',
+            marginBottom: '20px',
+            paddingBottom: '20px',
+            width: props.ui.isMobileView ? '95%' : '50vh'
+          }}>
             <h1>Create a New Account</h1>
             <br />
             <h3>Account Information</h3>
@@ -225,7 +234,8 @@ export function Register(props: IRegisterProps) {
 
 const mapStateToProps = (state: IState) => {
   return {
-    user: state.user
+    user: state.user,
+    ui: state.ui
   }
 }
 

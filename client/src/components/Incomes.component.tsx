@@ -162,9 +162,6 @@ function Incomes(props: IIncomeProps) {
         {//<Container style={{ textAlign: 'center'}}> 
         }
         <h2>Manage your income, {props.user.first}</h2>
-        <br />
-
-        <br />
 
         {//<Grid item xs={12} md={9}>
         }
@@ -177,7 +174,7 @@ function Incomes(props: IIncomeProps) {
                     types={incomeTypes}
                     createIncome={createNewIncome} />
                   <Button
-                    style={{ display: "inline-block", marginLeft: "5px" }}
+                    style={{ display: "inline-block", marginLeft: "10px" }}
                     color="secondary"
                     onClick={() => setShowTable(false)}>
                     Back

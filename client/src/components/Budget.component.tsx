@@ -239,15 +239,14 @@ export function Budget(props: IBudgetProps) {
             }}>
               {!budgets ? (
                 <div style={{ textAlign: 'center' }}>
-                  <b>Budgets allow you to set goals, easily visualize your limits, and even earn </b>
-                  <Link to="/rewards">rewards!</Link>
+                  <b>Budgets allow you to set goals and easily visualize your limits. </b>
                   <br />
                   <br />
                   <Divider />
                   <br />
                   {!isLoading ? (
                     <Fragment>
-                      <h2>Creating a budget is quick and easy.<br />To get started,</h2>
+                      <h2>Creating a budget is quick and simple.<br />To get started,</h2>
                       {isCreatingBudget ? (
                         <CreateBudgetStepper
                           isMobileView={props.ui.isMobileView} userId={props.user.id}
@@ -267,7 +266,7 @@ export function Budget(props: IBudgetProps) {
               ) : (
                   <Fragment>
                     <div style={{ textAlign: 'center' }}>
-                      <AppBar position="static">
+                      <AppBar style={{ backgroundColor: colors.lightTeal }} position="static">
                         <Tabs
                           centered={!props.ui.isMobileView}
                           value={tabIndex}

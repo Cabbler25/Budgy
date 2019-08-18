@@ -9,6 +9,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import WarningIcon from '@material-ui/icons/Warning';
 import clsx from 'clsx';
 import React from 'react';
+import colors from '../assets/Colors';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -19,7 +20,7 @@ const variantIcon = {
 
 const useStyles1 = makeStyles((theme: Theme) => ({
   success: {
-    backgroundColor: green[600],
+    backgroundColor: colors.lightGreen,
   },
   error: {
     backgroundColor: theme.palette.error.dark,

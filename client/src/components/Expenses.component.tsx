@@ -35,12 +35,12 @@ function Expenses(props: IExpenseProps) {
   const [expenses, setExpenses] = useState();
   const [hasExpenses, setHasExpenses] = useState(true);
   const [monthlyExpenses, setMonthlyExpenses] = useState();
-  const [isLoading,setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [expenseTypes, setExpenseTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [showMonthly, setShowMonthly] = useState(false);
-  const [totalExpenses,setTotalExpenses] = useState(0);
-  const [totalMonthlyExpenses,setTotalMonthlyExpenses] = useState(0);
+  const [totalExpenses, setTotalExpenses] = useState(0);
+  const [totalMonthlyExpenses, setTotalMonthlyExpenses] = useState(0);
   const [expenseType, setExpenseType] = useState();
   const [expensesByUserAndType, setExpensesByUserIdAndTypeId] = useState([]);
 
@@ -53,6 +53,7 @@ function Expenses(props: IExpenseProps) {
   }, [props.user.isLoggedIn])
 
   useEffect(() => {
+<<<<<<< HEAD
     // Avoid app crash in case user has no expenses in the database
     try {
       setTotalExpenses(expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
@@ -62,6 +63,11 @@ function Expenses(props: IExpenseProps) {
       setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
     } catch { setMonthlyExpenses(undefined); setIsLoading(false); setHasExpenses(false) }    
   }, [expenses,monthlyExpenses])
+=======
+    if (expenses) setTotalExpenses(expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))
+    if (monthlyExpenses) setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))
+  }, [expenses, monthlyExpenses])
+>>>>>>> 5c6b7d3a533b40d076b4db787809e7b29629d018
 
   // This function sends the request to get all user reimbursements
   async function getAllExpenses() {
@@ -70,11 +76,11 @@ function Expenses(props: IExpenseProps) {
     const url = `http://localhost:8080/expense/user/${props.user.id}`;
     await Axios.get(url)
       .then((payload: any) => {
-        setExpenses(payload.data);
+        payload.data.length > 0 && setExpenses(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
-      if (expenses) setTotalExpenses(expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
+    if (expenses) setTotalExpenses(expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
   }
 
   // This function sends the request to get all user reimbursements
@@ -82,15 +88,20 @@ function Expenses(props: IExpenseProps) {
     const url = `http://localhost:8080/expense/user/${props.user.id}/monthly`;
     await Axios.get(url)
       .then((payload: any) => {
-        setMonthlyExpenses(payload.data);
+        payload.data.length > 0 && setMonthlyExpenses(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
+<<<<<<< HEAD
       setIsLoading(false);
       if (monthlyExpenses) 
       setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))    
+=======
+    setIsLoading(false);
+    if (monthlyExpenses) setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))
+>>>>>>> 5c6b7d3a533b40d076b4db787809e7b29629d018
   }
-  
+
   async function getAllExpenseTypes() {
     const url = `http://localhost:8080/expense/types`;
     await Axios.get(url)
@@ -108,8 +119,8 @@ function Expenses(props: IExpenseProps) {
   }
   // Return monthly expenses
   function createMonthlyGraphData() {
-    return monthlyExpenses.map((i:any) =>{
-      return {key: i.expenseType.type,data: i.amount}
+    return monthlyExpenses.map((i: any) => {
+      return { key: i.expenseType.type, data: i.amount }
     });
   }
 
@@ -141,7 +152,7 @@ function Expenses(props: IExpenseProps) {
     }
   }
   // Handle view for only show monthly expenses
-  function viewMonthlyExpenses(state:boolean) {
+  function viewMonthlyExpenses(state: boolean) {
     // Show only monthly expenses in the donut graph
     setShowMonthly(state);
     // Show only monthly expenses in the tables
@@ -152,8 +163,8 @@ function Expenses(props: IExpenseProps) {
 
   //   Request function for new expense here
   async function createNewExpense(newType: any, newDescripion: string, newAmount: number,
-                                  newDate: string) {
-    setIsLoading(true);                                
+    newDate: string) {
+    setIsLoading(true);
     // Prepare request setup
     const url = 'http://localhost:8080/expense';
     const data = {
@@ -174,8 +185,8 @@ function Expenses(props: IExpenseProps) {
         const currentMonth =  new Date().getMonth();
         const newExpenseMonth = new Date(payload.data.date).getMonth();
         // Handle date conversion
-        const newDateFormatted = new Date(payload.data.date).toISOString().slice(0,10);
-        payload.data.date = newDateFormatted; 
+        const newDateFormatted = new Date(payload.data.date).toISOString().slice(0, 10);
+        payload.data.date = newDateFormatted;
         // Update arrays for properly visualize the new expense added
         // Only add to monthly expenses array if the assigned month is the current one
         if (newExpenseMonth == currentMonth) {
@@ -185,6 +196,7 @@ function Expenses(props: IExpenseProps) {
         // Update the table view too
         const withNewExpense = (expenses)?expenses.concat(payload.data):payload.data;
         if (showTable) {
+<<<<<<< HEAD
           // If the new expense asigned month is not the current one, it wont be added to the table
           // in monthly perspective
           if (showMonthly && (newExpenseMonth==currentMonth)) {
@@ -196,9 +208,21 @@ function Expenses(props: IExpenseProps) {
           const matchedExpenses = withNewExpense.filter((expense: any) =>
           expense.expenseType.type == payload.data.expenseType.type);
           setExpensesByUserIdAndTypeId(matchedExpenses);
+=======
+          if (showMonthly) {
+            const matchedExpenses = withNewMonthlyExpense.filter((expense: any) =>
+              expense.expenseType.type == payload.data.expenseType.type);
+            setExpensesByUserIdAndTypeId(matchedExpenses);
+          }
+          const matchedExpenses = withNewExpense.filter((expense: any) =>
+            expense.expenseType.type == payload.data.expenseType.type);
+          setExpensesByUserIdAndTypeId(matchedExpenses);
+          // Also show the new expense in monthly perspective
+          //handleElementClick(payload.data.expenseType.type);
+>>>>>>> 5c6b7d3a533b40d076b4db787809e7b29629d018
         }
       });
-      setIsLoading(false);
+    setIsLoading(false);
   }
 
   // Request function to delete an existing expense
@@ -211,23 +235,23 @@ function Expenses(props: IExpenseProps) {
     const url = `http://localhost:8080/expense/${expense.id}`;
     await Axios.delete(url, expense)
       .then(() => {
-          getAllExpenses();
-          getAllMonthlyExpenses();
-          if (showTable) {
-            // Also update if user is in monthly perspective
-            if (showMonthly) {
-              const deletedExpenseIndex = monthlyExpenses.findIndex(checkId);
-              setMonthlyExpenses(monthlyExpenses.splice(deletedExpenseIndex, 1));
-              handleElementClick(expense.expenseType.type);
-            }
-            // Find the index of the to-be-removed expense
-            const deletedExpenseIndex = expenses.findIndex(checkId);
-            // Remove it from the expenses array so it can be removed visually from the table
-            setExpenses(expenses.splice(deletedExpenseIndex, 1));
+        getAllExpenses();
+        getAllMonthlyExpenses();
+        if (showTable) {
+          // Also update if user is in monthly perspective
+          if (showMonthly) {
+            const deletedExpenseIndex = monthlyExpenses.findIndex(checkId);
+            setMonthlyExpenses(monthlyExpenses.splice(deletedExpenseIndex, 1));
             handleElementClick(expense.expenseType.type);
           }
-          setIsLoading(false);
+          // Find the index of the to-be-removed expense
+          const deletedExpenseIndex = expenses.findIndex(checkId);
+          // Remove it from the expenses array so it can be removed visually from the table
+          setExpenses(expenses.splice(deletedExpenseIndex, 1));
+          handleElementClick(expense.expenseType.type);
         }
+        setIsLoading(false);
+      }
       );
   }
   // Request function to update an expense
@@ -241,6 +265,7 @@ function Expenses(props: IExpenseProps) {
 
     // Send the request
     const url = `http://localhost:8080/expense`;
+<<<<<<< HEAD
     await Axios.put(url,expense)
     .then(async () => {
       await getAllExpenses();
@@ -254,10 +279,21 @@ function Expenses(props: IExpenseProps) {
           const updatedExpenseMonth = new Date(expense.date).getMonth();
           console.log(currentMonth,updatedExpenseMonth);
           if (updatedExpenseMonth == currentMonth) {
+=======
+    await Axios.put(url, expense)
+      .then(async () => {
+        await getAllExpenses();
+        await getAllMonthlyExpenses();
+        // Also update the expenses in the table perspective
+        if (showTable) {
+          // Update monthly expenses too
+          if (showMonthly) {
+>>>>>>> 5c6b7d3a533b40d076b4db787809e7b29629d018
             const updatedExpenseIndex = monthlyExpenses.findIndex(checkId);
             const monthlyExpensesCopy = monthlyExpenses;
             monthlyExpensesCopy[updatedExpenseIndex] = expense;
             const matchedExpenses = monthlyExpensesCopy.filter((expense: any) =>
+<<<<<<< HEAD
             expense.expenseType.type == expenseType);
             setExpensesByUserIdAndTypeId(matchedExpenses);
           } else { // remove the expense from monthly expenses in case the assigned new month is not this one
@@ -274,33 +310,56 @@ function Expenses(props: IExpenseProps) {
           const matchedExpenses = expensesCopy.filter((expense: any) =>
           expense.expenseType.type == expenseType);
           setExpensesByUserIdAndTypeId(matchedExpenses);
+=======
+              expense.expenseType.type == expenseType);
+            setExpensesByUserIdAndTypeId(matchedExpenses);
+          } else {
+            const updatedExpenseIndex = expenses.findIndex(checkId);
+            const expensesCopy = expenses;
+            expensesCopy[updatedExpenseIndex] = expense;
+            const matchedExpenses = expensesCopy.filter((expense: any) =>
+              expense.expenseType.type == expenseType);
+            setExpensesByUserIdAndTypeId(matchedExpenses);
+          }
+>>>>>>> 5c6b7d3a533b40d076b4db787809e7b29629d018
         }
-      }
-      setIsLoading(false);
-    });
+        setIsLoading(false);
+      });
   }
 
   return (
     <div style={{ textAlign: 'center' }}>
-      {!props.user.isLoggedIn ? 
-      (<>
+      {!props.user.isLoggedIn ?
+        (<>
           <div
+<<<<<<< HEAD
           style={{ marginTop: '50px', marginRight: 'auto', marginLeft: 'auto', textAlign: 'center', 
           color: colors.offWhite, width:"60%" }}>
               <h2 style={{ marginBottom: '40px' }}>
                 With Budgy you can schedule your expenses by
                 category, specifying amount and description. <br/>
                 That way you won´t forget them.
+=======
+            style={{
+              marginTop: '50px', marginRight: 'auto', marginLeft: 'auto', textAlign: 'center',
+              color: colors.offWhite, width: "60%"
+            }}>
+            <h2 style={{ marginBottom: '40px' }}>
+              Let us help you schedule your expenses by <br />
+              category, amount and description. That way you <br />
+              won´t forget them.
+>>>>>>> 5c6b7d3a533b40d076b4db787809e7b29629d018
                 <br /><br />To get started,
               </h2>
-              <Button style={{ border: `1px solid ${colors.offWhite}`, color: colors.offWhite }}
-                variant='text' component={Link} to='/login'>
-                Login
+            <Button style={{ border: `1px solid ${colors.offWhite}`, color: colors.offWhite }}
+              variant='text' component={Link} to='/login'>
+              Login
                 </Button>
-              <b style={{ marginLeft: '10px', marginRight: '10px' }}>or</b>
-              <Button component={Link} to='/register' style={{ backgroundColor: colors.orange }}>
-                Register
+            <b style={{ marginLeft: '10px', marginRight: '10px' }}>or</b>
+            <Button component={Link} to='/register' style={{ backgroundColor: colors.orange }}>
+              Register
               </Button>
+<<<<<<< HEAD
           </div> 
         </> ) :
       (
@@ -337,30 +396,69 @@ function Expenses(props: IExpenseProps) {
           {/* Show loader if expenses and monthly expenses aren't filled yet */}
           {(isLoading) ? (
             <div
+=======
+          </div>
+        </>) :
+        (
+          <>
+            {
+              showTable ?
+                <h2 style={{ color: colors.offWhite }}> Your {expenseType} expenses</h2> :
+                <h2 style={{ color: colors.offWhite }}>Your expenses, {props.user.first}</h2>
+            }
+            <Paper
+>>>>>>> 5c6b7d3a533b40d076b4db787809e7b29629d018
               style={{
-                margin: props.ui.isMobileView ? '75px' : '150px',
-                display: 'inline-block'
+                margin: '5px auto', padding: '10px',
+                backgroundColor: "rgba(220,245,230,0.9)",
+                width: props.ui.isMobileView ? "90%" : showTable ? '80%' : '50%',
+                height: props.ui.isMobileView ? "90%" : '60%'
               }}>
-              <BarLoader width={150} color={'#009688'} loading={isLoading} />
-            </div>
-          ) :
-            <div>
-              {showTable ? (
-                <Fragment>
-                  <Container>
-                    <Row>
-                      <Col>
-                        <Button
-                          color="secondary"
-                          onClick={() => setShowTable(false)}
-                          style={{ display: "inline-block", margin: '5px' }}>
-                          Back
+
+              {/* Show loader if expenses and monthly expenses aren't filled yet */}
+              {(!(expenses && monthlyExpenses)) ? (
+                <div
+                  style={{
+                    margin: props.ui.isMobileView ? '75px' : '150px',
+                    display: 'inline-block'
+                  }}>
+                  <BarLoader width={150} color={'#009688'} loading={isLoading} />
+                </div>
+              ) :
+                <div>
+                  {showTable ? (
+                    <Fragment>
+                      <Container>
+                        <Row>
+                          <Col>
+                            <Button
+                              color="secondary"
+                              onClick={() => setShowTable(false)}
+                              style={{ display: "inline-block", margin: '5px' }}>
+                              Back
                         </Button>
-                        {/* If on table perspective, don't show the type selector */}
-                        <NewExpense
-                          types={expenseTypes}
-                          createExpense={createNewExpense}
+                            {/* If on table perspective, don't show the type selector */}
+                            <NewExpense
+                              types={expenseTypes}
+                              createExpense={createNewExpense}
+                              view={props.ui.isMobileView}
+                              tableView={showTable}
+                              type={expenseType} />
+                          </Col>
+                        </Row>
+                      </Container>
+                      {isLoading ?
+                        <div
+                          style={{
+                            margin: props.ui.isMobileView ? '75px' : '150px',
+                            display: 'inline-block'
+                          }}>
+                          <BarLoader width={150} color={'#009688'} loading={isLoading} />
+                        </div>
+                        :
+                        <ExpensesTable expenses={expensesByUserAndType}
                           view={props.ui.isMobileView}
+<<<<<<< HEAD
                           tableView={showTable}
                           type={expenseType} />
                       </Col>
@@ -407,20 +505,52 @@ function Expenses(props: IExpenseProps) {
                                                     ()=>viewMonthlyExpenses(true)}
                               value="checkedB"
                               color="primary"
+=======
+                          deleteExpense={deleteExpense}
+                          updateExpense={updateExpense} />}
+                    </Fragment>
+                  ) : (
+                      <Fragment>
+                        {expenses &&
+                          <div>
+                            <h3>{showMonthly ? "This month" : "Overall"} expenses:
+                        {isLoading ? "..." : showMonthly ? " $" + totalMonthlyExpenses : " $" + totalExpenses}</h3>
+                            <i style={{ color: 'grey', fontSize: '14px' }}>
+                              Click on any section of the graphic to view details</i>
+                            <DonutGraph
+                              data={showMonthly ? createMonthlyGraphData() : createGraphData()}
+                              labels={createGraphLabels()}
+                              important='Emergency'
+                              isMobileView={props.ui.isMobileView}
+                              handleElementClick={handleElementClick} />
+                            <NewExpense
+                              types={expenseTypes}
+                              createExpense={createNewExpense}
+                              view={props.ui.isMobileView} />
+                            {/* Toggles between view monthly expenses and overall expenses */}
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={showMonthly}
+                                  onChange={showMonthly ? () => viewMonthlyExpenses(false) :
+                                    () => viewMonthlyExpenses(true)}
+                                  value="checkedB"
+                                  color="primary"
+                                />
+                              }
+                              style={{ marginLeft: '5px' }}
+                              label="This month"
+>>>>>>> 5c6b7d3a533b40d076b4db787809e7b29629d018
                             />
-                          }
-                          style={{marginLeft:'5px'}}
-                          label="This month"
-                        />  
-                      </div>}
-                  </Fragment>
-                )}
-              <br />
-            </div>
-          }
-      </Paper>
-      </>
-      )}
+                          </div>}
+                      </Fragment>
+                    )}
+                  <br />
+                </div>
+              }
+            </Paper>
+          </>
+        )}
     </div >
   );
 }

@@ -523,26 +523,27 @@ function Overview(props: IHomeProps) {
                         </>
                       ) : (
                           <>
-                            {totals.income !== 0 && (<>
-                              <h2>It looks like you may be in debt.</h2>
-                              {totals.income < totals.budget
-                                && (<h4>You're yearly budget was over income. This can give a false sense of security.</h4>)}
-                              {totals.monthlyExpense > totals.budget
-                                && (<h4>You didn't meet your budget this year, but there's always the next.</h4>)}
-                              {`Go to your  `}
-                              <Button size={props.ui.isMobileView ? 'small' : undefined}
-                                style={{
-                                  marginBottom: '5px',
-                                  width: '10px', maxWidth: '10px',
-                                  fontSize: '10px', color: colors.offWhite,
-                                  borderColor: colors.offWhite
-                                }}
-                                variant='outlined'
-                                component={Link} to='/budget'>
-                                Budget
+                            {totals.income !== 0 && (
+                              <>
+                                <h2>It looks like you may be in debt.</h2>
+                                {totals.income < totals.budget
+                                  && (<h4>You're yearly budget was over income. This can give a false sense of security.</h4>)}
+                                {totals.monthlyExpense > totals.budget
+                                  && (<h4>You didn't meet your budget this year, but there's always the next.</h4>)}
+                                {`Go to your  `}
+                                <Button size={props.ui.isMobileView ? 'small' : undefined}
+                                  style={{
+                                    marginBottom: '5px',
+                                    width: '10px', maxWidth: '10px',
+                                    fontSize: '10px', color: colors.offWhite,
+                                    borderColor: colors.offWhite
+                                  }}
+                                  variant='outlined'
+                                  component={Link} to='/budget'>
+                                  Budget
                               </Button>
-                              {`  for a detailed view.`}
-                            </>)}
+                                {`  for a detailed view.`}
+                              </>)}
                           </>
                         )}
                       <div style={{ width: '100%' }}>
