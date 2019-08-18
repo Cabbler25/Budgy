@@ -39,7 +39,6 @@ export function IncomesTable(props: any) {
   const [editRowKey, setEditRowKey] = useState(0);
   const [state, setState] = useState();
   const [confirmDialog, setConfirmDialog] = useState(false);
-  const [deleteLog, setDeleteLog] = useState(false);
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -51,6 +50,10 @@ export function IncomesTable(props: any) {
   }
 
   const handleEditedIncomeChange = (e: any) => {
+    if (e.target.name == 'amount') {
+      e.target.value = Number(e.target.value);
+    }
+    console.log(e.target.value);
     setState({
       ...state, [e.target.name]: e.target.value
     });
@@ -135,7 +138,7 @@ export function IncomesTable(props: any) {
                       color: (editRow && (editRowKey === row.id)) ? "black" : "grey"
                     }}
                     type="number"
-                    value={
+                    defaultValue={
                       (editRow && (editRowKey === row.id)) ? state.amount : row.amount}
                     name="amount"
                     onChange={(e: any) => handleEditedIncomeChange(e)} />
@@ -163,7 +166,7 @@ export function IncomesTable(props: any) {
                         setEditRow(false);
                         setEditRowKey(0);
                       }}>
-                        <svg xmlns={okTool} width="24" height="24" viewBox="0 0 24 24">
+                        <svg fill={colors.offWhite} xmlns={okTool} width="24" height="24" viewBox="0 0 24 24">
                           <path d={okPath} />
                         </svg>
                       </Button>
@@ -174,7 +177,7 @@ export function IncomesTable(props: any) {
                         setEditRowKey(0);
                         setState(row);
                       }}>
-                        <svg xmlns={undoTool}
+                        <svg xmlns={undoTool} fill={colors.offWhite}
                           width="24" height="24" viewBox="0 0 24 24">
                           <path d={undoPath} />
                         </svg>
@@ -193,7 +196,7 @@ export function IncomesTable(props: any) {
                         </svg>
                       </Button>
                       {/* Assign the onClick function to notify the parent which
-                        expense will be deleted */}
+                        income will be deleted */}
                       <Button
                         style={{ backgroundColor: colors.red, marginLeft: "5px" }}
                         onClick={() => {

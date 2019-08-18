@@ -1,4 +1,4 @@
-import { amber, green } from '@material-ui/core/colors';
+import { amber } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -9,6 +9,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import WarningIcon from '@material-ui/icons/Warning';
 import clsx from 'clsx';
 import React from 'react';
+import colors from '../assets/Colors';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -19,7 +20,7 @@ const variantIcon = {
 
 const useStyles1 = makeStyles((theme: Theme) => ({
   success: {
-    backgroundColor: green[600],
+    backgroundColor: colors.offWhite,
   },
   error: {
     backgroundColor: theme.palette.error.dark,
@@ -31,6 +32,7 @@ const useStyles1 = makeStyles((theme: Theme) => ({
     backgroundColor: amber[700],
   },
   icon: {
+    color: colors.teal,
     fontSize: 20,
   },
   iconVariant: {
@@ -38,6 +40,7 @@ const useStyles1 = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(1),
   },
   message: {
+    color: 'black',
     display: 'flex',
     alignItems: 'center',
   },
@@ -74,51 +77,3 @@ export default function MySnackbarContentWrapper(props: Props) {
     />
   );
 }
-
-const useStyles2 = makeStyles((theme: Theme) => ({
-  margin: {
-    margin: theme.spacing(1),
-  },
-}));
-
-// export default function CustomizedSnackbars() {
-//   const classes = useStyles2();
-
-//   function handleClick() {
-//     setOpen(true);
-//   }
-
-//   function handleClose(event?: SyntheticEvent, reason?: string) {
-//     if (reason === 'clickaway') {
-//       return;
-//     }
-
-//     setOpen(false);
-//   }
-
-//   return (
-//     <div>
-
-//       <MySnackbarContentWrapper
-//         variant="error"
-//         className={classes.margin}
-//         message="This is an error message!"
-//       />
-//       <MySnackbarContentWrapper
-//         variant="warning"
-//         className={classes.margin}
-//         message="This is a warning message!"
-//       />
-//       <MySnackbarContentWrapper
-//         variant="info"
-//         className={classes.margin}
-//         message="This is an information message!"
-//       />
-//       <MySnackbarContentWrapper
-//         variant="success"
-//         className={classes.margin}
-//         message="This is a success message!"
-//       />
-//     </div>
-//   );
-// }
