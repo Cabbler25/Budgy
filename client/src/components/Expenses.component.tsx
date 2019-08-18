@@ -33,6 +33,7 @@ export interface IExpenseProps {
 function Expenses(props: IExpenseProps) {
   // Needed constants with their respective state modifier function
   const [expenses, setExpenses] = useState();
+  const [hasExpenses, setHasExpenses] = useState(true);
   const [monthlyExpenses, setMonthlyExpenses] = useState();
   const [isLoading,setIsLoading] = useState(true);
   const [expenseTypes, setExpenseTypes] = useState([]);
@@ -52,8 +53,15 @@ function Expenses(props: IExpenseProps) {
   }, [props.user.isLoggedIn])
 
   useEffect(() => {
-    if (expenses) setTotalExpenses(expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))
-    if (monthlyExpenses) setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))    
+    // Avoid app crash in case user has no expenses in the database
+    try {
+      
+      setTotalExpenses(expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
+    } catch { setExpenses(undefined); setIsLoading(false); setHasExpenses(false); }
+    try {
+      
+      setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
+    } catch { setMonthlyExpenses(undefined); setIsLoading(false); setHasExpenses(false) }    
   }, [expenses,monthlyExpenses])
 
   // This function sends the request to get all user reimbursements
@@ -164,13 +172,13 @@ function Expenses(props: IExpenseProps) {
         const newDateFormatted = new Date(payload.data.date).toISOString().slice(0,10);
         payload.data.date = newDateFormatted; 
         // Update arrays for properly visualize the new expense added
-        setExpenses(expenses.concat(payload.data));
-        setMonthlyExpenses(monthlyExpenses.concat(payload.data));
+        setExpenses((expenses) ? expenses.concat(payload.data):payload.data);
+        if (showMonthly) setMonthlyExpenses(monthlyExpenses.concat(payload.data));
         // Update the table view too
-        const withNewExpense = expenses.concat(payload.data);
-        const withNewMonthlyExpense = monthlyExpenses.concat(payload.data);
+        const withNewExpense = (expenses)?expenses.concat(payload.data):payload.data;
         if (showTable) {
             if (showMonthly) {
+              const withNewMonthlyExpense = (monthlyExpenses)?monthlyExpenses.concat(payload.data):payload.data;
               const matchedExpenses = withNewMonthlyExpense.filter((expense: any) =>
               expense.expenseType.type == payload.data.expenseType.type);
               setExpensesByUserIdAndTypeId(matchedExpenses);
@@ -178,8 +186,6 @@ function Expenses(props: IExpenseProps) {
             const matchedExpenses = withNewExpense.filter((expense: any) =>
             expense.expenseType.type == payload.data.expenseType.type);
             setExpensesByUserIdAndTypeId(matchedExpenses);
-            // Also show the new expense in monthly perspective
-            //handleElementClick(payload.data.expenseType.type);
         }
       });
       setIsLoading(false);
@@ -260,9 +266,9 @@ function Expenses(props: IExpenseProps) {
           style={{ marginTop: '50px', marginRight: 'auto', marginLeft: 'auto', textAlign: 'center', 
           color: colors.offWhite, width:"60%" }}>
               <h2 style={{ marginBottom: '40px' }}>
-                Let us help you schedule your expenses by <br/>
-                category, amount and description. That way you <br/>
-                won´t forget them.
+                With <strong>Budgy</strong> you can schedule your expenses by
+                category, specifying amount and description. <br/>
+                That way you won´t forget them.
                 <br /><br />To get started,
               </h2>
               <Button style={{ border: `1px solid ${colors.offWhite}`, color: colors.offWhite }}
@@ -276,8 +282,22 @@ function Expenses(props: IExpenseProps) {
           </div> 
         </> ) :
       (
+        (!expenses && !hasExpenses) ? 
+        <>
+          <div
+          style={{ marginTop: '50px', marginRight: 'auto', marginLeft: 'auto', textAlign: 'center', 
+          color: colors.teal, width:"60%",backgroundColor:colors.unusedGrey }}>
+              <h2 style={{ marginBottom: '40px' }}>
+                Start setting up your expenses, {props.user.first}. <br/> <br/> <br/>
+                What about
+                <NewExpense
+                  types={expenseTypes}
+                  createExpense={createNewExpense}
+                  view={props.ui.isMobileView} />a new one?
+              </h2>
+          </div>
+        </> :
       <>
-      
         {
           showTable ?
             <h2 style={{ color: colors.offWhite }}> Your {expenseType} expenses</h2>:
@@ -290,9 +310,8 @@ function Expenses(props: IExpenseProps) {
           width: props.ui.isMobileView ? "90%" : showTable ? '80%' : '50%',
           height: props.ui.isMobileView ? "90%" : '60%'
         }}>
-            
           {/* Show loader if expenses and monthly expenses aren't filled yet */}
-          {(!(expenses && monthlyExpenses)) ? (
+          {(isLoading) ? (
             <div
               style={{
                 margin: props.ui.isMobileView ? '75px' : '150px',

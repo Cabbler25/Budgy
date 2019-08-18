@@ -86,7 +86,10 @@ export default function NewExpense(props: any) {
         onClick={handleClickOpen}
         style={{ display: "inline-block" }}
         color='primary'> */}
-      <Button color="secondary" style={{ display: 'inline-block' }} onClick={handleClickOpen} aria-label="add">
+      <Button 
+      color="secondary" 
+      style={{ display: 'inline-block',margin:"5px" }} 
+      onClick={handleClickOpen} aria-label="add">
         <AddIcon />
       </Button>
       {/* <svg xmlns={addTool}
