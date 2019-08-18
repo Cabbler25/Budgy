@@ -70,7 +70,7 @@ function NavBar(props: INavProps) {
   // Called only twice when component mounts/unmounts.
   useEffect(() => {
     // Mobile view query
-    const mediaQuery = window.matchMedia('(min-width: 700px)');
+    const mediaQuery = window.matchMedia('(min-width: 800px)');
     const listener = () => {
       props.setMobileView(!mediaQuery.matches);
     }
