@@ -263,10 +263,10 @@ export default function BudgetTable(props: any) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDelete} color="secondary">
+          <Button onClick={handleCloseDelete} variant="text">
             Cancel
           </Button>
-          <Button onClick={deleteSelection} variant="text" autoFocus>
+          <Button onClick={deleteSelection}>
             Confirm Delete
           </Button>
         </DialogActions>
