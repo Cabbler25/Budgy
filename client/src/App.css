@@ -31,3 +31,11 @@
     transform: rotate(360deg);
   }
 }
+
+.new-expense-form{
+    padding: 4px;
+}
+
+.user-register{
+  padding: 10px
+}

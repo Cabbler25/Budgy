@@ -7,11 +7,11 @@ import './App.css';
 import colors from './assets/Colors';
 import Budget from './components/Budget.component';
 import Expenses from './components/Expenses.component';
-import Home from './components/Home.component';
 import Incomes from './components/Incomes.component';
 import Login from './components/Login.component';
 import Logout from './components/Logout.component';
 import NavBar from './components/Navbar.component';
+import Overview from './components/Overview.component';
 import Register from './components/Register.component';
 import User from './components/User.component';
 import { persistor, store } from './redux/Store';
@@ -30,6 +30,11 @@ const theme = createMuiTheme({
         backgroundColor: colors.teal
       }
     },
+    MuiTablePagination: {
+      root: {
+        marginLeft: '-35px'
+      }
+    }
   },
   // Override the props of any component
   props: {
@@ -55,10 +60,10 @@ const App: React.FC = () => {
       <PersistGate loading={null} persistor={persistor}>
         <MuiThemeProvider theme={theme}>
           <Router>
-            <div style={{ height: '7px', width: '100%', minWidth: '100%', backgroundColor: colors.darkGreen }} />
+            <div style={{ height: '7px', width: '100%', backgroundColor: colors.darkGreen }} />
             <NavBar />
             <br />
-            <Route path="/" exact component={Home} />
+            <Route path="/" exact component={Overview} />
             <Route path="/login" exact component={Login} />
             <Route path="/logout" exact component={Logout} />
             <Route path="/register" exact component={Register} />

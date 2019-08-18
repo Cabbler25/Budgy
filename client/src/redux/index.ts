@@ -10,6 +10,7 @@ export interface IUserState {
     first: string,
     last: string,
     username: string,
+    email: '',
     token: string
 }
 

@@ -6,25 +6,26 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import colors from '../assets/Colors';
+import Logo from '../assets/Logo.svg';
 import { IState, IUiState, IUserState } from '../redux';
 import { setMobileView } from '../redux/actions';
 import Login from './LoginPopover.component';
 import { Sidebar } from './Sidebar.component';
-import { StaticContext } from 'react-router';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  navbar: {
-    maxHeight: '50%',
-    height: '50%',
+  logo: {
     marginLeft: '5px',
+    marginRight: '5px'
+  },
+  navbar: {
     color: 'primary'
   },
   title: {
-    marginRight: '50px',
     textTransform: 'initial',
     color: colors.offWhite
   },
   nav_item: {
+    width: '85px',
     marginLeft: '10px',
     textTransform: 'initial',
     fontSize: '16px',
@@ -48,9 +49,6 @@ interface INavProps {
 function NavBar(props: INavProps) {
   const classes = useStyles(props);
 
-  // Mobile view query
-  const mediaQuery = window.matchMedia('(min-width: 700px)');
-
   // Login form
   const [loginOpen, setLoginOpen] = useState(false);
 
@@ -71,14 +69,18 @@ function NavBar(props: INavProps) {
   // Hook into React lifecycle methods.
   // Called only twice when component mounts/unmounts.
   useEffect(() => {
+    // Mobile view query
+    const mediaQuery = window.matchMedia('(min-width: 800px)');
     const listener = () => {
       props.setMobileView(!mediaQuery.matches);
     }
+
     // Add listener to update view type
     mediaQuery.addListener(listener);
 
     // Remove listener when component unmounts
     return () => mediaQuery.removeListener(listener);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLoginOpen = () => {
@@ -103,59 +105,98 @@ function NavBar(props: INavProps) {
 
   return (
     <Fragment>
-      <Sidebar open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} handleLogin={handleLoginOpen} />
-      <AppBar style={{ boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined }} position='sticky'>
+      <Sidebar history={props.history} open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} />
+      <AppBar style={{ borderBottom: !isTopView ? `1px solid ${colors.darkGreen}` : undefined, boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : 'rgba(75, 168, 118, 0.95)' }} position='sticky'>
         <Toolbar className={classes.navbar}>
           {props.ui.isMobileView &&
             <Button style={{ marginRight: '5px', maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>
               <Icon style={{ fontSize: 30, color: colors.offWhite }}>menu</Icon>
             </Button>}
           <Button className={classes.title} variant='text' component={Link} to="/">
-            <Typography variant={props.ui.isMobileView ? 'body1' : 'h5'}>Wataname</Typography>
+            <img alt='' width='30px' height='30px' src={Logo} />
+            <Typography style={{ fontSize: '20px', textTransform: 'initial' }} variant='button'>Budgy</Typography>
           </Button>
           {!props.ui.isMobileView &&
             <Fragment>
+              <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/"
+                style={{
+                  marginLeft: '50px',
+                  textDecoration: onPage('/') ? `underline` : undefined
+                }}>
+                Overview
+              </Button>
               <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/budget"
-                style={{ textDecoration: onPage('/budget') ? `underline` : undefined }}>
+                style={{
+                  textDecoration: onPage('/budget') ? `underline` : undefined
+                }}>
                 Budget
               </Button>
-              <Button className={classes.nav_item} variant='text' component={Link} to="/expenses"
-                style={{ textDecoration: onPage('/expenses') ? `underline` : undefined }}>
+              <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/expenses"
+                style={{
+                  textDecoration: onPage('/expenses') ? `underline` : undefined
+                }}>
                 Expenses
               </Button>
-              <Button className={classes.nav_item} variant='text' component={Link} to="/incomes"
-                style={{ textDecoration: onPage('/incomes') ? `underline` : undefined }}>
+              <Button size='small' className={classes.nav_item} variant='text' component={Link} to="/incomes"
+                style={{
+                  textDecoration: onPage('/incomes') ? `underline` : undefined
+                }}>
                 Incomes
               </Button>
             </Fragment>}
           <div className={classes.nav_right}>
-            {props.user.isLoggedIn ?
-              <Button className={classes.nav_item} variant='text' color='secondary' component={Link} to="/logout">
-                Logout
-              </Button>
-              :
+            {props.user.isLoggedIn ? (
               <List>
                 <ListItem>
-                  {props.ui.isMobileView ?
-                    <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
-                      style={{ borderColor: colors.offWhite, fontSize: '12px' }}
-                      component={Link} to='/login'>
-                      Login
-                    </Button>
-                    :
-                    <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
-                      style={{ borderColor: colors.offWhite }} onClick={handleLoginOpen}>
-                      Login
-                    </Button>}
-                  <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
-                  <Button className={classes.nav_item} size='small' variant='contained' color='secondary'
-                    style={{ backgroundColor: colors.orange, fontSize: props.ui.isMobileView ? '12px' : undefined }}
-                    component={Link} to="/register">
-                    Register
+                  <Button size='small' className={classes.nav_item} variant='text' color='secondary' component={Link} to="/user"
+                    style={{
+                      width: props.ui.isMobileView ? '90%' : undefined,
+                      marginRight: props.ui.isMobileView ? '-8px' : undefined,
+                      fontSize: props.ui.isMobileView ? '14px' : undefined
+                    }}>
+                    Account
+                  </Button>
+                  <Button size='small' className={classes.nav_item}
+                    variant='text' color='secondary'
+                    component={Link} to="/logout"
+                    style={{
+                      width: props.ui.isMobileView ? '90%' : undefined,
+                      marginRight: props.ui.isMobileView ? '-12px' : undefined,
+                      fontSize: props.ui.isMobileView ? '14px' : undefined
+                    }}>
+                    Logout
                   </Button>
                 </ListItem>
               </List>
-            }
+            ) : (
+                <List>
+                  <ListItem>
+                    {props.ui.isMobileView ? (
+                      <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
+                        style={{ width: '90%', borderColor: colors.offWhite, fontSize: '12px' }}
+                        component={Link} to='/login'>
+                        Login
+                      </Button>
+                    ) : (
+                        <Button className={classes.nav_item} id='loginButton' size='small' variant='outlined' color='secondary'
+                          style={{ borderColor: colors.offWhite }} onClick={handleLoginOpen}>
+                          Login
+                        </Button>
+                      )}
+                    <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
+                    <Button className={classes.nav_item} size='small' variant='contained' color='secondary'
+                      style={{
+                        marginRight: props.ui.isMobileView ? '-8px' : undefined,
+                        width: props.ui.isMobileView ? '90%' : undefined,
+                        backgroundColor: colors.orange,
+                        fontSize: props.ui.isMobileView ? '12px' : undefined
+                      }}
+                      component={Link} to="/register">
+                      Register
+                    </Button>
+                  </ListItem>
+                </List>
+              )}
           </div>
         </Toolbar>
       </AppBar >
