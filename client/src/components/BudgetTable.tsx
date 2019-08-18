@@ -328,9 +328,10 @@ export default function BudgetTable(props: any) {
         </Table>
       </div>
       <TablePagination
-        style={{ padding: '0px' }}
+        style={{ marginLeft: '-35px' }}
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
+        colSpan={1}
         count={props.data.length}
         rowsPerPage={rowsPerPage}
         page={page}
