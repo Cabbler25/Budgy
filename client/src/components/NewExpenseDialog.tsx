@@ -1,4 +1,4 @@
-import { Container,Paper, TextField, InputAdornment } from '@material-ui/core';
+import { Container, Paper, TextField, InputAdornment, IconButton } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -10,7 +10,7 @@ import Select from '@material-ui/core/Select';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import React, { Fragment, useEffect } from 'react';
 import { Row } from 'reactstrap';
-import { addTool, addPath } from '../assets/Icons';
+import AddIcon from '@material-ui/icons/AddCircle';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,27 +32,30 @@ export default function NewExpense(props: any) {
     type: 0,
     description: '',
     amount: 0,
-    date:new Date().toISOString().slice(0,10),
-    formFilled:true
+    date: new Date().toISOString().slice(0, 10),
+    formFilled: true
   });
 
   const handleChange = (name: keyof typeof state) => (
     event: React.ChangeEvent<{ value: unknown }>,
   ) => {
-    setState({ ...state, 
+    setState({
+      ...state,
       [name]: event.target.value
     });
   };
 
   function handleClickOpen() {
-    setState({ type:0,
-      date:new Date().toISOString().slice(0,10),
-      description:'',amount:0, open: true,formFilled:true });
+    setState({
+      type: 0,
+      date: new Date().toISOString().slice(0, 10),
+      description: '', amount: 0, open: true, formFilled: true
+    });
   }
 
   useEffect(() => {
     if (props.tableView) {
-      setState({...state,type:props.type});
+      setState({ ...state, type: props.type });
     }
   });
 
@@ -61,15 +64,15 @@ export default function NewExpense(props: any) {
     if (state.type && state.description && state.amount) {
       // If user is in table view, the expense type is passed from the parent
       props.tableView ?
-      props.createExpense(props.types.find((type:any) => type.type == state.type),
-      state.description,state.amount,state.date)
-      :
-      props.createExpense(props.types.find((type:any) => type.id == state.type),
-      state.description,state.amount,state.date)
+        props.createExpense(props.types.find((type: any) => type.type == state.type),
+          state.description, state.amount, state.date)
+        :
+        props.createExpense(props.types.find((type: any) => type.id == state.type),
+          state.description, state.amount, state.date)
       // Close popover
       handleClose();
     } else {
-      setState({...state,formFilled:false});
+      setState({ ...state, formFilled: false });
     }
   }
 
@@ -79,126 +82,130 @@ export default function NewExpense(props: any) {
 
   return (
     <Fragment>
-      <Button 
-      onClick={handleClickOpen}
-      style={{display:"inline-block"}}
-      color='primary'>
-        <svg xmlns={addTool}  
-        width="24" height="24" viewBox="0 0 24 24">
-        <path d={addPath}/>
-        </svg>
+      {/* <Button
+        onClick={handleClickOpen}
+        style={{ display: "inline-block" }}
+        color='primary'> */}
+      <Button color="secondary" style={{ display: 'inline-block' }} onClick={handleClickOpen} aria-label="add">
+        <AddIcon />
       </Button>
+      {/* <svg xmlns={addTool}
+          width="24" height="24" viewBox="0 0 24 24">
+          <path d={addPath} />
+        </svg>
+      </Button> */}
       <Dialog disableBackdropClick disableEscapeKeyDown open={state.open} onClose={handleClose}>
         <DialogContent>
           <form className={classes.container}>
             <FormControl className={classes.formControl}>
-            {/* In each field, is checked if it's properly filled before sending the request */}
+              {/* In each field, is checked if it's properly filled before sending the request */}
               <Paper>
-                  <Container style={{textAlign: "center"}}>
-                    <Row>
-                      <h4>
-                        {
-                          (!props.tableView) ?
+                <Container style={{ textAlign: "center" }}>
+                  <Row>
+                    <h4>
+                      {
+                        (!props.tableView) ?
                           props.view ? "Add expense" : `Add New Expense` :
-                          `Add ${props.type} expense` 
-                        } 
-                      </h4>
-                    </Row>
-                    <Row className="new-expense-form">
-                        <TextField
-                        name="amount"
-                        className="new-expense-form"
-                        placeholder="0.00"
-                        label={
-                          state.formFilled ?
+                          `Add ${props.type} expense`
+                      }
+                    </h4>
+                  </Row>
+                  <Row className="new-expense-form">
+                    <TextField
+                      name="amount"
+                      className="new-expense-form"
+                      placeholder="0.00"
+                      label={
+                        state.formFilled ?
                           props.view ? "Amount" : "Expense Amount"
                           :
                           state.amount ?
-                          "Amount"
-                          :
-                          "Required"
-                        }
-                        error={state.formFilled?
-                          false
-                          :
-                          state.amount?
+                            "Amount"
+                            :
+                            "Required"
+                      }
+                      error={state.formFilled ?
+                        false
+                        :
+                        state.amount ?
                           false :
                           true}
-                        type="number"
-                        onChange={handleChange("amount")}
-                        InputProps={{
-                          startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                        }}
-                        />
-                    </Row>
-                    <Row className="new-expense-form">
+                      type="number"
+                      onChange={handleChange("amount")}
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      }}
+                    />
+                  </Row>
+                  <Row className="new-expense-form">
                     <TextField
                       id="date"
                       label="Pay on"
                       type="date"
-                      defaultValue={state.date}
+                      defaultValue={props.view?'':state.date}
                       onChange={handleChange('date')}
+                      style={{width:'100%'}}
                       InputLabelProps={{
                         shrink: true,
                       }}
                     />
-                    </Row>
-                    <Row className="new-expense-form">
-                        <TextField
-                        name="description"
-                        className="new-expense-form"
-                        placeholder="A brief description of the expense..."
-                        error={state.formFilled?
-                          false
-                          :
-                          state.description ?
-                          false :
-                          true}
-                        label={
-                          state.formFilled ?
-                          "Description"
-                          :
-                          state.description ?
-                          "Description"
-                          :
-                          "Required"
-                        }
-                        type="text"
-                        multiline={true}
-                        rows={props.view ? 4 : 5}
-                        onChange={handleChange("description")}/>
-                    </Row>
-                    {
-                      (!props.tableView) &&
-                    <Row className="new-expense-form">
-                      <Select
-                      value={state.type}
-                      onChange={handleChange('type')}
-                      input={<Input id="expense-type" />}
-                      error={state.formFilled?
+                  </Row>
+                  <Row className="new-expense-form">
+                    <TextField
+                      name="description"
+                      className="new-expense-form"
+                      placeholder="A brief description of the expense..."
+                      error={state.formFilled ?
                         false
                         :
-                        state.type ?
-                        false :
-                        true}
+                        state.description ?
+                          false :
+                          true}
+                      label={
+                        state.formFilled ?
+                          "Description"
+                          :
+                          state.description ?
+                            "Description"
+                            :
+                            "Required"
+                      }
+                      type="text"
+                      multiline={true}
+                      rows={props.view ? 4 : 5}
+                      onChange={handleChange("description")} />
+                  </Row>
+                  {
+                    (!props.tableView) &&
+                    <Row className="new-expense-form">
+                      <Select
+                        value={state.type}
+                        onChange={handleChange('type')}
+                        input={<Input id="expense-type" />}
+                        error={state.formFilled ?
+                          false
+                          :
+                          state.type ?
+                            false :
+                            true}
                       >
                         <MenuItem value={0}>
-                        <em style={
-                          {color:state.formFilled?"black":state.type?"black":"red"}
+                          <em style={
+                            { color: state.formFilled ? "black" : state.type ? "black" : "red" }
                           }>
-                          { state.formFilled ?
-                            props.view ? 
-                            "Type" : 
-                            "Select expense type":
-                            "Required"}
-                        </em>
+                            {state.formFilled ?
+                              props.view ?
+                                "Type" :
+                                "Select expense type" :
+                              "Required"}
+                          </em>
                         </MenuItem>
-                        {props.types.map((t:any) =>(<MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>)
+                        {props.types.map((t: any) => (<MenuItem key={t.id} value={t.id}>{t.type}</MenuItem>)
                         )}
                       </Select>
                     </Row>
-                    }
-                  </Container>
+                  }
+                </Container>
               </Paper>
             </FormControl>
           </form>

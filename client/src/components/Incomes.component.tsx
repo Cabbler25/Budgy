@@ -7,6 +7,7 @@ import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
 import { IncomesTable } from './IncomeTablesComponent';
 import NewIncome from './NewIncomesDialog';
+import { List, ListItem } from '@material-ui/core';
 
 
 export interface IIncomeProps {
@@ -162,9 +163,7 @@ function Incomes(props: IIncomeProps) {
         }
         <h2>Manage your income, {props.user.first}</h2>
         <br />
-        <NewIncome
-          types={incomeTypes}
-          createIncome={createNewIncome} />
+
         <br />
 
         {//<Grid item xs={12} md={9}>
@@ -172,11 +171,19 @@ function Incomes(props: IIncomeProps) {
         <div>
           {showTable ? (
             <Fragment>
-              <Button
-                color="secondary"
-                onClick={() => setShowTable(false)}>
-                Back
+              <List style={{ display: "inline-block" }}>
+                <ListItem>
+                  <NewIncome
+                    types={incomeTypes}
+                    createIncome={createNewIncome} />
+                  <Button
+                    style={{ display: "inline-block", marginLeft: "5px" }}
+                    color="secondary"
+                    onClick={() => setShowTable(false)}>
+                    Back
                 </Button>
+                </ListItem>
+              </List>
               <IncomesTable incomes={incomesByUserAndType} deleteIncome={deleteIncome} updateIncome={updateIncome} />
             </Fragment>
           ) : (
@@ -184,6 +191,10 @@ function Incomes(props: IIncomeProps) {
                 {incomes && (<DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
                   isMobileView={props.ui.isMobileView}
                   handleElementClick={handleElementClick} />)}
+                < br />
+                <NewIncome
+                  types={incomeTypes}
+                  createIncome={createNewIncome} />
               </Fragment>
             )}
           {//

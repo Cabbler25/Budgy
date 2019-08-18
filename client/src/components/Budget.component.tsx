@@ -210,109 +210,130 @@ export function Budget(props: IBudgetProps) {
 
   return (
     <>
-      {budgets && <h2 style={{ textAlign: 'center', color: colors.offWhite }}>Here's your monthly budget</h2>}
-      <Paper style={{
-        opacity: 0.85,
-        width: props.ui.isMobileView ? '90%' : '55%',
-        height: props.ui.isMobileView ? '95%' : '60%',
-        maxWidth: '90%',
-        maxHeight: '95%',
-        margin: '10px auto', padding: '20px 10px 20px 10px'
-      }}>
-        {!budgets ? (
-          <div style={{ textAlign: 'center' }}>
-            <b>Budgets allow you to set goals, easily visualize your limits, and even earn </b>
-            <Link to="/rewards">rewards!</Link>
-            <br />
-            <br />
-            <Divider />
-            <br />
-            {!isLoading ? (
-              <Fragment>
-                <h2>Creating a budget is quick and easy.<br />To get started,</h2>
-                {isCreatingBudget ? (
-                  <CreateBudgetStepper
-                    isMobileView={props.ui.isMobileView} userId={props.user.id}
-                    types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
-                ) : (
-                    <Button style={{ marginBottom: '10px' }} onClick={() => setIsCreatingBudget(true)} size="large" color="secondary">
-                      Create a Budget
-                  </Button>
-                  )}
-              </Fragment>
-            ) : (
-                <div style={styles.loadingDiv}>
-                  <BarLoader width={150} color={'#009688'} loading={isLoading} />
-                </div>
-              )}
-          </div>
-        ) : (
-            <Fragment>
-              <div style={{ textAlign: 'center' }}>
-                <AppBar position="static">
-                  <Tabs
-                    centered={!props.ui.isMobileView}
-                    value={tabIndex}
-                    onChange={handlePanelChange}
-                    variant={props.ui.isMobileView ? "fullWidth" : undefined}
-                  >
-                    <Tab style={{ color: colors.offWhite }} label="Donut Chart" {...a11yProps(0)} />
-                    <Tab style={{ color: colors.offWhite }} label="Bar Chart" {...a11yProps(1)} />
-                    <Tab onClick={() => setTableBudgets(budgets)} style={{ color: colors.offWhite }} label="Table" {...a11yProps(2)} />
-                  </Tabs>
-                </AppBar>
-                <HorizontalTabPanel value={tabIndex} index={0}>
-                  <Fragment>
-                    <h3 style={{ marginTop: '-5px', marginBottom: '-1px' }}>
-                      Monthly budget: ${budgetTotal}</h3>
-                    <i style={{ color: 'grey', fontSize: '14px' }}>Click a category to amend your budget.</i> <br />
-                    <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                      isMobileView={props.ui.isMobileView}
-                      handleElementClick={handleElementClick} />
-                  </Fragment>
-                </HorizontalTabPanel>
-                <HorizontalTabPanel value={tabIndex} index={1}>
-                  <Fragment>
-                    <h3 style={{ marginTop: '-5px', marginBottom: '-1px' }}>
-                      Monthly budget: ${budgetTotal}</h3>
-                    <i style={{ color: 'grey', fontSize: '14px' }}>Click a category to amend your budget.</i> <br />
-                    {props.ui.isMobileView ? (
-                      <VerticalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                        isMobileView={props.ui.isMobileView}
-                        handleElementClick={handleElementClick} />
-                    ) : (
-                        <HorizontalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                          isMobileView={props.ui.isMobileView}
-                          handleElementClick={handleElementClick} />
-                      )}
-                  </Fragment>
-                </HorizontalTabPanel>
-                <HorizontalTabPanel value={tabIndex} index={2}>
-                  <h3 style={{ marginTop: '-5px', marginBottom: '-1px' }}>
-                    Monthly budget: ${budgetTotal}</h3>
-                  <i style={{ color: 'grey', fontSize: '14px' }}>Select a budget to make changes.</i> <br />
-                  <BudgetTable data={tableBudgets} isMobileView={props.ui.isMobileView} types={budgetTypes}
-                    handleDeleteBudget={handleDeleteBudget}
-                    handleUpdateBudget={handleUpdateBudget} />
-                </HorizontalTabPanel>
-                {isCreatingBudget ? (
-                  <CreateBudgetStepper
-                    isMobileView={props.ui.isMobileView} userId={props.user.id}
-                    types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
-                ) : (
+      {!props.user.isLoggedIn ? (
+        <div style={{ marginTop: '50px', marginRight: '10px', marginLeft: '10px', textAlign: 'center', color: colors.offWhite }}>
+          <h2 style={{ marginBottom: '40px' }}>
+            Budgets allow you to easily set goals for yourself
+            <br /> and see how your spending stacks up.
+            <br /><br />To get started,
+          </h2>
+          <Button style={{ border: `1px solid ${colors.offWhite}`, color: colors.offWhite }}
+            variant='text' component={Link} to='/login'>
+            Login
+            </Button>
+          <b style={{ marginLeft: '10px', marginRight: '10px' }}>or</b>
+          <Button component={Link} to='/register' style={{ backgroundColor: colors.orange }}>
+            Register
+            </Button>
+        </div>
+      ) : (
+          <>
+            {budgets && <h2 style={{ textAlign: 'center', color: colors.offWhite }}>Here's your monthly budget</h2>}
+            < Paper style={{
+              opacity: 0.85,
+              width: props.ui.isMobileView ? '90%' : '55%',
+              height: props.ui.isMobileView ? '95%' : '60%',
+              maxWidth: '90%',
+              maxHeight: '95%',
+              margin: '10px auto', padding: '20px 10px 20px 10px'
+            }}>
+              {!budgets ? (
+                <div style={{ textAlign: 'center' }}>
+                  <b>Budgets allow you to set goals, easily visualize your limits, and even earn </b>
+                  <Link to="/rewards">rewards!</Link>
+                  <br />
+                  <br />
+                  <Divider />
+                  <br />
+                  {!isLoading ? (
                     <Fragment>
-                      <br /> <b style={{ marginTop: tabIndex === 2 ? '-15px' : '10px' }}>Missing something?</b> <br />
-                      <Button
-                        style={{ marginTop: '10px' }} size="small" color="secondary"
-                        onClick={handleCreateBudget}>
-                        Add another budget
-                    </Button>
+                      <h2>Creating a budget is quick and easy.<br />To get started,</h2>
+                      {isCreatingBudget ? (
+                        <CreateBudgetStepper
+                          isMobileView={props.ui.isMobileView} userId={props.user.id}
+                          types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
+                      ) : (
+                          <Button style={{ marginBottom: '10px' }} onClick={() => setIsCreatingBudget(true)} size="large" color="secondary">
+                            Create a Budget
+                  </Button>
+                        )}
                     </Fragment>
-                  )}
-              </div>
-            </Fragment>
-          )}
-      </Paper>
+                  ) : (
+                      <div style={styles.loadingDiv}>
+                        <BarLoader width={150} color={'#009688'} loading={isLoading} />
+                      </div>
+                    )}
+                </div>
+              ) : (
+                  <Fragment>
+                    <div style={{ textAlign: 'center' }}>
+                      <AppBar position="static">
+                        <Tabs
+                          centered={!props.ui.isMobileView}
+                          value={tabIndex}
+                          onChange={handlePanelChange}
+                          variant={props.ui.isMobileView ? "fullWidth" : undefined}
+                        >
+                          <Tab style={{ color: colors.offWhite }} label="Donut Chart" {...a11yProps(0)} />
+                          <Tab style={{ color: colors.offWhite }} label="Bar Chart" {...a11yProps(1)} />
+                          <Tab onClick={() => setTableBudgets(budgets)} style={{ color: colors.offWhite }} label="Table" {...a11yProps(2)} />
+                        </Tabs>
+                      </AppBar>
+                      <HorizontalTabPanel value={tabIndex} index={0}>
+                        <Fragment>
+                          <h3 style={{ marginTop: '-5px', marginBottom: '-1px' }}>
+                            Monthly budget: ${budgetTotal}</h3>
+                          <i style={{ color: 'grey', fontSize: '14px' }}>Click a category to amend your budget.</i> <br />
+                          <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                            isMobileView={props.ui.isMobileView}
+                            handleElementClick={handleElementClick} />
+                        </Fragment>
+                      </HorizontalTabPanel>
+                      <HorizontalTabPanel value={tabIndex} index={1}>
+                        <Fragment>
+                          <h3 style={{ marginTop: '-5px', marginBottom: '-1px' }}>
+                            Monthly budget: ${budgetTotal}</h3>
+                          <i style={{ color: 'grey', fontSize: '14px' }}>Click a category to amend your budget.</i> <br />
+                          {props.ui.isMobileView ? (
+                            <VerticalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                              isMobileView={props.ui.isMobileView}
+                              handleElementClick={handleElementClick} />
+                          ) : (
+                              <HorizontalBarGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                                isMobileView={props.ui.isMobileView}
+                                handleElementClick={handleElementClick} />
+                            )}
+                        </Fragment>
+                      </HorizontalTabPanel>
+                      <HorizontalTabPanel value={tabIndex} index={2}>
+                        <h3 style={{ marginTop: '-5px', marginBottom: '-1px' }}>
+                          Monthly budget: ${budgetTotal}</h3>
+                        <i style={{ color: 'grey', fontSize: '14px' }}>Select a budget to make changes.</i> <br />
+                        <BudgetTable data={tableBudgets} isMobileView={props.ui.isMobileView} types={budgetTypes}
+                          handleDeleteBudget={handleDeleteBudget}
+                          handleUpdateBudget={handleUpdateBudget} />
+                      </HorizontalTabPanel>
+                      {isCreatingBudget ? (
+                        <CreateBudgetStepper
+                          isMobileView={props.ui.isMobileView} userId={props.user.id}
+                          types={budgetTypes} handleSubmit={createBudget} handleCancel={handleCancelCreate} />
+                      ) : (
+                          <Fragment>
+                            <br /> <b style={{ marginTop: tabIndex === 2 ? '-15px' : '10px' }}>Missing something?</b> <br />
+                            <Button
+                              style={{ marginTop: '10px' }} size="small" color="secondary"
+                              onClick={handleCreateBudget}>
+                              Add another budget
+                            </Button>
+                          </Fragment>
+                        )}
+                    </div>
+                  </Fragment>
+                )}
+            </Paper>
+          </>
+        )
+      }
     </>
   );
 }
