@@ -162,7 +162,7 @@ export function IncomesTable(props: any) {
                         setEditRow(false);
                         setEditRowKey(0);
                       }}>
-                        <svg xmlns={okTool} width="24" height="24" viewBox="0 0 24 24">
+                        <svg fill={colors.offWhite} xmlns={okTool} width="24" height="24" viewBox="0 0 24 24">
                           <path d={okPath} />
                         </svg>
                       </Button>
@@ -173,7 +173,7 @@ export function IncomesTable(props: any) {
                         setEditRowKey(0);
                         setState(row);
                       }}>
-                        <svg xmlns={undoTool}
+                        <svg xmlns={undoTool} fill={colors.offWhite}
                           width="24" height="24" viewBox="0 0 24 24">
                           <path d={undoPath} />
                         </svg>
