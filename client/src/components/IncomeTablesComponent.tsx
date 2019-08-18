@@ -50,6 +50,10 @@ export function IncomesTable(props: any) {
   }
 
   const handleEditedIncomeChange = (e: any) => {
+    if (e.target.name == 'amount') {
+      e.target.value = Number(e.target.value);
+    }
+    console.log(e.target.value);
     setState({
       ...state, [e.target.name]: e.target.value
     });
