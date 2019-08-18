@@ -157,25 +157,34 @@ function Expenses(props: IExpenseProps) {
     };
     // console.log("this is the new expense before posting it:", data);
     await Axios.post(url, data)
-      .then(() => {
-        const newExpense = {
-          id: Math.max.apply(Math, expenses.map(function (exp: any) { return exp.id; })) + 1,
-          ...data
-        };
-        getAllExpenses();
-        getAllMonthlyExpenses();
+      .then((payload) => {
+        //getAllExpenses();
+        //getAllMonthlyExpenses();
+        // Handle date conversion
+        const newDateFormatted = new Date(payload.data.date).toISOString().slice(0,10);
+        payload.data.date = newDateFormatted; 
+        // Update arrays for properly visualize the new expense added
+        setExpenses(expenses.concat(payload.data));
+        setMonthlyExpenses(monthlyExpenses.concat(payload.data));
+        // Update the table view too
+        const withNewExpense = expenses.concat(payload.data);
+        const withNewMonthlyExpense = monthlyExpenses.concat(payload.data);
         if (showTable) {
-          // Also show the new expense in monthly perspective
-          if (showMonthly) {
-              setMonthlyExpenses(monthlyExpenses.push(newExpense));
-              handleElementClick(newExpense.expenseType.type);
-          }
-          setExpenses(expenses.push(newExpense));
-          handleElementClick(newExpense.expenseType.type);
+            if (showMonthly) {
+              const matchedExpenses = withNewMonthlyExpense.filter((expense: any) =>
+              expense.expenseType.type == payload.data.expenseType.type);
+              setExpensesByUserIdAndTypeId(matchedExpenses);
+            }
+            const matchedExpenses = withNewExpense.filter((expense: any) =>
+            expense.expenseType.type == payload.data.expenseType.type);
+            setExpensesByUserIdAndTypeId(matchedExpenses);
+            // Also show the new expense in monthly perspective
+            //handleElementClick(payload.data.expenseType.type);
         }
-        setIsLoading(false);
       });
+      setIsLoading(false);
   }
+
   // Request function to delete an existing expense
   async function deleteExpense(expense: any) {
     setIsLoading(true);
@@ -212,16 +221,8 @@ function Expenses(props: IExpenseProps) {
     function checkId(exp: any) {
       return exp.id === expense.id;
     }
-    // Update the expenses state in general (parent component)
-    if (showMonthly) {
-      const updatedExpenseIndex = monthlyExpenses.findIndex(checkId);
-      monthlyExpenses[updatedExpenseIndex] = expense;
-      
-      setMonthlyExpenses(monthlyExpenses);
-    }
-    const updatedExpenseIndex = expenses.findIndex(checkId);
-    expenses[updatedExpenseIndex] = expense;
-    setExpenses(expenses);
+    // Update the expenses and monthly expenses state in general (parent component)
+
     // Send the request
     const url = `http://localhost:8080/expense`;
     await Axios.put(url,expense)
@@ -230,14 +231,19 @@ function Expenses(props: IExpenseProps) {
       await getAllMonthlyExpenses();
       // Also update the expenses in the table perspective
       if (showTable) {
-        // console.log(expenses);
         // Update monthly expenses too
         if (showMonthly) {
-          const matchedExpenses = monthlyExpenses.filter((expense: any) =>
+          const updatedExpenseIndex = monthlyExpenses.findIndex(checkId);
+          const monthlyExpensesCopy = monthlyExpenses;
+          monthlyExpensesCopy[updatedExpenseIndex] = expense;
+          const matchedExpenses = monthlyExpensesCopy.filter((expense: any) =>
           expense.expenseType.type == expenseType);
           setExpensesByUserIdAndTypeId(matchedExpenses);  
         } else {
-          const matchedExpenses = expenses.filter((expense: any) =>
+          const updatedExpenseIndex = expenses.findIndex(checkId);
+          const expensesCopy = expenses;
+          expensesCopy[updatedExpenseIndex] = expense;
+          const matchedExpenses = expensesCopy.filter((expense: any) =>
           expense.expenseType.type == expenseType);
           setExpensesByUserIdAndTypeId(matchedExpenses);
         }
@@ -271,6 +277,7 @@ function Expenses(props: IExpenseProps) {
         </> ) :
       (
       <>
+      
         {
           showTable ?
             <h2 style={{ color: colors.offWhite }}> Your {expenseType} expenses</h2>:
@@ -335,7 +342,7 @@ function Expenses(props: IExpenseProps) {
                     {expenses &&
                       <div>
                         <h3>{showMonthly?"This month":"Overall"} expenses:  
-                        {showMonthly?" $"+totalMonthlyExpenses:" $"+totalExpenses}</h3>
+                        {isLoading?"...":showMonthly?" $"+totalMonthlyExpenses:" $"+totalExpenses}</h3>
                         <i style={{ color: 'grey', fontSize: '14px' }}>
                           Click on any section of the graphic to view details</i>
                         <DonutGraph

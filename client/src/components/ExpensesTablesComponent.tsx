@@ -346,38 +346,21 @@ export function ExpensesTable(props: any) {
                             name="date"
                             onChange={(e:any)=>handleEditedExpenseChange(e)}/>
                         </Typography>
-                    <Typography variant="h6" component="h4">
-                      <Input
-                        fullWidth={false}
-                        type="number"
-                        defaultValue={state.amount}
-                        name="amount"
-                        onChange={(e: any) => handleEditedExpenseChange(e)} />
-                    </Typography>
-                    <Typography className={cardClasses.title}
-                      color="textSecondary" gutterBottom>
-                      pay on:
+                        <Typography className={cardClasses.title} 
+                        color="textSecondary" gutterBottom>
+                          description:  
                         </Typography>
                         <Typography variant="h6" component="h4">
                           <Input
-                          disabled={props.view?false:true}
-                          style={{color:props.view?undefined:"black"}}
-                          fullWidth={false}
-                          multiline={true}
-                          defaultValue={state.description}
-                          name="description"
-                          onChange={(e:any)=>handleEditedExpenseChange(e)}
-                          rowsMax="3"/>
+                            disabled={props.view?false:true}
+                            style={{color:props.view?undefined:"black"}}
+                            fullWidth={false}
+                            multiline={true}
+                            defaultValue={state.description}
+                            name="description"
+                            onChange={(e: any) => handleEditedExpenseChange(e)}
+                            rowsMax="3" />
                         </Typography>
-                    <Typography variant="h6" component="h4">
-                      <Input
-                        fullWidth={false}
-                        multiline={true}
-                        defaultValue={state.description}
-                        name="description"
-                        onChange={(e: any) => handleEditedExpenseChange(e)}
-                        rowsMax="3" />
-                    </Typography>
                   </CardContent>
                 </Card>
                 <br />
