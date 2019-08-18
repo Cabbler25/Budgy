@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.models.Expense;
 import com.revature.models.ExpenseType;
+import com.revature.models.TotalExpense;
 import com.revature.services.ExpenseService;
 
 @RestController
@@ -44,9 +46,15 @@ public class ExpenseController {
 	public List<Expense> getExpenseByUserId(@PathVariable int userId) {
 		return expenseService.findByUserId(userId);
 	}
+
 	@RequestMapping(value = "/user/{userId}/monthly", method = RequestMethod.GET)
-	public List<Expense> getMonthlyExpensesByUserId(@PathVariable int userId){
+	public List<Expense> getMonthlyExpensesByUserId(@PathVariable int userId) {
 		return expenseService.findMonthlyExpensesByUserId(userId);
+	}
+
+	@GetMapping("/user/{userId}/yearly")
+	public List<TotalExpense> getPastYearsExpensesByUserId(@PathVariable int userId) {
+		return expenseService.findTotalMonthlyExpensesForYearByUserId(userId);
 	}
 
 //	Endpoint for getting expenses by type id

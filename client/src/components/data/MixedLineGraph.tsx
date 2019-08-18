@@ -1,31 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import colors from '../../assets/Colors';
-
-const data = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-  datasets: [{
-    label: 'Expenses',
-    type: 'line',
-    data: [51, 65, 40, 49, 60, 37, 40],
-    fill: false,
-    borderColor: colors.lightGreen,
-    backgroundColor: colors.lightGreen,
-    pointBorderColor: colors.lightGreen,
-    pointBackgroundColor: colors.lightGreen,
-    pointHoverBackgroundColor: colors.lightGreen,
-    pointHoverBorderColor: colors.lightGreen,
-  }, {
-    type: 'bar',
-    label: 'Budgets',
-    data: [200, 185, 590, 621, 250, 400, 95],
-    fill: false,
-    backgroundColor: colors.lightGreen,
-    borderColor: colors.lightGreen,
-    hoverBackgroundColor: colors.lightGreen,
-    hoverBorderColor: colors.lightGreen,
-  }]
-};
 
 function shadeColor(col: string, amt: number) {
   let usePound = false;
@@ -104,6 +79,7 @@ export default function MixedLineGraph(props: any) {
       }, {
         type: 'bar',
         label: 'Expenses',
+
         data: dataArr[0],
         fill: false,
         backgroundColor: expenseColors,
@@ -120,7 +96,17 @@ export default function MixedLineGraph(props: any) {
         <Bar
           data={data}
           width={500}
-          height={300}
+          height={props.isMobileView ? 500 : 400}
+          options={{
+            scales: {
+              yAxes: [{
+                display: true,
+                ticks: {
+                  beginAtZero: true
+                }
+              }],
+            },
+          }}
         />
       ) : (
           <></>
