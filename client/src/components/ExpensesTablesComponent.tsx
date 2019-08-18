@@ -8,41 +8,15 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
-import { useState, Fragment } from 'react';
+import React,{ useState, Fragment } from 'react';
 import colors from '../assets/Colors';
 
 /*
 TODO: 
 - If user clicks on update button, show a dialog that says
   confirm changes OK - Cancel
-- Add editable feature to the date like the other fields
 - Try adding monthly checkbox, that will display only expenses for current month
-- Instead of delete expense, should be pay expense (so the payment should be 
-  deducted from budget of the specific type)
 */
-
-const StyledTableCell = withStyles((theme: Theme) =>
-  createStyles({
-    head: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-    },
-    body: {
-      fontSize: 14,
-    },
-  }),
-)(TableCell);
-
-// const StyledTableRow = withStyles((theme: Theme) =>
-//   createStyles({
-//     root: {
-//       '&:nth-of-type(odd)': {
-//         backgroundColor: theme.palette.background.paper,
-//       },
-//     },
-//   }),
-// )(TableRow);
-
 
 export function ExpensesTable(props: any) {
   // Declare the boolean that will change the display of the row from read only to write
@@ -99,6 +73,19 @@ export function ExpensesTable(props: any) {
       setEditDialog(false);
     }
   }
+
+  const StyledTableCell = withStyles((theme: Theme) =>
+    createStyles({
+      head: {
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
+        fontSize: props.view?14:17
+      },
+      body: {
+        fontSize: 14,
+      },
+    }),
+  )(TableCell);
 
   // Define table styles
   const useStyles = makeStyles((theme: Theme) =>
@@ -171,8 +158,8 @@ export function ExpensesTable(props: any) {
                       <Input
                       fullWidth={false}
                       disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
-                      style={{fontSize:'13.3px',
-                      color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
+                      style={{fontSize:props.view?'13.3px':"17px",
+                      color:(editableRow && (editableRowKey === row.id)) ?colors.darkGreen:"black"}}
                       type="number"
                       value={(editableRow && (editableRowKey === row.id)) ?state.amount:row.amount}
                       name="amount"
@@ -187,8 +174,8 @@ export function ExpensesTable(props: any) {
                       <Input
                       fullWidth={false}
                       disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
-                      style={{fontSize:'13.3px',
-                      color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
+                      style={{fontSize:props.view?'13.3px':"17px",
+                      color:(editableRow && (editableRowKey === row.id)) ?colors.darkGreen:"black"}}
                       type="date"
                       value={(editableRow && (editableRowKey === row.id)) ?state.date:row.date}
                       name="date"
@@ -204,8 +191,8 @@ export function ExpensesTable(props: any) {
                       <Input
                       fullWidth={false}
                       disabled={(editableRow && (editableRowKey === row.id)) ?false:true}
-                      style={{fontSize:'13.3px',
-                      color:(editableRow && (editableRowKey === row.id)) ?"black":"grey"}}
+                      style={{fontSize:props.view?'13.3px':"17px",
+                      color:(editableRow && (editableRowKey === row.id)) ?colors.darkGreen:"black"}}
                       multiline={true}
                       value={(editableRow && (editableRowKey === row.id)) ?state.description:row.description}
                       name="description"
@@ -219,11 +206,7 @@ export function ExpensesTable(props: any) {
                     // If row is in edit mode
                     <Fragment>
                       <TableCell>
-                        <Button onClick={() => {
-                          props.updateExpense(state);
-                          setEditableRow(false);
-                          setEditableRowKey(0);
-                        }}>
+                        <Button onClick={() => {setEditDialog(true);}}>
                           <svg xmlns={okTool} width="24" height="24" viewBox="0 0 24 24">
                             <path d={okPath} />
                           </svg>
@@ -325,9 +308,7 @@ export function ExpensesTable(props: any) {
                 </Dialog>
             </Paper>
             }
-            {/* Display the delete confirm delete dialog when the user clicks on the 
-            delete icon. It shows the information of the expense before deleting
-            it. User can select between cancel or delete. */}
+            {/* Display the update confirm dialog. */}
             {      
               editDialog &&
               <Paper style={{textAlign: "center"}}>
@@ -343,6 +324,8 @@ export function ExpensesTable(props: any) {
                         </Typography>
                         <Typography variant="h6" component="h4">
                           <Input
+                          disabled={props.view?false:true}
+                          style={{color:props.view?undefined:"black"}}
                           fullWidth={false}
                           type="number"
                           defaultValue={state.amount}
@@ -355,6 +338,8 @@ export function ExpensesTable(props: any) {
                         </Typography>
                         <Typography variant="h6" component="h4">
                           <Input
+                            disabled={props.view?false:true}
+                            style={{color:props.view?undefined:"black"}}
                             fullWidth={false}
                             type="date"
                             defaultValue={state.date}
@@ -367,6 +352,8 @@ export function ExpensesTable(props: any) {
                         </Typography>
                         <Typography variant="h6" component="h4">
                           <Input
+                          disabled={props.view?false:true}
+                          style={{color:props.view?undefined:"black"}}
                           fullWidth={false}
                           multiline={true}
                           defaultValue={state.description}
