@@ -80,12 +80,13 @@ export function CreateBudgetStepper(props: any) {
         return (
           <TextField
             error={hasError}
-            style={{ width: props.isMobileView ? '300px' : '400px' }}
+            style={{ width: props.isMobileView ? '97%' : '400px' }}
             id='description'
             value={inputState.description}
             label='Description'
             variant='outlined'
             onChange={handleInputChange}
+            helperText={hasError ? 'Required' : undefined}
           />
         );
       case 0:

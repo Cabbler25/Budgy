@@ -158,48 +158,45 @@ export function ChangePw(props: IUpdatePWProps) {
   return (
     <div>
       <Button size="small" style={{ margin: "5px" }} onClick={handleClickOpen}><Lock /> Change Password</Button>
-      <Dialog open={state.open}>
+      <Dialog style={{ width: '100%' }} open={state.open}>
         <DialogContent>
           <form className={classes.container}>
             <FormControl className={classes.formControl}>
+              <Container style={{ textAlign: "center" }}>
+                <Row><h4>Change Password</h4></Row>
 
-              <Paper>
-                <Container style={{ textAlign: "center" }}>
-                  <Row><h4>Change Password</h4></Row>
-
-                  <Row className="new-expense-form">
-                    <TextField
-                      name="oldPassword"
-                      error={errors.previous}
-                      helperText={errors.previous ? errorText.previous : ''}
-                      className="new-expense-form"
-                      label="Enter Old Password"
-                      type="password"
-                      onChange={handleChange("prev")}
-                    />
-                  </Row>
-                  <Row className="new-expense-form">
-                    <TextField
-                      name="newPassword"
-                      error={errors.newOne}
-                      helperText={errors.newOne ? errorText.newOne : ''}
-                      className="new-expense-form"
-                      label="Enter New Password"
-                      type="password"
-                      onChange={handleChange("newOne")} />
-                  </Row>
-                  <Row className="new-expense-form">
-                    <TextField
-                      name="newPasswordAgain"
-                      error={errors.repeat}
-                      helperText={errors.repeat ? errorText.repeat : ''}
-                      className="new-expense-form"
-                      label="Re-enter New Password"
-                      type="password"
-                      onChange={handleChange("confirm")} />
-                  </Row>
-                </Container>
-              </Paper>
+                <Row className="new-expense-form">
+                  <TextField
+                    name="oldPassword"
+                    error={errors.previous}
+                    helperText={errors.previous ? errorText.previous : ''}
+                    className="new-expense-form"
+                    label="Old Password"
+                    type="password"
+                    onChange={handleChange("prev")}
+                  />
+                </Row>
+                <Row className="new-expense-form">
+                  <TextField
+                    name="newPassword"
+                    error={errors.newOne}
+                    helperText={errors.newOne ? errorText.newOne : ''}
+                    className="new-expense-form"
+                    label="New Password"
+                    type="password"
+                    onChange={handleChange("newOne")} />
+                </Row>
+                <Row className="new-expense-form">
+                  <TextField
+                    name="newPasswordAgain"
+                    error={errors.repeat}
+                    helperText={errors.repeat ? errorText.repeat : ''}
+                    className="new-expense-form"
+                    label="New Password"
+                    type="password"
+                    onChange={handleChange("confirm")} />
+                </Row>
+              </Container>
             </FormControl>
           </form>
         </DialogContent>
@@ -209,12 +206,12 @@ export function ChangePw(props: IUpdatePWProps) {
               // Function call to send the request for creating new expense
               handleSubmit
             }
-            color="primary">
+            color="secondary">
             Apply
             </Button>
           <Button
             onClick={handleClose}
-            color="secondary">
+            variant="text">
             Cancel
           </Button>
         </DialogActions>

@@ -161,7 +161,7 @@ function NavBar(props: INavProps) {
                     component={Link} to="/logout"
                     style={{
                       width: props.ui.isMobileView ? '90%' : undefined,
-                      marginRight: props.ui.isMobileView ? '-12px' : undefined,
+                      marginRight: props.ui.isMobileView ? '-30px' : undefined,
                       fontSize: props.ui.isMobileView ? '14px' : undefined
                     }}>
                     Logout
@@ -186,7 +186,7 @@ function NavBar(props: INavProps) {
                     <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
                     <Button className={classes.nav_item} size='small' variant='contained' color='secondary'
                       style={{
-                        marginRight: props.ui.isMobileView ? '-8px' : undefined,
+                        marginRight: props.ui.isMobileView ? '-30px' : undefined,
                         width: props.ui.isMobileView ? '90%' : undefined,
                         backgroundColor: colors.orange,
                         fontSize: props.ui.isMobileView ? '12px' : undefined

@@ -163,7 +163,7 @@ export function IncomesTable(props: any) {
                         setEditRow(false);
                         setEditRowKey(0);
                       }}>
-                        <svg xmlns={okTool} width="24" height="24" viewBox="0 0 24 24">
+                        <svg fill={colors.offWhite} xmlns={okTool} width="24" height="24" viewBox="0 0 24 24">
                           <path d={okPath} />
                         </svg>
                       </Button>
@@ -174,7 +174,7 @@ export function IncomesTable(props: any) {
                         setEditRowKey(0);
                         setState(row);
                       }}>
-                        <svg xmlns={undoTool}
+                        <svg xmlns={undoTool} fill={colors.offWhite}
                           width="24" height="24" viewBox="0 0 24 24">
                           <path d={undoPath} />
                         </svg>
@@ -184,7 +184,9 @@ export function IncomesTable(props: any) {
                   :
                   <Fragment>
                     <TableCell>
-                      <Button onClick={() => { handleEditButton(row); setEditRowKey(row.id); }}>
+                      <Button
+                        style={{ margin: "5px" }}
+                        onClick={() => { handleEditButton(row); setEditRowKey(row.id); }}>
                         <svg fill={colors.offWhite} xmlns={pencilTool}
                           width="24" height="24" viewBox="0 0 24 24">
                           <path d={pencilPath} />

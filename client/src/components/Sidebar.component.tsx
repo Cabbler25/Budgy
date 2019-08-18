@@ -36,7 +36,7 @@ export function Sidebar(props: any) {
                 Login
               </Button>}
           </div>
-          <Divider style={{ backgroundColor: colors.offWhite, marginTop: '20px' }} />
+          <Divider style={{ backgroundColor: colors.teal, marginTop: '20px' }} />
         </div>
         <div style={{ textAlign: 'center' }}>
           <Button style={{ marginTop: '50px' }} variant='text' component={Link} to="/">
