@@ -98,6 +98,7 @@ function Incomes(props: IIncomeProps) {
   }
 
   async function updateIncome(income: any) {
+    income.amount = Number(income.amount);
     function checkId(inc: any) {
       return inc.id === income.id;
     }
@@ -115,6 +116,8 @@ function Incomes(props: IIncomeProps) {
         if (showTable) {
           const updatedIncomeIndex = incomes.findIndex(checkId)
           incomes[updatedIncomeIndex] = income;
+          console.log(incomes);
+          console.log(income);
           setIncomes(incomes);
         }
       })
