@@ -3,11 +3,11 @@ import { Bar } from 'react-chartjs-2';
 import colors from '../../assets/Colors';
 
 const data = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  labels: ['Bills', 'Food', 'Emergency', 'Entertainment', 'Other'],
   datasets: [{
     label: 'Expenses',
     type: 'line',
-    data: [51, 65, 40, 49, 60, 37, 40],
+    data: [51, 350, 40, 49, 60],
     fill: false,
     borderColor: colors.lightGreen,
     backgroundColor: colors.lightGreen,
@@ -18,7 +18,7 @@ const data = {
   }, {
     type: 'bar',
     label: 'Budgets',
-    data: [200, 185, 590, 621, 250, 400, 95],
+    data: [200, 185, 590, 621, 250],
     fill: false,
     backgroundColor: colors.lightGreen,
     borderColor: colors.lightGreen,

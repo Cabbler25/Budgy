@@ -9,7 +9,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import React, { Fragment, useState } from 'react';
 import { okPath, okTool, pencilPath, pencilTool, removePath, removeTool, undoPath, undoTool } from '../assets/Icons';
-
+import colors from '../assets/Colors';
 
 
 const StyledTableCell = withStyles((theme: Theme) =>
@@ -39,6 +39,7 @@ export function IncomesTable(props: any) {
   const [editRowKey, setEditRowKey] = useState(0);
   const [state, setState] = useState();
   const [confirmDialog, setConfirmDialog] = useState(false);
+  const [deleteLog, setDeleteLog] = useState(false);
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -134,7 +135,7 @@ export function IncomesTable(props: any) {
                       color: (editRow && (editRowKey === row.id)) ? "black" : "grey"
                     }}
                     type="number"
-                    defaultValue={
+                    value={
                       (editRow && (editRowKey === row.id)) ? state.amount : row.amount}
                     name="amount"
                     onChange={(e: any) => handleEditedIncomeChange(e)} />
@@ -184,7 +185,7 @@ export function IncomesTable(props: any) {
                   <Fragment>
                     <TableCell>
                       <Button onClick={() => { handleEditButton(row); setEditRowKey(row.id); }}>
-                        <svg xmlns={pencilTool}
+                        <svg fill={colors.offWhite} xmlns={pencilTool}
                           width="24" height="24" viewBox="0 0 24 24">
                           <path d={pencilPath} />
                         </svg>
@@ -192,11 +193,12 @@ export function IncomesTable(props: any) {
                       {/* Assign the onClick function to notify the parent which
                         expense will be deleted */}
                       <Button
+                        style={{ backgroundColor: colors.red, marginLeft: "5px" }}
                         onClick={() => {
                           setConfirmDialog(true);
                           setState(row);
                         }}>
-                        <svg xmlns={removeTool}
+                        <svg fill={colors.offWhite} xmlns={removeTool}
                           width="24" height="24" viewBox="0 0 24 24">
                           <path d={removePath} />
                         </svg>
@@ -211,10 +213,7 @@ export function IncomesTable(props: any) {
                               </DialogContent>
                               <DialogActions>
                                 <Button
-                                  onClick={
-                                    // Function call to send the request for creating new expense
-                                    () => props.deleteIncome(row)
-                                  }
+                                  onClick={() => { props.deleteIncome(row); setConfirmDialog(false) }}
                                   color="primary">
                                   Ok
                                 </Button>
