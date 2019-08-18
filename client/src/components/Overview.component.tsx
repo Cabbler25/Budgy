@@ -6,6 +6,7 @@ import { BarLoader } from 'react-spinners';
 import colors from '../assets/Colors';
 import { IState, IUiState, IUserState } from '../redux';
 import MixedLineGraph from './data/MixedLineGraph';
+import LineGraph from './data/LineGraph';
 
 interface IHomeProps {
   user: IUserState;
@@ -33,7 +34,7 @@ function Home(props: IHomeProps) {
   const [budgets, setBudgets] = useState();
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState();
   const [typeLabels, setTypeLabels] = useState([]);
-
+  const [expMonths, setExpMonths] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const [totals, setTotals] = useState({
@@ -41,6 +42,9 @@ function Home(props: IHomeProps) {
     income: 0,
     budget: 0
   })
+
+  const [monthlyExpenses, setMonthlyExpenses] = useState();
+  const [months, setMonths] = useState();
 
   useEffect(() => {
     if (props.user.isLoggedIn) {
@@ -75,6 +79,7 @@ function Home(props: IHomeProps) {
       income: incomeTotal,
       budget: budgetTotal
     })
+
   }, [currentMonthExpenses, budgets, incomes])
 
   async function getAllTypes() {
@@ -112,8 +117,31 @@ function Home(props: IHomeProps) {
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
+    url = `http://localhost:8080/expense/user/${props.user.id}/yearly`;
+    await Axios.get(url)
+      .then((payload: any) => {
+        let arrMonth: string[] = [];
+        let arrTot: number[] = [];
+        if (payload.data.length != 0) {
+            for(let i =0; i < payload.data.length; i++)
+            {
+              console.log(payload.data[i].month)
+              arrMonth.push(payload.data[i].month);
+              arrTot.push(payload.data[i].total);
+            }
+            //arrTot.reverse();
+            //arrMonth.reverse();
+            setMonthlyExpenses(arrTot);
+            setMonths(arrMonth);
+            setExpMonths(payload.data.length);
+            
+        }
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
     setIsLoading(false);
   }
+
 
   function createBudgetGraphData() {
     if (!budgets) return;
@@ -134,6 +162,25 @@ function Home(props: IHomeProps) {
       return i.type;
     });
   }
+
+  function createLineStaticIncome(){
+    let arrIncomes: number[] = [];
+    for(let i =0; i < expMonths; i++){
+      arrIncomes.push(totals.income);
+  }
+  return arrIncomes;
+}
+  function createLineStaticBudget(){
+    let arrBudget: number[] = [];
+    for(let i =0; i < expMonths; i++){
+      arrBudget.push(totals.budget);
+  }
+  return arrBudget;
+}
+
+
+
+
 
   return (
     // Rows of data
@@ -181,12 +228,11 @@ function Home(props: IHomeProps) {
               <Grid className={classes.grid_container} container>
                 <Grid item xs={6}>
                   <Paper style={{ opacity: 0.85, display: 'inline-block' }}>
-                    <MixedLineGraph budgetData={createBudgetGraphData()}
-                      expenseData={createExpenseGraphData()} labels={createGraphLabels()} />
+                    <LineGraph data={0} months={months} expenseTotals={monthlyExpenses} income={createLineStaticIncome()} budget={createLineStaticBudget()}/>
                   </Paper>
                 </Grid>
                 <Grid item xs={6}>
-                  <h1>Here's how you're stacking up</h1>
+                  <h1>Here's your expenses for the past year</h1>
                   And below we'll show you a bunch of details. You don't even know but we'll show you.
               </Grid>
               </Grid>
