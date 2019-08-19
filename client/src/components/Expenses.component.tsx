@@ -89,6 +89,7 @@ function Expenses(props: IExpenseProps) {
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
+
     setIsLoading(false);
     if (monthlyExpenses) setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))
   }
