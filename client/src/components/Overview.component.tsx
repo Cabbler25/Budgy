@@ -541,7 +541,7 @@ function Overview(props: IHomeProps) {
                               <>
                                 <h2>It looks like you may be in debt.</h2>
                                 {totals.income < totals.budget
-                                  && (<h4>You're yearly budget was over income. This can give a false sense of security.</h4>)}
+                                  && (<h4>You're yearly budget was over your income.<br />This can give a false sense of security.</h4>)}
                                 {totals.monthlyExpense > totals.budget
                                   && (<h4>You didn't meet your budget this year, but there's always the next.</h4>)}
                                 {`Go to your  `}

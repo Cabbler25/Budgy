@@ -74,13 +74,10 @@ function NavBar(props: INavProps) {
     const listener = () => {
       props.setMobileView(!mediaQuery.matches);
     }
-
     // Add listener to update view type
     mediaQuery.addListener(listener);
-
     // Remove listener when component unmounts
     return () => mediaQuery.removeListener(listener);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLoginOpen = () => {
