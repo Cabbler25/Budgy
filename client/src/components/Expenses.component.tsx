@@ -1,8 +1,8 @@
-import { Button, createStyles, makeStyles, Paper, Theme, FormControlLabel, Checkbox, Snackbar } from '@material-ui/core';
+import { Button, Checkbox, FormControlLabel, Paper, Snackbar } from '@material-ui/core';
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Redirect, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { Col, Container, Row } from 'reactstrap';
 import colors from '../assets/Colors';

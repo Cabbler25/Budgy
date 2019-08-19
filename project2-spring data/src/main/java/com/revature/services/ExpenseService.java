@@ -31,26 +31,26 @@ public class ExpenseService {
 		this.expenseTypeRepository = expenseTypeRepository;
 	}
 
-//	@Transactional
-//	public List<Expense> getAllExpenses() {
-//		return (List<Expense>) ExpenseRepository.findAll();
-//	}
-	public Optional<Expense> getById(int id) {
-		return expenseRepository.findById(id);
-	}
-
-	public List<Expense> findByUserId(int userId) {
-		return expenseRepository.findByUserIdOrderByIdDesc(userId);
-	}
-
-	public Optional<ExpenseType> findExpenseTypeById(int id) {
-		return expenseTypeRepository.findById(id);
-	}
-
 	public List<Expense> findExpenseByUserIdAndExpenseType(int userId, Optional<ExpenseType> expenseType) {
 		return expenseRepository.findByUserIdAndExpenseType(userId, expenseType);
 	}
 
+	// Get expense by ID
+	public Optional<Expense> getById(int id) {
+		return expenseRepository.findById(id);
+	}
+
+	// Get expense by USER
+	public List<Expense> findByUserId(int userId) {
+		return expenseRepository.findByUserIdOrderByIdDesc(userId);
+	}
+
+	// Get expense by TYPE
+	public Optional<ExpenseType> findExpenseTypeById(int id) {
+		return expenseTypeRepository.findById(id);
+	}
+
+	// Get all expense types
 	public List<ExpenseType> findAllExpenseTypes() {
 		return expenseTypeRepository.findAll();
 	}
