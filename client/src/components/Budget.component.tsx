@@ -285,7 +285,7 @@ export function Budget(props: IBudgetProps) {
                   <br />
                   {!isLoading ? (
                     <Fragment>
-                      <h2>Creating a budget is quick and simple.<br />To get started,</h2>
+                      <h2>Creating a monthly budget is quick and simple.<br />To get started,</h2>
                       {isCreatingBudget ? (
                         <CreateBudgetStepper
                           isMobileView={props.ui.isMobileView} userId={props.user.id}

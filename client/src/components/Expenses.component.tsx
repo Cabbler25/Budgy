@@ -236,22 +236,28 @@ function Expenses(props: IExpenseProps) {
           openUpdate: false,
           openCreate: false,
         })
+        // Update info view in table perspective
         if (showTable) {
           // Also update if user is in monthly perspective
           if (showMonthly) {
-            const temp = expenses.filter((e: any) => e.id !== expense.id)
-            setMonthlyExpenses(temp.length > 0 ? temp : undefined);
-            handleElementClick(expense.expenseType.type);
+            // Remove the expense from the graph by filtering the expenses array
+            // Also remove it from the array sent to the table wich also filters by type
+            const tempGraph = monthlyExpenses.filter((e: any) => e.id !== expense.id);
+            const tempTable = monthlyExpenses.filter((e: any) => e.id !== expense.id
+              && e.expenseType.type == expense.expenseType.type);
+            setExpensesByUserIdAndTypeId(tempTable);
+            setMonthlyExpenses(tempGraph.length > 0 ? tempGraph : undefined);
           }
-          // Find the index of the to-be-removed expense
-          // Remove it from the expenses array so it can be removed visually from the table
-          const temp = expenses.filter((e: any) => e.id !== expense.id)
-          setExpenses(temp.length > 0 ? temp : undefined);
-          handleElementClick(expense.expenseType.type);
+          // Remove the expense from the graph by filtering the expenses array
+          // Also remove it from the array sent to the table wich also filters by type
+          const tempGraph = expenses.filter((e: any) => e.id !== expense.id);
+          const tempTable = expenses.filter((e: any) => e.id !== expense.id
+            && e.expenseType.type == expense.expenseType.type);
+          setExpensesByUserIdAndTypeId(tempTable);
+          setExpenses(tempGraph.length > 0 ? tempGraph : undefined);
         }
         setIsLoading(false);
-      }
-      );
+      });
   }
   // Request function to update an expense
   async function updateExpense(expense: any) {
@@ -299,6 +305,7 @@ function Expenses(props: IExpenseProps) {
             const updatedExpenseIndex = expenses.findIndex(checkId);
             const expensesCopy = expenses;
             expensesCopy[updatedExpenseIndex] = expense;
+            // Update the table information
             const matchedExpenses = expensesCopy.filter((expense: any) =>
               expense.expenseType.type == expenseType);
             setExpensesByUserIdAndTypeId(matchedExpenses);
