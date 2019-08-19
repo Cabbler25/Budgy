@@ -1,8 +1,8 @@
-import { Button, createStyles, makeStyles, Paper, Theme, FormControlLabel, Checkbox, Snackbar } from '@material-ui/core';
+import { Button, Checkbox, FormControlLabel, Paper, Snackbar } from '@material-ui/core';
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Redirect, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { Col, Container, Row } from 'reactstrap';
 import colors from '../assets/Colors';
@@ -59,11 +59,11 @@ function Expenses(props: IExpenseProps) {
     // Avoid app crash in case user has no expenses in the database
     try {
       setTotalExpenses(expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
-    } catch { setExpenses(undefined); setIsLoading(false); setHasExpenses(false); }
+    } catch { setExpenses(undefined); setHasExpenses(false); }
     try {
 
       setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
-    } catch { setMonthlyExpenses(undefined); setIsLoading(false); setHasExpenses(false) }
+    } catch { setMonthlyExpenses(undefined); setHasExpenses(false) }
   }, [expenses, monthlyExpenses])
 
   // This function sends the request to get all user reimbursements
@@ -89,6 +89,7 @@ function Expenses(props: IExpenseProps) {
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
+
     setIsLoading(false);
     if (monthlyExpenses) setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))
   }
@@ -334,7 +335,7 @@ function Expenses(props: IExpenseProps) {
         </>)
         :
         (
-          (!expenses && !hasExpenses) ?
+          (!isLoading && !expenses && !hasExpenses) ?
             <>
               <div
                 style={{
@@ -429,7 +430,7 @@ function Expenses(props: IExpenseProps) {
                               <h3>{showMonthly ? "This month" : "Overall"} expenses:
                         {isLoading ? "..." : showMonthly ? " $" + totalMonthlyExpenses : " $" + totalExpenses}</h3>
                               <i style={{ color: 'grey', fontSize: '14px' }}>
-                                Click on any section of the graphic to view details</i>
+                                Click on any section of the graphic to view details.</i>
                               <DonutGraph
                                 data={showMonthly ? createMonthlyGraphData() : createGraphData()}
                                 labels={createGraphLabels()}
