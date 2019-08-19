@@ -116,12 +116,9 @@ function Incomes(props: IIncomeProps) {
         if (showTable) {
           const updatedIncomeIndex = incomes.findIndex(checkId)
           incomes[updatedIncomeIndex] = income;
-          console.log(incomes);
-          console.log(income);
           setIncomes(incomes);
         }
       })
-
   }
 
 
@@ -235,9 +232,14 @@ function Incomes(props: IIncomeProps) {
             </Fragment>
           ) : (
               <Fragment>
-                {incomes && (<DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                  isMobileView={props.ui.isMobileView}
-                  handleElementClick={handleElementClick} />)}
+                {incomes && (
+                  <>
+                    <i style={{ color: 'grey', fontSize: '14px' }}>
+                      Click on any section of the graphic to view details.</i>
+                    <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                      isMobileView={props.ui.isMobileView}
+                      handleElementClick={handleElementClick} />
+                  </>)}
                 < br />
                 <NewIncome
                   types={incomeTypes}

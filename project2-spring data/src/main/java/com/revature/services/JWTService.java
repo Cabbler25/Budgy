@@ -49,12 +49,9 @@ public class JWTService {
 				return true;
 			else
 				return false;
-
 		} catch (JwtException e) {
-
 			return false;
 		}
-
 	}
 
 	public static boolean checkAuth(String token) {

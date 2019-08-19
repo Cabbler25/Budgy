@@ -158,7 +158,7 @@ export default function NewIncome(props: any) {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleSubmit} >Ok</Button>
-            <Button onClick={handleClose} variant="text">Cancel</Button>
+            <Button onClick={handleClose}>Cancel</Button>
           </DialogActions>
         </Dialog>
       </Fragment>
