@@ -447,7 +447,6 @@ export function User(props: IUserAcct) {
             />
           </Snackbar>
         </Paper>
-
       </Grid>
     </Grid >
 
