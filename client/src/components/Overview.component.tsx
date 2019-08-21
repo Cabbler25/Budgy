@@ -7,14 +7,21 @@ import { Link } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import colors from '../assets/Colors';
 import Logo from '../assets/Logo.svg';
-import { IState, IUiState, IUserState } from '../redux';
+import { IState, IUiState, IUserState, IExpensesState } from '../redux';
 import LineGraph from './data/LineGraph';
 import MixedBarGraph from './data/MixedBarGraph';
 import MixedLineGraph from './data/MixedLineGraph';
+import { setExpenses, setExpenseTypes, setThisMonthExpenses, setExpensesTotal, setThisMonthExpensesTotal } from '../redux/actions';
 
 interface IHomeProps {
   user: IUserState;
   ui: IUiState;
+  userExpenses:IExpensesState;
+  setExpenses: (expenses:any) => void;
+  setExpenseTypes: (expenseTypes:any) => void;
+  setThisMonthExpenses: (thisMonthExpenses:any) => void;
+  setExpensesTotal: (expensesTotal:number) => void;
+  setThisMonthExpensesTotal: (thisMonthExpensesTotal:number) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -99,9 +106,9 @@ function Overview(props: IHomeProps) {
   };
 
   useEffect(() => {
+    getAllTypes();
     if (props.user.isLoggedIn) {
       setIsLoading(true);
-      getAllTypes();
       fetchAllData();
     }
     // Load budgets, incomes, expenses
@@ -116,8 +123,8 @@ function Overview(props: IHomeProps) {
     }
 
     let expensesTotal = 0;
-    if (currentMonthExpenses) {
-      expensesTotal = currentMonthExpenses.map((i: any) => i.amount).reduce((a: any, b: any) => a + b);
+    if (props.userExpenses.thisMonthExpenses) {
+      expensesTotal = props.userExpenses.thisMonthExpenses.map((i: any) => i.amount).reduce((a: any, b: any) => a + b);
     }
 
     let incomeTotal = 0;
@@ -138,26 +145,41 @@ function Overview(props: IHomeProps) {
       income: incomeTotal,
       budget: budgetTotal
     })
-  }, [currentMonthExpenses, budgets, incomes, monthlyExpenses])
+  }, [props.userExpenses.thisMonthExpenses, budgets, incomes, monthlyExpenses])
 
   async function getAllTypes() {
     const url = `http://localhost:8080/budget/types`;
     Axios.get(url)
       .then((payload: any) => {
-        payload.data.length > 0 && setTypes(payload.data);
+        payload.data.length > 0 && props.setExpenseTypes(payload.data);
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
   }
 
   async function fetchAllData() {
-    let url = `http://localhost:8080/expense/user/${props.user.id}/monthly`;
-    await Axios.get(url)
-      .then((payload: any) => {
-        payload.data.length > 0 && setCurrentMonthExpenses(payload.data);
-      }).catch((err: any) => {
-        // Handle error by displaying something else
-      });
+    // User expenses info connected to redux
+    // Avoid re-fetching the database in case the user logged in already
+    let url = `http://localhost:8080/expense/user/${props.user.id}`;
+    if (!props.userExpenses.expenses) { 
+      await Axios.get(url)
+        .then((payload: any) => {
+          payload.data.length > 0 && props.setExpenses(payload.data);
+        }).catch((err: any) => {
+          // Handle error by displaying something else
+        });
+    }
+    // User expenses info connected to redux
+    // Avoid re-fetching the database in case the user logged in already
+    if (!props.userExpenses.thisMonthExpenses) {
+      url = `http://localhost:8080/expense/user/${props.user.id}/monthly`;
+      await Axios.get(url)
+        .then((payload: any) => {
+          payload.data.length > 0 && props.setThisMonthExpenses(payload.data);
+        }).catch((err: any) => {
+          // Handle error by displaying something else
+        });
+    }
     url = `http://localhost:8080/income/user/${props.user.id}`;
     await Axios.get(url)
       .then((payload: any) => {
@@ -194,7 +216,10 @@ function Overview(props: IHomeProps) {
       }).catch((err: any) => {
         // Handle error by displaying something else
       });
-    setIsLoading(false);
+      if (props.userExpenses.expenses && 
+          props.userExpenses.thisMonthExpenses && props.userExpenses.expenseTypes){
+        setIsLoading(false);
+      }
     calcOverages();
   }
 
@@ -250,16 +275,17 @@ function Overview(props: IHomeProps) {
     });
   }
 
+  // User expenses information connected to redux
   function createExpenseGraphData() {
-    if (!currentMonthExpenses) return undefined;
-    return currentMonthExpenses.map((i: any) => {
+    if (!props.userExpenses.thisMonthExpenses) return undefined;
+    return props.userExpenses.thisMonthExpenses.map((i: any) => {
       return { key: i.expenseType.type, data: i.amount }
     });
   }
 
   function createGraphLabels() {
-    if (!types) return undefined;
-    return types.map((i: any) => {
+    if (!props.userExpenses.expenseTypes) return undefined;
+    return props.userExpenses.expenseTypes.map((i: any) => {
       return i.type;
     });
   }
@@ -281,7 +307,7 @@ function Overview(props: IHomeProps) {
 
   return (
     (props.user.isLoggedIn ? (
-      (isLoading ? (
+      (isLoading && (!props.userExpenses.expenseTypes) && (!props.userExpenses.expenses) ? (
         <div style={{ margin: 'auto', height: '100vh', textAlign: 'center' }}>
           <div style={{ marginTop: '40vh', display: 'inline-block' }}>
             <BarLoader width={250} color={colors.offWhite} loading={isLoading} />
@@ -310,7 +336,8 @@ function Overview(props: IHomeProps) {
                           <i style={{ color: 'grey', fontSize: '14px' }}>Red bars indicate an over-budget category.</i> <br />
                         </div>
                         <MixedLineGraph isMobileView={props.ui.isMobileView} budgetData={createBudgetGraphData()}
-                          expenseData={createExpenseGraphData()} labels={createGraphLabels()} />
+                          expenseData={createExpenseGraphData()} 
+                          labels={createGraphLabels()} />
                       </Paper>
                     </Grid>
                     <Grid
@@ -427,7 +454,8 @@ function Overview(props: IHomeProps) {
                       item xs={props.ui.isMobileView ? 12 : 6}>
                       <Paper className={classes.graph_paper}>
                         <MixedBarGraph isMobileView={props.ui.isMobileView} budgets={budgets}
-                          expenses={currentMonthExpenses} incomes={incomes} labels={createGraphLabels()} />
+                          expenses={props.userExpenses.thisMonthExpenses} incomes={incomes} 
+                          labels={createGraphLabels()} />
                       </Paper>
                     </Grid>
                     <Grid
@@ -626,8 +654,16 @@ function Overview(props: IHomeProps) {
 const mapStateToProps = (state: IState) => {
   return {
     user: state.user,
-    ui: state.ui
+    ui: state.ui,
+    userExpenses:state.userExpenses
   }
 }
 
-export default connect(mapStateToProps)(Overview);
+const mapDispatchToProps = {
+  setExpenses: setExpenses,
+  setExpenseTypes: setExpenseTypes,
+  setThisMonthExpenses: setThisMonthExpenses,
+  setExpensesTotal: setExpensesTotal,
+  setThisMonthExpensesTotal: setThisMonthExpensesTotal
+}
+export default connect(mapStateToProps,mapDispatchToProps)(Overview);

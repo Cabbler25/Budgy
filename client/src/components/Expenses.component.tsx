@@ -6,14 +6,20 @@ import { Link } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { Col, Container, Row } from 'reactstrap';
 import colors from '../assets/Colors';
-import { IState, IUiState, IUserState } from '../redux';
+import { IState, IUiState, IUserState, IExpensesState } from '../redux';
 import DonutGraph from './data/DonutGraph';
 import { ExpensesTable } from './ExpensesTablesComponent';
 import NewExpense from './NewExpenseDialog';
 import MySnackbarContentWrapper from './SnackBarComponent';
+import { setExpenses, setExpenseTypes, setExpensesTotal, setThisMonthExpenses, setThisMonthExpensesTotal } from '../redux/actions';
 
 export interface IExpenseProps {
   user: IUserState;
+  userExpenses:IExpensesState;
+  setExpenses: (expenses:any) => void;
+  setThisMonthExpenses: (thisMonthExpenses:any) => void;
+  setExpensesTotal: (expensesTotal:number) => void;
+  setThisMonthExpensesTotal: (thisMonthExpensesTotal:number) => void;
   ui: IUiState;
   type: number;
   date: string;
@@ -23,18 +29,12 @@ export interface IExpenseProps {
 }
 
 function Expenses(props: IExpenseProps) {
-  // Needed constants with their respective state modifier function
-  const [expenses, setExpenses] = useState();
   const [hasExpenses, setHasExpenses] = useState(true);
-  const [monthlyExpenses, setMonthlyExpenses] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const [expenseTypes, setExpenseTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [showMonthly, setShowMonthly] = useState(false);
-  const [totalExpenses, setTotalExpenses] = useState(0);
-  const [totalMonthlyExpenses, setTotalMonthlyExpenses] = useState(0);
   const [expenseType, setExpenseType] = useState();
-  const [expensesByUserAndType, setExpensesByUserIdAndTypeId] = useState([]);
+  const [tableExpenses, setTableExpenses] = useState([]);
   const [snackBar, setSnackBar] = useState({
     openDelete: false,
     openUpdate: false,
@@ -48,61 +48,28 @@ function Expenses(props: IExpenseProps) {
       openUpdate: false,
       openCreate: false,
     })
-    if (props.user.isLoggedIn) {
-      getAllExpenses();
-      getAllMonthlyExpenses();
-      getAllExpenseTypes();
-    }
-  }, [props.user.isLoggedIn])
+  }, [props.user.isLoggedIn]);
 
   useEffect(() => {
     // Avoid app crash in case user has no expenses in the database
     try {
-      setTotalExpenses(expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
-    } catch { setExpenses(undefined); setHasExpenses(false); }
+      if (props.userExpenses.expenses.length > 1) {
+        props.setExpensesTotal(props.userExpenses.expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
+      } else {
+        props.setExpensesTotal(props.userExpenses.expenses[0].amount);
+      }
+    } catch { setHasExpenses(false); }
+
     try {
-
-      setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
-    } catch { setMonthlyExpenses(undefined); setHasExpenses(false) }
-  }, [expenses, monthlyExpenses])
-
-  // This function sends the request to get all user reimbursements
-  async function getAllExpenses() {
-    // Show loading bar at the moment this function is called
-    setIsLoading(true);
-    const url = `http://localhost:8080/expense/user/${props.user.id}`;
-    await Axios.get(url)
-      .then((payload: any) => {
-        payload.data.length > 0 && setExpenses(payload.data);
-      }).catch((err: any) => {
-        // Handle error by displaying something else
-      });
-    if (expenses) setTotalExpenses(expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
-  }
-
-  // This function sends the request to get all user reimbursements
-  async function getAllMonthlyExpenses() {
-    const url = `http://localhost:8080/expense/user/${props.user.id}/monthly`;
-    await Axios.get(url)
-      .then((payload: any) => {
-        payload.data.length > 0 && setMonthlyExpenses(payload.data);
-      }).catch((err: any) => {
-        // Handle error by displaying something else
-      });
-
+      if (props.userExpenses.thisMonthExpenses.length > 1) {
+        props.setThisMonthExpensesTotal(props.userExpenses.expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b));
+      } else {
+        props.setThisMonthExpensesTotal(props.userExpenses.thisMonthExpenses[0].amount);
+      }
+    } catch { }
     setIsLoading(false);
-    if (monthlyExpenses) setTotalMonthlyExpenses(monthlyExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b))
-  }
+  }, [props.userExpenses.expenses, props.userExpenses.thisMonthExpenses]);
 
-  async function getAllExpenseTypes() {
-    const url = `http://localhost:8080/expense/types`;
-    await Axios.get(url)
-      .then((payload: any) => {
-        setExpenseTypes(payload.data);
-      }).catch((err: any) => {
-        // Handle error by displaying something else
-      });
-  }
 
   function handleCloseSnackBar() {
     setSnackBar({
@@ -115,44 +82,53 @@ function Expenses(props: IExpenseProps) {
 
   // Return all expenses
   function createGraphData() {
-    return expenses.map((i: any) => {
+    return props.userExpenses.expenses.map((i: any) => {
       return { key: i.expenseType.type, data: i.amount }
     });
   }
+  // Return the expenses data for the table
+  function generalExpensesTableData() {
+    const type = props.userExpenses.expenseTypes.find((type: any) => type.type == expenseType);
+    return props.userExpenses.expenses.filter((expense: any) =>
+          JSON.stringify(expense.expenseType) == JSON.stringify(type));
+  }
+  // Return the current month expenses data for the table
+  function thisMonthExpensesTableData() {
+    const type = props.userExpenses.expenseTypes.find((type: any) => type.type == expenseType);
+    return props.userExpenses.thisMonthExpenses.filter((expense: any) =>
+          JSON.stringify(expense.expenseType) == JSON.stringify(type));
+  }
+  // Calculate all expenses total
+  function calculateExpensesTotal() {
+    return props.userExpenses.expenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b);
+  }
+  // Calculate all monthly expenses total
+  function calculateThisMonthExpensesTotal() {
+    return props.userExpenses.thisMonthExpenses.map((num: any) => num.amount).reduce((a: any, b: any) => a + b);
+  }
   // Return monthly expenses
   function createMonthlyGraphData() {
-    return monthlyExpenses.map((i: any) => {
+    return props.userExpenses.thisMonthExpenses.map((i: any) => {
       return { key: i.expenseType.type, data: i.amount }
     });
   }
 
   function createGraphLabels() {
-    return expenseTypes.map((i: any) => {
+    return props.userExpenses.expenseTypes.map((i: any) => {
       return i.type;
     });
   }
+
   // Function used to display the expenses in the table.
   function handleElementClick(label: string) {
-    const type = expenseTypes.find((type: any) => type.type == label);
+    const type = props.userExpenses.expenseTypes.find((type: any) => type.type == label);
     if (type) {
-      // Update expenses view in table perspective
-      if (showMonthly) {
-        const matchedExpenses = monthlyExpenses.filter((expense: any) =>
-          JSON.stringify(expense.expenseType) == JSON.stringify(type));
-        setExpensesByUserIdAndTypeId(matchedExpenses);
-        setExpenseType(label);
-        // Show the table if a piece of the donut is clicked
-        setShowTable(true);
-      } else { // Update expenses view in graph perspective
-        const matchedExpenses = expenses.filter((expense: any) =>
-          JSON.stringify(expense.expenseType) == JSON.stringify(type));
-        setExpensesByUserIdAndTypeId(matchedExpenses);
-        setExpenseType(label);
-        // Show the table if a piece of the donut is clicked
-        setShowTable(true);
-      }
+      // Show the table if a piece of the donut is clicked
+      setExpenseType(label);
+      setShowTable(true);
     }
   }
+
   // Handle view for only show monthly expenses
   function viewMonthlyExpenses(state: boolean) {
     // Show only monthly expenses in the donut graph
@@ -166,67 +142,52 @@ function Expenses(props: IExpenseProps) {
   //   Request function for new expense here
   async function createNewExpense(newType: any, newDescripion: string, newAmount: number,
     newDate: string) {
-    setIsLoading(true);
-    // Prepare request setup
-    const url = 'http://localhost:8080/expense';
-    const data = {
-      userId: props.user.id,
-      expenseType: newType,
-      date: newDate,
-      description: newDescripion,
-      amount: newAmount
-    };
-    // console.log("this is the new expense before posting it:", data);
-    await Axios.post(url, data)
-      .then((payload) => {
-        setSnackBar({
-          ...snackBar,
-          openDelete: false,
-          openUpdate: false,
-          openCreate: true,
-        })
-        if (!expenses) {
-          getAllExpenses();
-          getAllMonthlyExpenses();
-        }
-        // Check if the new expense fits in the monthly category or in the general category
-        const currentMonth = new Date().getMonth();
-        const newExpenseMonth = new Date(payload.data.date).getMonth();
-        // Handle date conversion
-        const newDateFormatted = new Date(payload.data.date).toISOString().slice(0, 10);
-        payload.data.date = newDateFormatted;
-        // Update arrays for properly visualize the new expense added
-        // Only add to monthly expenses array if the assigned month is the current one
-        if (newExpenseMonth == currentMonth) {
-          setMonthlyExpenses((monthlyExpenses) ? monthlyExpenses.concat(payload.data) : [payload.data]);
-        }
-        setExpenses((expenses) ? expenses.concat(payload.data) : [payload.data]);
-        // Update the table view too
-        const withNewExpense = (expenses) ? expenses.concat(payload.data) : payload.data;
-        if (showTable) {
-          // If the new expense asigned month is not the current one, it wont be added to the table
-          // in monthly perspective
-          if (showMonthly && (newExpenseMonth == currentMonth)) {
-            const withNewMonthlyExpense = (monthlyExpenses) ? monthlyExpenses.concat(payload.data) : payload.data;
-            const matchedExpenses = withNewMonthlyExpense.filter((expense: any) =>
-              expense.expenseType.type == payload.data.expenseType.type);
-            setExpensesByUserIdAndTypeId(matchedExpenses);
+      if (!props.userExpenses.expenses) {
+        setShowTable(false);
+      }
+      setIsLoading(true);
+      // Prepare request setup
+      const url = 'http://localhost:8080/expense';
+      const data = {
+        userId: props.user.id,
+        expenseType: newType,
+        date: newDate,
+        description: newDescripion,
+        amount: newAmount
+      };
+      await Axios.post(url, data)
+        .then((payload) => {
+          setSnackBar({
+            ...snackBar,
+            openDelete: false,
+            openUpdate: false,
+            openCreate: true,
+          })
+          // Handle date conversion for the new expense
+          const newDateFormatted = new Date(payload.data.date).toISOString().slice(0, 10);
+          payload.data.date = newDateFormatted;
+          // Update arrays for properly visualize the new expense added
+          const expensesCopy = props.userExpenses.expenses ?
+                               props.userExpenses.expenses.concat(payload.data) : [
+                               payload.data] ;
+          props.setExpenses(expensesCopy);
+          // Add it to the monthly expenses if the month of the new expense is the current month
+          const currentMonth = new Date().getMonth();
+          const newExpenseMonth = new Date(payload.data.date).getMonth();
+          if (newExpenseMonth == currentMonth) {
+            // Only add to monthly expenses array if the assigned month is the current one
+            const thisMonthExpensesCopy = props.userExpenses.thisMonthExpenses? 
+                                          props.userExpenses.thisMonthExpenses.concat(payload.data) : 
+                                          [payload.data];
+            props.setThisMonthExpenses(thisMonthExpensesCopy);
           }
-          const matchedExpenses = withNewExpense.filter((expense: any) =>
-            expense.expenseType.type == payload.data.expenseType.type);
-          setExpensesByUserIdAndTypeId(matchedExpenses);
-        }
-      });
-    setIsLoading(false);
+        });
+      setIsLoading(false);
   }
 
   // Request function to delete an existing expense
   async function deleteExpense(expense: any) {
     setIsLoading(true);
-    // Find the id of the removed expense
-    function checkId(exp: any) {
-      return exp.id === expense.id;
-    }
     const url = `http://localhost:8080/expense/${expense.id}`;
     await Axios.delete(url, expense)
       .then(() => {
@@ -236,38 +197,33 @@ function Expenses(props: IExpenseProps) {
           openUpdate: false,
           openCreate: false,
         })
-        // Update info view in table perspective
-        if (showTable) {
-          // Also update if user is in monthly perspective
-          if (showMonthly) {
-            // Remove the expense from the graph by filtering the expenses array
-            // Also remove it from the array sent to the table wich also filters by type
-            const tempGraph = monthlyExpenses.filter((e: any) => e.id !== expense.id); 
-            const tempTable = monthlyExpenses.filter((e: any) => e.id !== expense.id 
-                                                  && e.expenseType.type==expense.expenseType.type);
-            setExpensesByUserIdAndTypeId(tempTable);
-            setMonthlyExpenses(tempGraph.length > 0 ? tempGraph : undefined);
-          }
+        // Check if the new expense fits in the monthly category or in the general category
+        const currentMonth = new Date().getMonth();
+        const newExpenseMonth = new Date(expense.date).getMonth();
+        // Also update if user is in monthly perspective
+        if (currentMonth == newExpenseMonth) {
           // Remove the expense from the graph by filtering the expenses array
           // Also remove it from the array sent to the table wich also filters by type
-          const tempGraph = expenses.filter((e: any) => e.id !== expense.id); 
-          const tempTable = expenses.filter((e: any) => e.id !== expense.id 
-                                                && e.expenseType.type==expense.expenseType.type);
-          setExpensesByUserIdAndTypeId(tempTable);
-          setExpenses(tempGraph.length > 0 ? tempGraph : undefined);
+          const tempGraph = props.userExpenses.thisMonthExpenses.filter((e: any) => e.id !== expense.id); 
+          props.setThisMonthExpenses(tempGraph.length > 0 ? tempGraph : undefined);
         }
+        // Remove the expense from the graph by filtering the expenses array
+        // Also remove it from the array sent to the table wich also filters by type
+        const tempGraph = props.userExpenses.expenses.filter((e: any) => e.id !== expense.id); 
+        props.setExpenses(tempGraph.length > 0 ? tempGraph : undefined);
         setIsLoading(false);
       });
   }
+
   // Request function to update an expense
   async function updateExpense(expense: any) {
     setIsLoading(true);
+    expense.amount = Number(expense.amount);
     // Find the id of the updated expense
     function checkId(exp: any) {
       return exp.id === expense.id;
     }
     // Update the expenses and monthly expenses state in general (parent component)
-
     // Send the request
     const url = `http://localhost:8080/expense`;
     await Axios.put(url, expense)
@@ -278,39 +234,16 @@ function Expenses(props: IExpenseProps) {
           openUpdate: true,
           openCreate: false,
         })
-        await getAllExpenses();
-        await getAllMonthlyExpenses();
-        // Also update the expenses in the table perspective
-        if (showTable) {
-          // Update monthly expenses too
-          if (showMonthly) {
-            // Check if the new expense fits in the monthly category or in the general category
-            const currentMonth = new Date().getMonth();
-            const updatedExpenseMonth = new Date(expense.date).getMonth();
-            if (updatedExpenseMonth == currentMonth) {
-              const updatedExpenseIndex = monthlyExpenses.findIndex(checkId);
-              const monthlyExpensesCopy = monthlyExpenses;
-              monthlyExpensesCopy[updatedExpenseIndex] = expense;
-              const matchedExpenses = monthlyExpensesCopy.filter((expense: any) =>
-                expense.expenseType.type == expenseType);
-              setExpensesByUserIdAndTypeId(matchedExpenses);
-            } else { // remove the expense from monthly expenses in case the assigned new month is not this one
-              const updatedExpenseIndex = monthlyExpenses.findIndex(checkId);
-              setMonthlyExpenses(monthlyExpenses.splice(updatedExpenseIndex, 1));
-              const matchedExpenses = monthlyExpenses.filter((expense: any) =>
-                expense.expenseType.type == expenseType);
-              setExpensesByUserIdAndTypeId(matchedExpenses);
-            }
-          } else {
-            const updatedExpenseIndex = expenses.findIndex(checkId);
-            const expensesCopy = expenses;
-            expensesCopy[updatedExpenseIndex] = expense;
-            // Update the table information
-            const matchedExpenses = expensesCopy.filter((expense: any) =>
-              expense.expenseType.type == expenseType);
-            setExpensesByUserIdAndTypeId(matchedExpenses);
-          }
-        }
+        // Update general expenses array
+        const updatedExpenseIndex = props.userExpenses.expenses.findIndex(checkId);
+        const expensesCopy = props.userExpenses.expenses;
+        expensesCopy[updatedExpenseIndex] = expense;
+        props.setExpenses(expensesCopy);
+        // Now filter the monthly expenses from the general expenses array according to the month
+        // Get current month
+        const currentMonth = new Date().getMonth();
+        const thisMonthExpensesCopy = expensesCopy.filter( (e:any) => new Date(e.date).getMonth() == currentMonth );
+        props.setThisMonthExpenses(thisMonthExpensesCopy);
         setIsLoading(false);
       });
   }
@@ -342,7 +275,7 @@ function Expenses(props: IExpenseProps) {
         </>)
         :
         (
-          (!isLoading && !expenses && !hasExpenses) ?
+          (!isLoading && !props.userExpenses.expenses && !hasExpenses) ?
             <>
               <div
                 style={{
@@ -353,7 +286,7 @@ function Expenses(props: IExpenseProps) {
                   Start setting up your expenses, {props.user.first}. <br /> <br /> <br />
                   What about a new one? <br />
                   <NewExpense
-                    types={expenseTypes}
+                    types={props.userExpenses.expenseTypes}
                     createExpense={createNewExpense}
                     view={props.ui.isMobileView} />
                 </h2>
@@ -403,7 +336,7 @@ function Expenses(props: IExpenseProps) {
                             </Button>
                                 {/* If on table perspective, don't show the type selector */}
                                 <NewExpense
-                                  types={expenseTypes}
+                                  types={props.userExpenses.expenseTypes}
                                   createExpense={createNewExpense}
                                   view={props.ui.isMobileView}
                                   tableView={showTable}
@@ -422,7 +355,9 @@ function Expenses(props: IExpenseProps) {
                                 <BarLoader width={150} color={'#009688'} loading={isLoading} />
                               </div>
                               :
-                              <ExpensesTable expenses={expensesByUserAndType}
+                              <ExpensesTable expenses={showMonthly?
+                                             thisMonthExpensesTableData():
+                                             generalExpensesTableData()}
                                 view={props.ui.isMobileView}
                                 deleteExpense={deleteExpense}
                                 updateExpense={updateExpense} />
@@ -432,10 +367,11 @@ function Expenses(props: IExpenseProps) {
                       :
                       (
                         <Fragment>
-                          {expenses &&
+                          {props.userExpenses.expenses &&
                             <div>
                               <h3>{showMonthly ? "This month" : "Overall"} expenses:
-                        {isLoading ? "..." : showMonthly ? " $" + totalMonthlyExpenses : " $" + totalExpenses}</h3>
+                        {isLoading ? "..." : showMonthly ? " $" + calculateThisMonthExpensesTotal() : 
+                              " $" + calculateExpensesTotal()}</h3>
                               <i style={{ color: 'grey', fontSize: '14px' }}>
                                 Click on any section of the graphic to view details.</i>
                               <DonutGraph
@@ -445,7 +381,7 @@ function Expenses(props: IExpenseProps) {
                                 isMobileView={props.ui.isMobileView}
                                 handleElementClick={handleElementClick} />
                               <NewExpense
-                                types={expenseTypes}
+                                types={props.userExpenses.expenseTypes}
                                 createExpense={createNewExpense}
                                 view={props.ui.isMobileView} />
                               {/* Toggles between view monthly expenses and overall expenses */}
@@ -517,12 +453,21 @@ function Expenses(props: IExpenseProps) {
   );
 }
 
-// Redux
+// Redux connection
 const mapStateToProps = (state: IState) => {
   return {
     user: state.user,
-    ui: state.ui
+    ui: state.ui,
+    userExpenses:state.userExpenses
   }
 }
 
-export default connect(mapStateToProps)(Expenses);
+const mapDispatchToProps = {
+  setExpenses: setExpenses,
+  setExpenseTypes: setExpenseTypes,
+  setThisMonthExpenses: setThisMonthExpenses,
+  setExpensesTotal: setExpensesTotal,
+  setThisMonthExpensesTotal: setThisMonthExpensesTotal
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Expenses);

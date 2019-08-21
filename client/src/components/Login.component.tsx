@@ -35,7 +35,6 @@ export function Login(props: ILoginProps) {
       setPwError(false);
       setUsernameError(false);
       //Do something will payload
-      console.log(payload.data);
       props.updateUserInfo(payload.data);
       props.updateUserLoggedIn(true);
       props.history.push('/');
