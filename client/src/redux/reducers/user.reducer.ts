@@ -2,6 +2,7 @@ import { userActionTypes } from '../actions';
 
 const initialState = {
     isLoggedIn: false,
+    // Personal user info and jwt
     id: 0,
     first: '',
     last: '',

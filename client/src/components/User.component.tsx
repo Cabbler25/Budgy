@@ -4,16 +4,17 @@ import Axios from 'axios';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import '../App.css';
-import { IState, IUserState } from '../redux';
+import { IState, IUserState, IUiState } from '../redux';
 import { updateUserInfo } from '../redux/actions';
 import ChangePw from './ChangePWDialog';
 import MySnackbarContentWrapper from './SnackBarComponent';
 
-
 interface IUserAcct {
   user: IUserState;
+  ui: IUiState;
   updateUserInfo: (payload: any) => void;
 }
+
 export function User(props: IUserAcct) {
   const [fnameField, setFnameField] = useState('');
   const [lnameField, setLnameField] = useState('');
@@ -28,6 +29,9 @@ export function User(props: IUserAcct) {
   const [openUp, setOpenUp] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
+  function work(x: string) {
+    return (<p style={{ fontWeight: 'bolder' }}>x</p>)
+  }
   function handleOpen() {
     setOpen(true);
   }
@@ -216,7 +220,11 @@ export function User(props: IUserAcct) {
 
     <Grid container style={{ textAlign: 'center', width: '100%' }}>
       <Grid item xs={12}>
-        <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: '20px' }} >
+        <Paper style={{
+          display: 'inline-block',
+          width: props.ui.isMobileView ? '95%' : '500px',
+          paddingBottom: '20px'
+        }} >
           <h3>Profile Settings</h3>
           {updateFname ?
             <div>
@@ -229,8 +237,6 @@ export function User(props: IUserAcct) {
                 style={{ width: '200px', margin: '10px' }}
                 InputProps={{
                   endAdornment: <InputAdornment position="end" onClick={noEditFname}><Undo /></InputAdornment>,
-
-
                 }}
               />
             </div>
@@ -358,7 +364,13 @@ export function User(props: IUserAcct) {
       </Grid>
       <Grid item xs={12}>
 
-        <Paper style={{ display: 'inline-block', width: '500px', height: '500px', margin: "20px" }}>
+        <Paper style={{
+          display: 'inline-block',
+          width: props.ui.isMobileView ? '95%' : '500px',
+          marginTop: '20px',
+          marginBottom: '20px',
+          paddingBottom: '20px'
+        }}>
           <h3>Data Settings</h3>
           <FormControl>
             <FormLabel style={{ margin: "20px" }}>Select Data to be Deleted</FormLabel>
@@ -404,10 +416,10 @@ export function User(props: IUserAcct) {
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
                     Are you sure you want to delete the following data:
-                  </DialogContentText>
-                  {toDelete.budget ? <h5 style={{ margin: "5px", padding: "0" }}>Budget</h5> : ''}
-                  {toDelete.expenses ? <h5 style={{ margin: "5px", padding: "0" }}>Expenses</h5> : ''}
-                  {toDelete.income ? <h5 style={{ margin: "5px", padding: "0" }}>Income</h5> : ''}
+            </DialogContentText>
+                  {toDelete.budget ? <h5>Budget</h5> : ''}
+                  {toDelete.expenses ? <h5>Expenses</h5> : ''}
+                  {toDelete.income ? <h5>Income</h5> : ''}
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClose} color="primary">
@@ -435,9 +447,8 @@ export function User(props: IUserAcct) {
             />
           </Snackbar>
         </Paper>
-
       </Grid>
-    </Grid>
+    </Grid >
 
   );
 }
@@ -445,6 +456,7 @@ export function User(props: IUserAcct) {
 const mapStateToProps = (state: IState) => {
   return {
     user: state.user,
+    ui: state.ui
   }
 }
 const mapDispatchToProps = {

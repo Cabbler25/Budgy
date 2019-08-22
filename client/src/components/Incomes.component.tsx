@@ -1,4 +1,4 @@
-import { Button, Paper } from '@material-ui/core';
+import { Button, Paper, Snackbar } from '@material-ui/core';
 import Axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -7,6 +7,8 @@ import { IState, IUiState, IUserState } from '../redux';
 import DonutGraph from './data/DonutGraph';
 import { IncomesTable } from './IncomeTablesComponent';
 import NewIncome from './NewIncomesDialog';
+import { List, ListItem } from '@material-ui/core';
+import MySnackbarContentWrapper from './SnackBarComponent';
 
 
 export interface IIncomeProps {
@@ -23,13 +25,35 @@ function Incomes(props: IIncomeProps) {
   const [incomeTypes, setIncomeTypes] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [incomesByUserAndType, setIncomeByUserIdAndTypeId] = useState([]);
+  const [snackBar, setSnackBar] = useState({
+    openDelete: false,
+    openUpdate: false,
+    openCreate: false
+  })
 
   useEffect(() => {
+    setSnackBar({
+      ...snackBar,
+      openDelete: false,
+      openUpdate: false,
+      openCreate: false,
+    })
+
     if (props.user.isLoggedIn) {
       getAllIncomes();
       getAllIncomeTypes();
     }
   }, [props.user.isLoggedIn])
+
+
+  function handleCloseSnackBar() {
+    setSnackBar({
+      ...snackBar,
+      openDelete: false,
+      openUpdate: false,
+      openCreate: false
+    })
+  }
 
   async function getAllIncomes() {
     const url = `http://localhost:8080/income/user/${props.user.id}`;
@@ -49,6 +73,14 @@ function Incomes(props: IIncomeProps) {
     const url = `http://localhost:8080/income/${income.id}`;
     await Axios.delete(url, income)
       .then(() => {
+
+        setSnackBar({
+          ...snackBar,
+          openDelete: true,
+          openCreate: false,
+          openUpdate: false
+        })
+
         getAllIncomes();
         if (showTable) {
           const deletedIncomesIndex = incomes.findIndex(checkId);
@@ -66,19 +98,27 @@ function Incomes(props: IIncomeProps) {
   }
 
   async function updateIncome(income: any) {
+    income.amount = Number(income.amount);
     function checkId(inc: any) {
       return inc.id === income.id;
     }
     const url = `http://localhost:8080/income`
     Axios.put(url, income)
       .then(() => {
+
+        setSnackBar({
+          ...snackBar,
+          openDelete: false,
+          openCreate: false,
+          openUpdate: true
+        })
+
         if (showTable) {
           const updatedIncomeIndex = incomes.findIndex(checkId)
           incomes[updatedIncomeIndex] = income;
           setIncomes(incomes);
         }
       })
-
   }
 
 
@@ -130,6 +170,14 @@ function Incomes(props: IIncomeProps) {
     };
     Axios.post(url, data)
       .then(() => {
+
+        setSnackBar({
+          ...snackBar,
+          openDelete: false,
+          openCreate: true,
+          openUpdate: false
+        })
+
         const newIncome = {
           id: Math.max.apply(Math, incomes.map(function (inc: any) { return inc.id; })) + 1,
           ...data
@@ -161,29 +209,41 @@ function Incomes(props: IIncomeProps) {
         {//<Container style={{ textAlign: 'center'}}> 
         }
         <h2>Manage your income, {props.user.first}</h2>
-        <br />
-        <NewIncome
-          types={incomeTypes}
-          createIncome={createNewIncome} />
-        <br />
 
         {//<Grid item xs={12} md={9}>
         }
         <div>
           {showTable ? (
             <Fragment>
-              <Button
-                color="secondary"
-                onClick={() => setShowTable(false)}>
-                Back
+              <List style={{ display: "inline-block" }}>
+                <ListItem>
+                  <NewIncome
+                    types={incomeTypes}
+                    createIncome={createNewIncome} />
+                  <Button
+                    style={{ display: "inline-block", marginLeft: "10px" }}
+                    color="secondary"
+                    onClick={() => setShowTable(false)}>
+                    Back
                 </Button>
+                </ListItem>
+              </List>
               <IncomesTable incomes={incomesByUserAndType} deleteIncome={deleteIncome} updateIncome={updateIncome} />
             </Fragment>
           ) : (
               <Fragment>
-                {incomes && (<DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
-                  isMobileView={props.ui.isMobileView}
-                  handleElementClick={handleElementClick} />)}
+                {incomes && (
+                  <>
+                    <i style={{ color: 'grey', fontSize: '14px' }}>
+                      Click on any section of the graphic to view details.</i>
+                    <DonutGraph data={createGraphData()} labels={createGraphLabels()} important='Emergency'
+                      isMobileView={props.ui.isMobileView}
+                      handleElementClick={handleElementClick} />
+                  </>)}
+                < br />
+                <NewIncome
+                  types={incomeTypes}
+                  createIncome={createNewIncome} />
               </Fragment>
             )}
           {//
@@ -194,10 +254,49 @@ function Incomes(props: IIncomeProps) {
             // <br />
           }
         </div>
-        {//</Grid>
-        }
-        {//</Container>
-        }
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={snackBar.openCreate}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackBar}
+        >
+          <MySnackbarContentWrapper
+            variant="success"
+            message="Income Created"
+          />
+        </Snackbar>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={snackBar.openDelete}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackBar}
+        >
+          <MySnackbarContentWrapper
+            variant="success"
+            message="Income Deleted"
+          />
+        </Snackbar>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={snackBar.openUpdate}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackBar}
+        >
+          <MySnackbarContentWrapper
+            variant="success"
+            message="Income Modified"
+          />
+        </Snackbar>
+
       </Paper>
     </div>
   );

@@ -70,17 +70,14 @@ function NavBar(props: INavProps) {
   // Called only twice when component mounts/unmounts.
   useEffect(() => {
     // Mobile view query
-    const mediaQuery = window.matchMedia('(min-width: 700px)');
+    const mediaQuery = window.matchMedia('(min-width: 800px)');
     const listener = () => {
       props.setMobileView(!mediaQuery.matches);
     }
-
     // Add listener to update view type
     mediaQuery.addListener(listener);
-
     // Remove listener when component unmounts
     return () => mediaQuery.removeListener(listener);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLoginOpen = () => {
@@ -106,7 +103,7 @@ function NavBar(props: INavProps) {
   return (
     <Fragment>
       <Sidebar history={props.history} open={sidebarOpen} handleClose={handleSidebarClose} isLoggedIn={props.user.isLoggedIn} />
-      <AppBar style={{ borderBottom: !isTopView ? `1px solid ${colors.darkGreen}` : undefined, boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : undefined, opacity: 0.97 }} position='sticky'>
+      <AppBar style={{ borderBottom: !isTopView ? `1px solid ${colors.darkGreen}` : undefined, boxShadow: 'none', backgroundColor: isTopView ? 'transparent' : 'rgba(75, 168, 118, 0.95)' }} position='sticky'>
         <Toolbar className={classes.navbar}>
           {props.ui.isMobileView &&
             <Button style={{ marginRight: '5px', maxWidth: '40px', minWidth: '40px' }} variant='text' onClick={handleSidebarOpen}>
@@ -161,7 +158,7 @@ function NavBar(props: INavProps) {
                     component={Link} to="/logout"
                     style={{
                       width: props.ui.isMobileView ? '90%' : undefined,
-                      marginRight: props.ui.isMobileView ? '-12px' : undefined,
+                      marginRight: props.ui.isMobileView ? '-30px' : undefined,
                       fontSize: props.ui.isMobileView ? '14px' : undefined
                     }}>
                     Logout
@@ -186,7 +183,7 @@ function NavBar(props: INavProps) {
                     <Login open={loginOpen} handleClose={handleLoginClose} anchorEl={document.getElementById('loginButton')} />
                     <Button className={classes.nav_item} size='small' variant='contained' color='secondary'
                       style={{
-                        marginRight: props.ui.isMobileView ? '-8px' : undefined,
+                        marginRight: props.ui.isMobileView ? '-30px' : undefined,
                         width: props.ui.isMobileView ? '90%' : undefined,
                         backgroundColor: colors.orange,
                         fontSize: props.ui.isMobileView ? '12px' : undefined
