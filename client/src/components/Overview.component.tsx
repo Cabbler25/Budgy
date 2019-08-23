@@ -106,8 +106,9 @@ function Overview(props: IHomeProps) {
   };
 
   useEffect(() => {
-    getAllTypes();
+    
     if (props.user.isLoggedIn) {
+      // getAllTypes();
       setIsLoading(true);
       fetchAllData();
     }
@@ -147,40 +148,9 @@ function Overview(props: IHomeProps) {
     })
   }, [props.userExpenses.thisMonthExpenses, budgets, incomes, monthlyExpenses])
 
-  async function getAllTypes() {
-    const url = `http://localhost:8080/budget/types`;
-    Axios.get(url)
-      .then((payload: any) => {
-        payload.data.length > 0 && props.setExpenseTypes(payload.data);
-      }).catch((err: any) => {
-        // Handle error by displaying something else
-      });
-  }
-
+  
   async function fetchAllData() {
-    // User expenses info connected to redux
-    // Avoid re-fetching the database in case the user logged in already
-    let url = `http://localhost:8080/expense/user/${props.user.id}`;
-    if (!props.userExpenses.expenses) { 
-      await Axios.get(url)
-        .then((payload: any) => {
-          payload.data.length > 0 && props.setExpenses(payload.data);
-        }).catch((err: any) => {
-          // Handle error by displaying something else
-        });
-    }
-    // User expenses info connected to redux
-    // Avoid re-fetching the database in case the user logged in already
-    if (!props.userExpenses.thisMonthExpenses) {
-      url = `http://localhost:8080/expense/user/${props.user.id}/monthly`;
-      await Axios.get(url)
-        .then((payload: any) => {
-          payload.data.length > 0 && props.setThisMonthExpenses(payload.data);
-        }).catch((err: any) => {
-          // Handle error by displaying something else
-        });
-    }
-    url = `http://localhost:8080/income/user/${props.user.id}`;
+    let url = `http://localhost:8080/income/user/${props.user.id}`;
     await Axios.get(url)
       .then((payload: any) => {
         // console.log(payload.data);
@@ -217,10 +187,9 @@ function Overview(props: IHomeProps) {
         // Handle error by displaying something else
       });
       if (props.userExpenses.expenses && 
-          props.userExpenses.thisMonthExpenses && props.userExpenses.expenseTypes){
-        setIsLoading(false);
-      }
-    calcOverages();
+        props.userExpenses.thisMonthExpenses && props.userExpenses.expenseTypes){
+        calcOverages();
+      } 
   }
 
   function calcOverages() {
@@ -265,6 +234,7 @@ function Overview(props: IHomeProps) {
       setOverBudgets(overs.length > 0 ? overs : undefined);
       setUnderBudgets(unders.length > 0 ? unders : undefined);
     }
+    setIsLoading(false);
   }
 
 
@@ -307,7 +277,8 @@ function Overview(props: IHomeProps) {
 
   return (
     (props.user.isLoggedIn ? (
-      (isLoading && (!props.userExpenses.expenseTypes) && (!props.userExpenses.expenses) ? (
+      (isLoading && (!props.userExpenses.expenseTypes) && (!props.userExpenses.expenses)
+       && (!budgets) && (!incomes) && (!months) ? (
         <div style={{ margin: 'auto', height: '100vh', textAlign: 'center' }}>
           <div style={{ marginTop: '40vh', display: 'inline-block' }}>
             <BarLoader width={250} color={colors.offWhite} loading={isLoading} />
@@ -547,11 +518,11 @@ function Overview(props: IHomeProps) {
                       margin: 0
                     }}
                       item xs={props.ui.isMobileView ? 12 : 6}>
-                      <Paper className={classes.graph_paper}>
+                      {/* <Paper className={classes.graph_paper}>
                         <LineGraph data={0} months={months}
                           expenseTotals={monthlyExpenses}
                           income={createLineStaticIncome()} budget={createLineStaticBudget()} />
-                      </Paper>
+                      </Paper> */}
                     </Grid>
                     <Grid
                       style={{

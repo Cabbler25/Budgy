@@ -95,14 +95,12 @@ public class ExpenseService {
 			String monthString = LocalDate.now().minusYears(1).plusMonths(i).getMonth().getDisplayName(TextStyle.FULL,
 					Locale.ENGLISH);
 			int year = LocalDate.now().minusYears(1).plusMonths(i).getYear();
-			//System.out.println(year);
+//			System.out.println(year);
 			double sum = 0;
 			double thisMonthSum = 0;
 			for (Expense k : expenses) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(k.getDate());
-				int expenseMonth = cal.get(Calendar.MONTH);
-				if (monthInt == expenseMonth + 1)
+
+				if (monthInt == k.getDate().getMonth() + 1)
 					sum += k.getAmount();
 
 			} // Inner enhanced for loop

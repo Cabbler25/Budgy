@@ -1,8 +1,8 @@
 import { Backdrop, Button, Divider, Paper, Popover, TextField } from '@material-ui/core';
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { IState, IUserState } from '../redux';
-import { updateUserLoggedIn, updateUserInfo } from '../redux/actions';
+import { IState, IUserState, IExpensesState } from '../redux';
+import { updateUserLoggedIn, updateUserInfo, setExpenses, setExpenseTypes, setThisMonthExpenses } from '../redux/actions';
 import Axios from 'axios';
 
 interface ILoginProps {
@@ -12,6 +12,10 @@ interface ILoginProps {
   handleClose: () => void;
   open: boolean;
   anchorEl: any;
+  userExpenses: IExpensesState;
+  setExpenses: (expenses:any) => void;
+  setExpenseTypes: (expenseTypes:any) => void;
+  setThisMonthExpenses: (thisMonthExpenses:any) => void;
 }
 
 export function Login(props: ILoginProps) {
@@ -27,16 +31,37 @@ export function Login(props: ILoginProps) {
     setPwError(false);
   }, [props.open])
 
-  const handleUsernameInput = (e: any) => {
-    setUsernameField(e.target.value);
-    setUsernameError(false);
-    setPwError(false);
-  }
-
-  const handlePwInput = (e: any) => {
-    setPwField(e.target.value);
-    setPwError(false);
-    setUsernameError(false);
+  // As soon as user logs in, request expenses information about her/him
+  async function getUserExpensesInfo(userId:number) {
+    // User expenses info connected to redux
+    let url = `http://localhost:8080/expense/user/${userId}`;
+    if (!props.userExpenses.expenses) { 
+      await Axios.get(url)
+        .then((payload: any) => {
+          payload.data.length > 0 && props.setExpenses(payload.data);
+        }).catch((err: any) => {
+          // Handle error by displaying something else
+        });
+    }
+    if (!props.userExpenses.thisMonthExpenses) {
+      url = `http://localhost:8080/expense/user/${userId}/monthly`;
+      await Axios.get(url)
+        .then((payload: any) => {
+          payload.data.length > 0 && props.setThisMonthExpenses(payload.data);
+        }).catch((err: any) => {
+          // Handle error by displaying something else
+        });
+    }
+    url = `http://localhost:8080/expense/types`;
+    await Axios.get(url)
+      .then((payload: any) => {
+        payload.data.length > 0 && props.setExpenseTypes(payload.data);
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+    // After all information is stored, head user to the overview page
+    props.userExpenses.expenses && props.updateUserLoggedIn(true);
+    props.handleClose();    
   }
 
   async function logIn() {
@@ -48,8 +73,8 @@ export function Login(props: ILoginProps) {
       setPwError(false);
       setUsernameError(false);
       props.updateUserInfo(payload.data)
-      props.updateUserLoggedIn(true);
-      props.handleClose();
+      // Call the function to retrieve all user expenses information
+      getUserExpensesInfo(payload.data.id);
     }).catch(err => {
       setUsernameError(true);
       setUsernameErrorTxt('');
@@ -58,6 +83,17 @@ export function Login(props: ILoginProps) {
     });
   }
 
+  const handleUsernameInput = (e: any) => {
+    setUsernameField(e.target.value);
+    setUsernameError(false);
+    setPwError(false);
+  }
+
+  const handlePwInput = (e: any) => {
+    setPwField(e.target.value);
+    setPwError(false);
+    setUsernameError(false);
+  }
   const handleLogin = () => {
     if (!usernameField) {
       setUsernameError(true);
@@ -134,14 +170,18 @@ export function Login(props: ILoginProps) {
 // Needed state
 const mapStateToProps = (state: IState) => {
   return {
-    user: state.user
+    user: state.user,
+    userExpenses:state.userExpenses
   }
 }
 
 // Needed actions
 const mapDispatchToProps = {
   updateUserLoggedIn: updateUserLoggedIn,
-  updateUserInfo: updateUserInfo
+  updateUserInfo: updateUserInfo,
+  setExpenses: setExpenses,
+  setExpenseTypes: setExpenseTypes,
+  setThisMonthExpenses: setThisMonthExpenses
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

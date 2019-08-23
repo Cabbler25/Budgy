@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Button, Divider, TextField } from '@material-ui/core';
-import { IUserState, IState } from '../redux';
-import { updateUserLoggedIn, updateUserInfo } from '../redux/actions';
+import { IUserState, IState, IExpensesState } from '../redux';
+import { updateUserLoggedIn, updateUserInfo, setExpenses, setExpenseTypes, setThisMonthExpenses } from '../redux/actions';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import Axios from 'axios';
@@ -10,6 +10,10 @@ interface ILoginProps {
   user: IUserState;
   updateUserInfo: (payload: any) => void;
   updateUserLoggedIn: (val: boolean) => void;
+  userExpenses: IExpensesState;
+  setExpenses: (expenses:any) => void;
+  setExpenseTypes: (expenseTypes:any) => void;
+  setThisMonthExpenses: (thisMonthExpenses:any) => void;
   history: any;
 }
 
@@ -26,6 +30,39 @@ export function Login(props: ILoginProps) {
     setPwError(false);
   }, [])
 
+  // As soon as user logs in, request expenses information about her/him
+  async function getUserExpensesInfo(userId:number) {
+    // User expenses info connected to redux
+    let url = `http://localhost:8080/expense/user/${userId}`;
+    if (!props.userExpenses.expenses) { 
+      await Axios.get(url)
+        .then((payload: any) => {
+          payload.data.length > 0 && props.setExpenses(payload.data);
+        }).catch((err: any) => {
+          // Handle error by displaying something else
+        });
+    }
+    if (!props.userExpenses.thisMonthExpenses) {
+      url = `http://localhost:8080/expense/user/${userId}/monthly`;
+      await Axios.get(url)
+        .then((payload: any) => {
+          payload.data.length > 0 && props.setThisMonthExpenses(payload.data);
+        }).catch((err: any) => {
+          // Handle error by displaying something else
+        });
+    }
+    url = `http://localhost:8080/expense/types`;
+    await Axios.get(url)
+      .then((payload: any) => {
+        payload.data.length > 0 && props.setExpenseTypes(payload.data);
+      }).catch((err: any) => {
+        // Handle error by displaying something else
+      });
+    // After all information is stored, head user to the overview page
+    props.userExpenses.expenseTypes && 
+      props.history.push('/');
+  }
+
   async function logIn() {
     const url = 'http://localhost:8080/login';
     await Axios.post(url, {
@@ -36,8 +73,9 @@ export function Login(props: ILoginProps) {
       setUsernameError(false);
       //Do something will payload
       props.updateUserInfo(payload.data);
+      // Request user expenses info
+      getUserExpensesInfo(payload.data.id);
       props.updateUserLoggedIn(true);
-      props.history.push('/');
     }).catch(err => {
       setUsernameError(true);
       setUsernameErrorTxt('');
@@ -57,7 +95,7 @@ export function Login(props: ILoginProps) {
     setPwError(false);
     setUsernameError(false);
   }
-
+  // Check if information is properly filled in order to proceed
   const handleLogin = () => {
     if (!usernameField) {
       setUsernameError(true);
@@ -113,13 +151,17 @@ export function Login(props: ILoginProps) {
 // Redux
 const mapStateToProps = (state: IState) => {
   return {
-    user: state.user
+    user: state.user,
+    userExpenses:state.userExpenses
   }
 }
 
 const mapDispatchToProps = {
   updateUserLoggedIn: updateUserLoggedIn,
-  updateUserInfo: updateUserInfo
+  updateUserInfo: updateUserInfo,
+  setExpenses: setExpenses,
+  setExpenseTypes: setExpenseTypes,
+  setThisMonthExpenses: setThisMonthExpenses,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

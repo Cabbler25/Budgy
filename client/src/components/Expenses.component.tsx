@@ -168,19 +168,15 @@ function Expenses(props: IExpenseProps) {
           payload.data.date = newDateFormatted;
           // Update arrays for properly visualize the new expense added
           const expensesCopy = props.userExpenses.expenses ?
-                               props.userExpenses.expenses.concat(payload.data) : [
-                               payload.data] ;
+                               props.userExpenses.expenses.concat(payload.data) : 
+                               [payload.data];
           props.setExpenses(expensesCopy);
           // Add it to the monthly expenses if the month of the new expense is the current month
           const currentMonth = new Date().getMonth();
-          const newExpenseMonth = new Date(payload.data.date).getMonth();
-          if (newExpenseMonth == currentMonth) {
-            // Only add to monthly expenses array if the assigned month is the current one
-            const thisMonthExpensesCopy = props.userExpenses.thisMonthExpenses? 
-                                          props.userExpenses.thisMonthExpenses.concat(payload.data) : 
-                                          [payload.data];
-            props.setThisMonthExpenses(thisMonthExpensesCopy);
-          }
+          const thisMonthExpensesCopy = expensesCopy.filter((e:any)=>(
+            new Date(e.date).getMonth() == currentMonth
+          ));
+          props.setThisMonthExpenses(thisMonthExpensesCopy);
         });
       setIsLoading(false);
   }
@@ -197,20 +193,12 @@ function Expenses(props: IExpenseProps) {
           openUpdate: false,
           openCreate: false,
         })
-        // Check if the new expense fits in the monthly category or in the general category
-        const currentMonth = new Date().getMonth();
-        const newExpenseMonth = new Date(expense.date).getMonth();
-        // Also update if user is in monthly perspective
-        if (currentMonth == newExpenseMonth) {
-          // Remove the expense from the graph by filtering the expenses array
-          // Also remove it from the array sent to the table wich also filters by type
-          const tempGraph = props.userExpenses.thisMonthExpenses.filter((e: any) => e.id !== expense.id); 
-          props.setThisMonthExpenses(tempGraph.length > 0 ? tempGraph : undefined);
-        }
         // Remove the expense from the graph by filtering the expenses array
-        // Also remove it from the array sent to the table wich also filters by type
         const tempGraph = props.userExpenses.expenses.filter((e: any) => e.id !== expense.id); 
         props.setExpenses(tempGraph.length > 0 ? tempGraph : undefined);
+        // Also update this month expenses
+        const currentMonth = new Date().getMonth();
+        props.setThisMonthExpenses(tempGraph.filter((e:any)=>(new Date(e.date).getMonth()==currentMonth)));
         setIsLoading(false);
       });
   }

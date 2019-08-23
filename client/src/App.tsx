@@ -1,7 +1,7 @@
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 import './App.css';
 import colors from './assets/Colors';
@@ -15,6 +15,7 @@ import Overview from './components/Overview.component';
 import Register from './components/Register.component';
 import User from './components/User.component';
 import { persistor, store } from './redux/Store';
+import { getThemeProps } from '@material-ui/styles';
 
 
 // We will define our theme here, feel free to add to it.
@@ -60,6 +61,7 @@ const App: React.FC = () => {
       <PersistGate loading={null} persistor={persistor}>
         <MuiThemeProvider theme={theme}>
           <Router>
+            <Redirect to="/login" />
             <div style={{ height: '7px', width: '100%', backgroundColor: colors.darkGreen }} />
             <NavBar />
             <br />

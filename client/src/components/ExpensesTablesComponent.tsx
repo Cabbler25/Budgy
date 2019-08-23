@@ -8,11 +8,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { pencilTool, pencilPath, removeTool, removePath, undoTool, undoPath, okTool, okPath } from '../assets/Icons';
-<<<<<<< HEAD
 import React,{ useState, Fragment } from 'react';
-=======
-import React, { useState, Fragment } from 'react';
->>>>>>> 883ba3a9fd016b77abad039bf37ae25900099c66
 import colors from '../assets/Colors';
 
 /*
