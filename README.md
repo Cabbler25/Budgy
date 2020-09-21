@@ -1,4 +1,4 @@
-https://i.imgur.com/PvjhwPH.png
+![Image](https://i.imgur.com/EQ93S8Z.png)
 
 Project 2
 
